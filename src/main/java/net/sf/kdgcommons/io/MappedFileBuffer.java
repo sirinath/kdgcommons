@@ -14,7 +14,6 @@
 
 package net.sf.kdgcommons.io;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -36,18 +35,19 @@ import java.nio.channels.FileChannel.MapMode;
  *  sub-buffer that may be accessed (via {@link getBytes} and {@link #putBytes}),
  *  and may be no larger than 1 GB.
  *  <p>
- *  <em>Warning:</em> this class is not thread-safe; caller must expliitly
- *  synchronize access.
+ *  <strong>Warning:</strong>
+ *  This class is not thread-safe. Caller must explicitly synchronize access,
+ *  or call {@link #clone} to create a distinct buffer for each thread.
  */
 public class MappedFileBuffer
-implements Closeable
+implements Cloneable
 {
     private final static int MAX_SEGMENT_SIZE = Integer.MAX_VALUE / 2;
 
-    private RandomAccessFile _mappedFile;
     private long _fileSize;
     private long _segmentSize;              // long because it's used long expressions
     private MappedByteBuffer[] _buffers;
+
 
     /**
      *  Opens and memory-maps the specified file for read-only access, using
@@ -102,21 +102,31 @@ implements Closeable
         if (segmentSize > MAX_SEGMENT_SIZE)
             throw new IllegalArgumentException(
                     "segment size too large (max " + MAX_SEGMENT_SIZE + "): " + segmentSize);
+
         _segmentSize = segmentSize;
-
-        String mode = readWrite ? "rw" : "r";
-        _mappedFile = new RandomAccessFile(file, mode);
-        FileChannel channel = _mappedFile.getChannel();
-
-        MapMode mapMode = readWrite ? MapMode.READ_WRITE : MapMode.READ_ONLY;
         _fileSize = file.length();
-        _buffers = new MappedByteBuffer[(int)(_fileSize / segmentSize) + 1];
-        int bufIdx = 0;
-        for (long offset = 0 ; offset < _fileSize ; offset += segmentSize)
+
+        RandomAccessFile mappedFile = null;
+        try
         {
-            long remainingFileSize = _fileSize - offset;
-            long thisSegmentSize = Math.min(2L * segmentSize, remainingFileSize);
-            _buffers[bufIdx++] = channel.map(mapMode, offset, thisSegmentSize);
+            String mode = readWrite ? "rw" : "r";
+            MapMode mapMode = readWrite ? MapMode.READ_WRITE : MapMode.READ_ONLY;
+
+            mappedFile = new RandomAccessFile(file, mode);
+            FileChannel channel = mappedFile.getChannel();
+
+            _buffers = new MappedByteBuffer[(int)(_fileSize / segmentSize) + 1];
+            int bufIdx = 0;
+            for (long offset = 0 ; offset < _fileSize ; offset += segmentSize)
+            {
+                long remainingFileSize = _fileSize - offset;
+                long thisSegmentSize = Math.min(2L * segmentSize, remainingFileSize);
+                _buffers[bufIdx++] = channel.map(mapMode, offset, thisSegmentSize);
+            }
+        }
+        finally
+        {
+            IOUtil.closeQuietly(mappedFile);
         }
     }
 
@@ -271,42 +281,45 @@ implements Closeable
 
 
     /**
-     *  Closes the underlying file, and invalidates all buffers. Subsequent
-     *  calls will return silently. Attempts to use the buffer after calling
-     *  <code>close()</code> will throw <code>IllegalStateException</code>
+     *  Creates a new buffer referencing the same file, but with
      */
-    public void close()
-    throws IOException
+    @Override
+    public MappedFileBuffer clone()
     {
-        if (_mappedFile == null)
-            return;
-
-        _mappedFile.close();
-        _mappedFile = null;
-        _buffers = null;
+        try
+        {
+            MappedFileBuffer that = (MappedFileBuffer)super.clone();
+            that._buffers = new MappedByteBuffer[_buffers.length];
+            for (int ii = 0 ; ii < _buffers.length ; ii++)
+            {
+                // if the file is a multiple of the segment size, we
+                // can end up with an empty slot in the buffer array
+                if (_buffers[ii] != null)
+                    that._buffers[ii] = (MappedByteBuffer)_buffers[ii].duplicate();
+            }
+            return that;
+        }
+        catch (CloneNotSupportedException ex)
+        {
+            throw new RuntimeException("unreachable code", ex);
+        }
     }
+
 
 
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
 
-    @Override
-    protected void finalize()
-    throws Throwable
-    {
-        close();
-    }
-
-
     private void checkState()
     {
-        if (_mappedFile == null)
+        if (_buffers == null)
             throw new IllegalStateException("buffer has been closed");
     }
 
 
-    private ByteBuffer buffer(long index)
+    // this is exposed for a white-box test of cloning
+    protected ByteBuffer buffer(long index)
     {
         checkState();
         ByteBuffer buf = _buffers[(int)(index / _segmentSize)];

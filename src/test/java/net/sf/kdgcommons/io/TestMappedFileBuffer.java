@@ -40,7 +40,6 @@ extends TestCase
     }
 
 
-
     @Override
     protected void tearDown()
     throws IOException
@@ -204,15 +203,6 @@ extends TestCase
     }
 
 
-    public void testCanCloseMultipleTimes() throws Exception
-    {
-        writeContent(255, 0x00);
-        MappedFileBuffer buf = new MappedFileBuffer(_testFile, 1024, true);
-        buf.close();
-        buf.close();
-    }
-
-
     public void testFailWriteToReadOnlyBuffer() throws Exception
     {
         writeContent(8191, 0x00);
@@ -232,22 +222,18 @@ extends TestCase
     }
 
 
-    public void testFailAccessAfterClose() throws Exception
+    public void testClone() throws Exception
     {
         writeContent(8191, 0x00);
-        MappedFileBuffer buf = new MappedFileBuffer(_testFile, 1024, false);
+        MappedFileBuffer buf1 = new MappedFileBuffer(_testFile, 1024, true);
+        MappedFileBuffer buf2 = buf1.clone();
 
-        buf.getInt(8000L);  // verifies that the file was created correctly
+        // this doesn't really test the documented behavior of clone()
+        buf1.putInt(3172, 0x12345678);
+        assertEquals(0x12345678, buf2.getInt(3172));
 
-        buf.close();
-        try
-        {
-            buf.getInt(8000L);
-            fail("able to access buffer after closed");
-        }
-        catch (IllegalStateException ee)
-        {
-            // success
-        }
+        // this is a little better, but it could use different mappings
+        // ... and the test is dependent on the implementation
+        assertNotSame(buf1.buffer(1234), buf2.buffer(1234));
     }
 }
