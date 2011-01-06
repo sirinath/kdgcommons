@@ -170,6 +170,18 @@ extends TestCase
     }
 
 
+    // this test added for internal comparator coverage; it won't affect
+    // affect coverage of Heapsort itself, but I want to cover all cases
+    public void testIntSortWithEqualElements() throws Exception
+    {
+        int[] src = new int[] { 5, 3, 3, 4, 12 };
+        int[] exp = new int[] { 12, 5, 4, 3, 3 };
+
+        Heapsort.sort(src, new ReversingIntComparator());
+        assertEquals(exp, src);
+    }
+
+
     public void testIntSortManyElements() throws Exception
     {
         final int size = 10000;
@@ -182,10 +194,20 @@ extends TestCase
         Heapsort.sort(src, cmp);
         assertEquals(exp, src);
 
-        // we should have at most 3 comparisons per swap, so assert those
+        // we should have at most 3 comparisons per swap
         int expectedCompares = 3 * size * log2Size;
         assertTrue("comparison count (was " + cmp.count + ", expected " + expectedCompares + ")",
                    cmp.count < expectedCompares);
+    }
+
+
+    public void testIntSortPortionOfArray() throws Exception
+    {
+        int[] src = new int[] { 5, 3, 2, 4, 12 };
+        int[] exp = new int[] { 5, 4, 3, 2, 12 };
+
+        Heapsort.sort(src, 1, 3, new ReversingIntComparator());
+        assertEquals(exp, src);
     }
 
 
@@ -195,6 +217,7 @@ extends TestCase
         Integer[] src = toObjectArray(base);
         Integer[] exp = toObjectArray(createSortedCopy(base));
 
+        // coverage note: this call is delegated to all other variants
         Heapsort.sort(src);
         assertEquals(Arrays.asList(exp), Arrays.asList(src));
     }
@@ -207,6 +230,7 @@ extends TestCase
         List<Integer> exp = new ArrayList<Integer>(base);
         Collections.sort(exp);
 
+        // coverage note: this call is delegated to all other variants
         Heapsort.sort(src);
         assertEquals(exp, src);
     }

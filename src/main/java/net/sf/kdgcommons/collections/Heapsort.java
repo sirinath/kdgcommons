@@ -17,6 +17,7 @@ package net.sf.kdgcommons.collections;
 import java.util.Comparator;
 import java.util.List;
 
+
 /**
  *  Implementations of heapsort for a variety of data structures. Heapsort is an
  *  in-place sort (albeit not stable), which is useful in memory-constrained
@@ -43,12 +44,23 @@ public class Heapsort
      */
     public static void sort(int[] array, IntComparator comparator)
     {
-        heapsort(new IntArrayAccessor(array, comparator));
+        sort(array, 0, array.length, comparator);
     }
 
 
     /**
-     *  Sorts an object array using natural ordering.
+     *  Sorts a portion of a primitive integer array using an external comparator.
+     */
+    public static void sort(int[] array, int off, int len, IntComparator comparator)
+    {
+        heapsort(new IntArrayAccessor(array, comparator), off, len);
+    }
+
+
+    /**
+     *  Sorts an object array using natural ordering. You would use this method
+     *  rather than <code>Arrays.sort()</code> to avoid creation of a working
+     *  array, which will consume 4/8 bytes per element.
      */
     public static <T extends Comparable<T>> void sort(T[] array)
     {
@@ -61,13 +73,24 @@ public class Heapsort
      */
     public static <T extends Object> void sort(T[] array, Comparator<T> cmp)
     {
-        heapsort(new ObjectArrayAccessor<T>(array, cmp));
+        sort(array, 0, array.length, cmp);
     }
 
 
     /**
-     *  Sorts a list using natural ordering. Only appropriate for
-     *  random-access lists.
+     *  Sorts a section of an object array using the provided comparator.
+     */
+    public static <T extends Object> void sort(T[] array, int off, int len, Comparator<T> cmp)
+    {
+        heapsort(new ObjectArrayAccessor<T>(array, cmp), off, len);
+    }
+
+
+    /**
+     *  Sorts a list using natural ordering. Only appropriate for random-access
+     *  lists. You would use this method rather than <code>Collections.sort()</code>
+     *  to avoid creation of working arrays, which will consume 4/8 bytes per
+     *  element.
      */
     public static <T extends Comparable<T>> void sort(List<T> list)
     {
@@ -76,11 +99,22 @@ public class Heapsort
 
 
     /**
-     *  Sorts an object array using the provided comparator.
+     *  Sorts a list using the provided comparator. Only appropriate for
+     *  random-access lists.
      */
     public static <T extends Object> void sort(List<T> list, Comparator<T> cmp)
     {
-        heapsort(new ListAccessor<T>(list, cmp));
+        sort(list, 0, list.size(), cmp);
+    }
+
+
+    /**
+     *  Sorts a portion of a list using the provided comparator. Only appropriate
+     *  for random-access lists.
+     */
+    public static <T extends Object> void sort(List<T> list, int off, int len, Comparator<T> cmp)
+    {
+        heapsort(new ListAccessor<T>(list, cmp), off, len);
     }
 
 
@@ -94,26 +128,111 @@ public class Heapsort
      */
     private interface Accessor
     {
-        public int size();
         public int compare(int index1, int index2);
         public void swap(int index1, int index2);
     }
 
 
     /**
+     *  Accessor implementation for <code>int[]</code>.
+     */
+    private static class IntArrayAccessor
+    implements Accessor
+    {
+        private int[] _array;
+        private IntComparator _comparator;
+
+        public IntArrayAccessor(int[] array, IntComparator comparator)
+        {
+            _array = array;
+            _comparator = comparator;
+        }
+
+        public int compare(int index1, int index2)
+        {
+            return _comparator.compare(_array[index1], _array[index2]);
+        }
+
+        public void swap(int index1, int index2)
+        {
+            int tmp = _array[index1];
+            _array[index1] = _array[index2];
+            _array[index2] = tmp;
+        }
+    }
+
+
+    /**
+     *  Accessor implementation for <code>Object[]</code>.
+     */
+    private static class ObjectArrayAccessor<T extends Object>
+    implements Accessor
+    {
+        private T[] _array;
+        private Comparator<T> _comparator;
+
+        public ObjectArrayAccessor(T[] array, Comparator<T> comparator)
+        {
+            _array = array;
+            _comparator = comparator;
+        }
+
+        public int compare(int index1, int index2)
+        {
+            return _comparator.compare(_array[index1], _array[index2]);
+        }
+
+        public void swap(int index1, int index2)
+        {
+            T tmp = _array[index1];
+            _array[index1] = _array[index2];
+            _array[index2] = tmp;
+        }
+    }
+
+
+    /**
+     *  Accessor implementation for <code>List</code>.
+     */
+    private static class ListAccessor<T extends Object>
+    implements Accessor
+    {
+        private List<T> _list;
+        private Comparator<T> _comparator;
+
+        public ListAccessor(List<T> list, Comparator<T> comparator)
+        {
+            _list = list;
+            _comparator = comparator;
+        }
+
+        public int compare(int index1, int index2)
+        {
+            return _comparator.compare(_list.get(index1), _list.get(index2));
+        }
+
+        public void swap(int index1, int index2)
+        {
+            T tmp = _list.get(index1);
+            _list.set(index1, _list.get(index2));
+            _list.set(index2, tmp);
+        }
+    }
+
+
+    /**
      *  The core sort routine.
      */
-    private static void heapsort(Accessor acc)
+    private static void heapsort(Accessor acc, int off, int len)
     {
-        for (int end = 1 ; end < acc.size() ; end++)
+        for (int end = off+1 ; end < off + len ; end++)
             siftUp(acc, end);
 
-        for (int end = acc.size() - 1 ; end >= 0 ; )
+        for (int end = off + len - 1 ; end >= off ; )
         {
             acc.swap(0, end);
             siftDown(acc, --end);
         }
-
     }
 
 
@@ -150,109 +269,6 @@ public class Heapsort
             if (acc.compare(parent, child) < 0)
                 acc.swap(parent, child);
             parent = child;
-        }
-    }
-
-
-    /**
-     *  Accessor implementation for <code>int[]</code>.
-     */
-    private static class IntArrayAccessor
-    implements Accessor
-    {
-        private int[] _array;
-        private IntComparator _comparator;
-
-        public IntArrayAccessor(int[] array, IntComparator comparator)
-        {
-            _array = array;
-            _comparator = comparator;
-        }
-
-        public int size()
-        {
-            return _array.length;
-        }
-
-        public int compare(int index1, int index2)
-        {
-            return _comparator.compare(_array[index1], _array[index2]);
-        }
-
-        public void swap(int index1, int index2)
-        {
-            int tmp = _array[index1];
-            _array[index1] = _array[index2];
-            _array[index2] = tmp;
-        }
-    }
-
-
-    /**
-     *  Accessor implementation for <code>Object[]</code>.
-     */
-    private static class ObjectArrayAccessor<T extends Object>
-    implements Accessor
-    {
-        private T[] _array;
-        private Comparator<T> _comparator;
-
-        public ObjectArrayAccessor(T[] array, Comparator<T> comparator)
-        {
-            _array = array;
-            _comparator = comparator;
-        }
-
-        public int size()
-        {
-            return _array.length;
-        }
-
-        public int compare(int index1, int index2)
-        {
-            return _comparator.compare(_array[index1], _array[index2]);
-        }
-
-        public void swap(int index1, int index2)
-        {
-            T tmp = _array[index1];
-            _array[index1] = _array[index2];
-            _array[index2] = tmp;
-        }
-    }
-
-
-
-    /**
-     *  Accessor implementation for <code>List</code>.
-     */
-    private static class ListAccessor<T extends Object>
-    implements Accessor
-    {
-        private List<T> _list;
-        private Comparator<T> _comparator;
-
-        public ListAccessor(List<T> list, Comparator<T> comparator)
-        {
-            _list = list;
-            _comparator = comparator;
-        }
-
-        public int size()
-        {
-            return _list.size();
-        }
-
-        public int compare(int index1, int index2)
-        {
-            return _comparator.compare(_list.get(index1), _list.get(index2));
-        }
-
-        public void swap(int index1, int index2)
-        {
-            T tmp = _list.get(index1);
-            _list.set(index1, _list.get(index2));
-            _list.set(index2, tmp);
         }
     }
 
