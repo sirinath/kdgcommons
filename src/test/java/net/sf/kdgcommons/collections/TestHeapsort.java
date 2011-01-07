@@ -79,12 +79,26 @@ extends TestCase
     implements Heapsort.IntComparator
     {
         public int count;
+        public int expectedCount;
+
+        public CountingIntComparator(int size)
+        {
+            // our implementation of heapsort should perform at most 3 compares per element
+            expectedCount = 3 * size * (int)Math.ceil(Math.log(size) / Math.log(2));
+        }
 
         public int compare(int i1, int i2)
         {
+            count++;
             return (i1 < i2) ? -1
                  : (i1 > i2) ? 1
                  : 0;
+        }
+
+        public void assertCompareCount()
+        {
+            assertTrue("expected < " + expectedCount + ", was " + count,
+                       count < expectedCount);
         }
     }
 
@@ -185,19 +199,15 @@ extends TestCase
     public void testIntSortManyElements() throws Exception
     {
         final int size = 10000;
-        final int log2Size = 14;
 
         int[] src = createRandomArray(size);
         int[] exp = createSortedCopy(src);
 
-        CountingIntComparator cmp = new CountingIntComparator();
+        CountingIntComparator cmp = new CountingIntComparator(size);
         Heapsort.sort(src, cmp);
         assertEquals(exp, src);
 
-        // we should have at most 3 comparisons per swap
-        int expectedCompares = 3 * size * log2Size;
-        assertTrue("comparison count (was " + cmp.count + ", expected " + expectedCompares + ")",
-                   cmp.count < expectedCompares);
+        cmp.assertCompareCount();
     }
 
 
