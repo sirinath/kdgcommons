@@ -19,15 +19,17 @@ import java.util.List;
 
 
 /**
- *  Implementations of heapsort for a variety of data structures. Heapsort is an
- *  in-place sort (albeit not stable), which is useful in memory-constrained
- *  situations.
+ *  Implementation of sorting for various array and collection types. Unless
+ *  otherwise noted, these sorts are in-place (they do not use additional heap
+ *  memory to hold a copy of the data, unlike the JDK's MergeSort) and are not
+ *  stable (equal objects may have different relative positions in subsequent
+ *  calls).
  *  <p>
- *  Of particular interest, this class supports sorting <code>int</code> arrays
- *  with an external comparator. This is useful when the array represents an
- *  index into another data structure.
+ *  Of particular note, this class provides an <code>int[]</code> that uses an
+ *  external comparator. This is very useful when the array is actually an index
+ *  into some other data structure, such as a memory-mapped file.
  */
-public class Heapsort
+public class SortUtil
 {
     /**
      *  Implementations of this class compare two primitive <code>int</code>s,
