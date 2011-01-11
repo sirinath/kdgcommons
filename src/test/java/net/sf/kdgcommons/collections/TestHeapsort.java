@@ -97,6 +97,7 @@ extends TestCase
 
         public void assertCompareCount()
         {
+            assertTrue("expected > 0", count > 0);
             assertTrue("expected < " + expectedCount + ", was " + count,
                        count < expectedCount);
         }
