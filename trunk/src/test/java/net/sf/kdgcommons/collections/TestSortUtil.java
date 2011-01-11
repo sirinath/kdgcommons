@@ -23,7 +23,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 
-public class TestHeapsort
+public class TestSortUtil
 extends TestCase
 {
 //----------------------------------------------------------------------------
@@ -62,7 +62,7 @@ extends TestCase
 
     // we'll throw a twist into the ordering for the int[] tess
     public static class ReversingIntComparator
-    implements Heapsort.IntComparator
+    implements SortUtil.IntComparator
     {
         public int compare(int i1, int i2)
         {
@@ -76,7 +76,7 @@ extends TestCase
     // this will be used to verify the O(NlogN) property; it orders by
     // increasing values so we can compare result to Arrays.sort()
     public static class CountingIntComparator
-    implements Heapsort.IntComparator
+    implements SortUtil.IntComparator
     {
         public int count;
         public int expectedCount;
@@ -140,7 +140,7 @@ extends TestCase
         int[] src = new int[0];
         int[] exp = new int[0];
 
-        Heapsort.sort(src, new ReversingIntComparator());
+        SortUtil.sort(src, new ReversingIntComparator());
         assertEquals(exp, src);
     }
 
@@ -150,7 +150,7 @@ extends TestCase
         int[] src = new int[] { 3 };
         int[] exp = new int[] { 3 };
 
-        Heapsort.sort(src, new ReversingIntComparator());
+        SortUtil.sort(src, new ReversingIntComparator());
         assertEquals(exp, src);
     }
 
@@ -160,7 +160,7 @@ extends TestCase
         int[] src = new int[] { 3, 5 };
         int[] exp = new int[] { 5, 3 };
 
-        Heapsort.sort(src, new ReversingIntComparator());
+        SortUtil.sort(src, new ReversingIntComparator());
         assertEquals(exp, src);
     }
 
@@ -170,7 +170,7 @@ extends TestCase
         int[] src = new int[] { 5, 3, 4 };
         int[] exp = new int[] { 5, 4, 3 };
 
-        Heapsort.sort(src, new ReversingIntComparator());
+        SortUtil.sort(src, new ReversingIntComparator());
         assertEquals(exp, src);
     }
 
@@ -180,7 +180,7 @@ extends TestCase
         int[] src = new int[] { 5, 3, 4, 12 };
         int[] exp = new int[] { 12, 5, 4, 3 };
 
-        Heapsort.sort(src, new ReversingIntComparator());
+        SortUtil.sort(src, new ReversingIntComparator());
         assertEquals(exp, src);
     }
 
@@ -192,7 +192,7 @@ extends TestCase
         int[] src = new int[] { 5, 3, 3, 4, 12 };
         int[] exp = new int[] { 12, 5, 4, 3, 3 };
 
-        Heapsort.sort(src, new ReversingIntComparator());
+        SortUtil.sort(src, new ReversingIntComparator());
         assertEquals(exp, src);
     }
 
@@ -205,7 +205,7 @@ extends TestCase
         int[] exp = createSortedCopy(src);
 
         CountingIntComparator cmp = new CountingIntComparator(size);
-        Heapsort.sort(src, cmp);
+        SortUtil.sort(src, cmp);
         assertEquals(exp, src);
 
         cmp.assertCompareCount();
@@ -217,7 +217,7 @@ extends TestCase
         int[] src = new int[] { 5, 3, 2, 4, 12 };
         int[] exp = new int[] { 5, 4, 3, 2, 12 };
 
-        Heapsort.sort(src, 1, 3, new ReversingIntComparator());
+        SortUtil.sort(src, 1, 3, new ReversingIntComparator());
         assertEquals(exp, src);
     }
 
@@ -229,7 +229,7 @@ extends TestCase
         Integer[] exp = toObjectArray(createSortedCopy(base));
 
         // coverage note: this call is delegated to all other variants
-        Heapsort.sort(src);
+        SortUtil.sort(src);
         assertEquals(Arrays.asList(exp), Arrays.asList(src));
     }
 
@@ -242,7 +242,7 @@ extends TestCase
         Collections.sort(exp);
 
         // coverage note: this call is delegated to all other variants
-        Heapsort.sort(src);
+        SortUtil.sort(src);
         assertEquals(exp, src);
     }
 
