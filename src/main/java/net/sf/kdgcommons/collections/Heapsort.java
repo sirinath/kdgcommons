@@ -46,6 +46,24 @@ public class Heapsort
 
 
     /**
+     *  The sort implementation accesses the collection using an instance of
+     *  this interface. This allows, on the one hand, a way to avoid duplicate
+     *  sort code. On the other, it allows direct manipulation of collections
+     *  that aren't array-based.
+     */
+    private interface Accessor
+    {
+        public int size();
+        public int compare(int index1, int index2);
+        public void swap(int index1, int index2);
+    }
+
+
+//----------------------------------------------------------------------------
+//  Public methods
+//----------------------------------------------------------------------------
+
+    /**
      *  Sorts a primitive integer array using an external comparator.
      */
     public static void sort(int[] array, IntComparator comparator)
@@ -59,7 +77,7 @@ public class Heapsort
      */
     public static void sort(int[] array, int off, int len, IntComparator comparator)
     {
-        heapsort(new IntArrayAccessor(array, comparator), off, len);
+        sort(new IntArrayAccessor(array, comparator), off, len);
     }
 
 
@@ -88,7 +106,7 @@ public class Heapsort
      */
     public static <T extends Object> void sort(T[] array, int off, int len, Comparator<T> cmp)
     {
-        heapsort(new ObjectArrayAccessor<T>(array, cmp), off, len);
+        sort(new ObjectArrayAccessor<T>(array, cmp), off, len);
     }
 
 
@@ -120,23 +138,42 @@ public class Heapsort
      */
     public static <T extends Object> void sort(List<T> list, int off, int len, Comparator<T> cmp)
     {
-        heapsort(new ListAccessor<T>(list, cmp), off, len);
+        sort(new ListAccessor<T>(list, cmp), off, len);
+    }
+
+
+    /**
+     *  Sorts a collection encapsulated by the provided <code>Accessor</code>.
+     *  This is used to physically sort a collection that is not backed by an
+     *  array (eg, a memory-mapped file).
+     */
+    public static void sort(Accessor acc)
+    {
+        sort(acc, 0, acc.size());
+    }
+
+
+    /**
+     *  Sorts a subset of the collection encapsulated by the provided
+     *  <code>Accessor</code>. This is used to physically sort a collection
+     *  that is not backed by an array (eg, a memory-mapped file).
+     */
+    public static void sort(Accessor acc, int off, int len)
+    {
+        for (int end = off+1 ; end < off + len ; end++)
+            siftUp(acc, end);
+
+        for (int end = off + len - 1 ; end >= off ; )
+        {
+            acc.swap(0, end);
+            siftDown(acc, --end);
+        }
     }
 
 
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
-
-    /**
-     *  We abstract away the array manipulations into instances of this
-     *  interface so that we don't have to replicate the sort code.
-     */
-    private interface Accessor
-    {
-        public int compare(int index1, int index2);
-        public void swap(int index1, int index2);
-    }
 
 
     /**
@@ -152,6 +189,11 @@ public class Heapsort
         {
             _array = array;
             _comparator = comparator;
+        }
+
+        public int size()
+        {
+            return _array.length;
         }
 
         public int compare(int index1, int index2)
@@ -183,6 +225,11 @@ public class Heapsort
             _comparator = comparator;
         }
 
+        public int size()
+        {
+            return _array.length;
+        }
+
         public int compare(int index1, int index2)
         {
             return _comparator.compare(_array[index1], _array[index2]);
@@ -212,6 +259,11 @@ public class Heapsort
             _comparator = comparator;
         }
 
+        public int size()
+        {
+            return _list.size();
+        }
+
         public int compare(int index1, int index2)
         {
             return _comparator.compare(_list.get(index1), _list.get(index2));
@@ -222,22 +274,6 @@ public class Heapsort
             T tmp = _list.get(index1);
             _list.set(index1, _list.get(index2));
             _list.set(index2, tmp);
-        }
-    }
-
-
-    /**
-     *  The core sort routine.
-     */
-    private static void heapsort(Accessor acc, int off, int len)
-    {
-        for (int end = off+1 ; end < off + len ; end++)
-            siftUp(acc, end);
-
-        for (int end = off + len - 1 ; end >= off ; )
-        {
-            acc.swap(0, end);
-            siftDown(acc, --end);
         }
     }
 
