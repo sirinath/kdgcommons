@@ -14,6 +14,8 @@
 
 package net.sf.kdgcommons.lang;
 
+import java.io.UnsupportedEncodingException;
+
 
 /**
  *  A collection of static utility methods for working with Strings.
@@ -144,6 +146,23 @@ public class StringUtil
             chars[ii] = (char)(bytes[ii] & 0xFF);
         }
         return new String(chars);
+    }
+
+
+    /**
+     *  Converts the string to a UTF-8 byte array, turning the checked exception
+     *  (which should never happen) into a runtime exception.
+     */
+    public static byte[] toUTF8(String str)
+    {
+        try
+        {
+            return str.getBytes("UTF-8");
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            throw new RuntimeException("UTF-8 not supported", e);
+        }
     }
 
 
