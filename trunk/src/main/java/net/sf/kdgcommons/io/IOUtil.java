@@ -15,6 +15,11 @@
 package net.sf.kdgcommons.io;
 
 import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel.MapMode;
 
 
 /**
@@ -44,6 +49,33 @@ public class IOUtil
         catch (Exception ex)
         {
             // ignore it
+        }
+    }
+
+
+    /**
+     *  Memory maps a segment of a file.
+     *
+     *  @param  file    The file to be mapped.
+     *  @param  offset  The starting location of the mapping within the file.
+     *  @param  length  The number of bytes to be mapped. This is limited to
+     *                  <code>Integer.MAX_VALUE</code>, but is a <code>long</code>
+     *                  so that you can pass <code>File.length()</code>.
+     *  @param  mode    The mapping mode. The underlying channel will be opened
+     *                  using the same mode (so that you can map a read-only file).
+     */
+    public static MappedByteBuffer map(File file, long offset, long length, MapMode mode)
+    throws IOException
+    {
+        String rafMode = mode.equals(MapMode.READ_ONLY) ? "r" : "rw";
+        RandomAccessFile raf = new RandomAccessFile(file, rafMode);
+        try
+        {
+            return raf.getChannel().map(mode, offset, length);
+        }
+        finally
+        {
+            closeQuietly(raf);
         }
     }
 }
