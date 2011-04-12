@@ -49,7 +49,6 @@ public class TestStringUtil extends TestCase
     }
 
 
-
     public void testTrim() throws Exception
     {
         assertEquals("foo", StringUtil.trim("  foo \t\n\r "));
@@ -169,22 +168,27 @@ public class TestStringUtil extends TestCase
     }
 
 
-    public void testLatinString() throws Exception
+    public void testToUTF8ForNull() throws Exception
     {
-        byte[] src = new byte[] {(byte)0x00, (byte)0x40, (byte)0x7F,
-                                 (byte)0x80, (byte)0xC9, (byte)0xFF};
+        byte[] data = StringUtil.toUTF8(null);
+        assertEquals(0, data.length);
+    }
 
-        String dst1 = StringUtil.toLatinString(src);
-        assertEquals(6, dst1.length());
-        assertEquals('\u0000', dst1.charAt(0));
-        assertEquals('\u0040', dst1.charAt(1));
-        assertEquals('\u007F', dst1.charAt(2));
-        assertEquals('\u0080', dst1.charAt(3));
-        assertEquals('\u00C9', dst1.charAt(4));
-        assertEquals('\u00FF', dst1.charAt(5));
 
-        byte[] dst2 = StringUtil.toLatinBytes(dst1);
-        assertTrue(ObjectUtil.equals(src, dst2));
+    public void testFromUTF8() throws Exception
+    {
+        byte[] data = new byte[]
+                      {
+                      (byte)'a', (byte)'b', (byte)0xC3, (byte)0xA7,
+                      (byte)0xE2, (byte)0x9D, (byte)0x87
+                      };
+        assertEquals("ab\u00e7\u2747", StringUtil.fromUTF8(data));
+    }
+
+
+    public void testFromUTF8ForNull() throws Exception
+    {
+        assertEquals("", StringUtil.fromUTF8(null));
     }
 
 
