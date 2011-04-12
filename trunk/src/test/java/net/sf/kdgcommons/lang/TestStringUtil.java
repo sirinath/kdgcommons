@@ -134,6 +134,20 @@ public class TestStringUtil extends TestCase
     }
 
 
+    public void testToUTF8() throws Exception
+    {
+        byte[] data = StringUtil.toUTF8("ab\u00e7\u2747");
+        assertEquals(7, data.length);
+        assertEquals('a',  data[0]);
+        assertEquals('b',  data[1]);
+        assertEquals(0xC3, data[2] & 0xFF);
+        assertEquals(0xA7, data[3] & 0xFF);
+        assertEquals(0xE2, data[4] & 0xFF);
+        assertEquals(0x9D, data[5] & 0xFF);
+        assertEquals(0x87, data[6] & 0xFF);
+    }
+
+
     public void testLatinString() throws Exception
     {
         byte[] src = new byte[] {(byte)0x00, (byte)0x40, (byte)0x7F,
