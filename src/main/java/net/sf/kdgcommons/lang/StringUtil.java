@@ -86,6 +86,49 @@ public class StringUtil
 
 
     /**
+     *  Pads a string that is < N characters by adding the specified character
+     *  on the left side. Treats <code>null</code> as a zero-length string (ie,
+     *  returned string will just consist of padding).
+     */
+    public static String padLeft(String str, int len, char c)
+    {
+        if (str == null)
+            str = "";
+
+        if (str.length() >= len)
+            return str;
+
+        StringBuilder sb = new StringBuilder(len);
+        for (int ii = (len - str.length()) ; ii > 0 ; ii--)
+            sb.append(c);
+
+        sb.append(str);
+        return sb.toString();
+    }
+
+
+    /**
+     *  Pads a string that is < N characters by adding the specified character
+     *  on the right side. Treats <code>null</code> as a zero-length string (ie,
+     *  returned string will just consist of padding).
+     */
+    public static String padRight(String str, int len, char c)
+    {
+        if (str == null)
+            str = "";
+
+        if (str.length() >= len)
+            return str;
+
+        StringBuilder sb = new StringBuilder(len);
+        sb.append(str);
+        while (sb.length() < len)
+            sb.append(c);
+        return sb.toString();
+    }
+
+
+    /**
      *  Determines whether the first string contains the second.
      *  <p>
      *  Returns <code>true</code> if the second string is an empty string
