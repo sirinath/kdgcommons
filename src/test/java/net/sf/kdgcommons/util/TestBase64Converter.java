@@ -16,8 +16,6 @@ package net.sf.kdgcommons.util;
 
 import junit.framework.TestCase;
 
-import net.sf.kdgcommons.lang.StringUtil;
-
 
 public class TestBase64Converter extends TestCase
 {
@@ -36,7 +34,7 @@ public class TestBase64Converter extends TestCase
         new String[] { "foobar", "Zm9vYmFy" }
     };
 
-    
+
 //----------------------------------------------------------------------------
 //  Support Code
 //----------------------------------------------------------------------------
@@ -47,25 +45,27 @@ public class TestBase64Converter extends TestCase
      *  compactness (and also because our source of test data uses strings).
      */
     private void assertEncoding(String source, String expected)
+    throws Exception
     {
-        byte[] src = StringUtil.toLatinBytes(source);
-        byte[] exp = StringUtil.toLatinBytes(expected);
+        byte[] src = source.getBytes("US-ASCII");
+        byte[] exp = expected.getBytes("US-ASCII");
         byte[] dst = Base64Converter.encode(src);
         assertEquals(exp.length, dst.length);
         for (int ii = 0; ii < exp.length ; ii++)
             assertEquals("byte " + ii, exp[ii], dst[ii]);
     }
 
-    
+
     /**
      *  Performs a decoding of a source array, and asserts that it produced
      *  the expected bytes. This takes strings as both input and output, for
      *  compactness (and also because our source of test data uses strings).
      */
     private void assertDecoding(String source, String expected)
+    throws Exception
     {
-        byte[] src = StringUtil.toLatinBytes(source);
-        byte[] exp = StringUtil.toLatinBytes(expected);
+        byte[] src = source.getBytes("US-ASCII");
+        byte[] exp = expected.getBytes("US-ASCII");
         byte[] dst = Base64Converter.decode(src);
         assertEquals(exp.length, dst.length);
         for (int ii = 0; ii < exp.length ; ii++)
@@ -117,12 +117,13 @@ public class TestBase64Converter extends TestCase
     {
         for (int ii = 0 ; ii < TEST_STRINGS.length ; ii++)
         {
-            String decoded = StringUtil.toLatinString(
-                                Base64Converter.decode(TEST_STRINGS[ii][1]));
+            String decoded = new String(
+                                Base64Converter.decode(TEST_STRINGS[ii][1]),
+                                "US-ASCII");
             assertEquals(TEST_STRINGS[ii][0], decoded);
         }
 
         assertEquals("foobar",
-                     StringUtil.toLatinString( Base64Converter.decode("Z m9v\nYm\n?Fy")));
+                     new String(Base64Converter.decode("Z m9v\nYm\n?Fy"), "US-ASCII"));
     }
 }

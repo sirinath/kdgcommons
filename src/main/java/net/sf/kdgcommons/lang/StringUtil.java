@@ -18,7 +18,9 @@ import java.io.UnsupportedEncodingException;
 
 
 /**
- *  A collection of static utility methods for working with Strings.
+ *  A collection of static utility methods for working with Strings. All
+ *  methods are null-safe; in general they treat <code>null</code> as an
+ *  empty string (but see JavaDoc).
  */
 public class StringUtil
 {
@@ -176,30 +178,18 @@ public class StringUtil
 
 
     /**
-     *  Creates a string from the passed <code>byte[]</code>, assuming that
-     *  the array contains ISO-8859-1 (Latin-1) characters. Ignores the JVM's
-     *  default encoding; simply creates an equal-sized <code>char[]</code>
-     *  and copies the bytes into it.
-     */
-    public static String toLatinString(byte[] bytes)
-    {
-        char[] chars = new char[bytes.length];
-        for (int ii = 0 ; ii < bytes.length ; ii++)
-        {
-            chars[ii] = (char)(bytes[ii] & 0xFF);
-        }
-        return new String(chars);
-    }
-
-
-    /**
      *  Converts the string to a UTF-8 byte array, turning the checked exception
      *  (which should never happen) into a runtime exception.
+     *  <p>
+     *  If passed <code>null</code>, returns an empty array.
      */
     public static byte[] toUTF8(String str)
     {
         try
         {
+            if (str == null)
+                return new byte[0];
+
             return str.getBytes("UTF-8");
         }
         catch (UnsupportedEncodingException e)
@@ -210,19 +200,24 @@ public class StringUtil
 
 
     /**
-     *  Creates a <code>byte[]</code> from the passed String, assuming that
-     *  the string contains only ISO-8859-1 (Latin-1) characters. Ignores
-     *  the JVM's default encoding; simply creates an equal-sized <code>byte[]
-     *  </code> and copies the bytes into it.
+     *  Converts the passed byte array to a string, using UTF-8 encoding, and
+     *  turning the checked exception (which should never happen) into a runtime
+     *  exception.
+     *  <p>
+     *  If passed <code>null</code>, returns an empty string.
      */
-    public static byte[] toLatinBytes(String str)
+    public static String fromUTF8(byte[] bytes)
     {
-        byte[] bytes = new byte[str.length()];
-        for (int ii = 0 ; ii < bytes.length ; ii++)
+        try
         {
-            bytes[ii] = (byte)(str.charAt(ii) & 0xFF);
+            if (bytes == null)
+                return "";
+            return new String(bytes, "UTF-8");
         }
-        return bytes;
+        catch (UnsupportedEncodingException e)
+        {
+            throw new RuntimeException("UTF-8 not supported", e);
+        }
     }
 
 
