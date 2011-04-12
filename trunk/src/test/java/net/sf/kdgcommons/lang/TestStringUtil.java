@@ -80,6 +80,27 @@ public class TestStringUtil extends TestCase
     }
 
 
+    public void testPadding() throws Exception
+    {
+        assertEquals("qqqqq", StringUtil.padLeft("", 5, 'q'));
+        assertEquals("qqqqq", StringUtil.padRight("", 5, 'q'));
+
+        assertEquals("qqABC", StringUtil.padLeft("ABC", 5, 'q'));
+        assertEquals("ABCqq", StringUtil.padRight("ABC", 5, 'q'));
+
+        assertEquals("supercali", StringUtil.padLeft("supercali", 5, 'q'));
+        assertEquals("fragilist", StringUtil.padRight("fragilist", 5, 'q'));
+    }
+
+
+    public void testPaddingNull() throws Exception
+    {
+        assertEquals("qqqqq", StringUtil.padLeft(null, 5, 'q'));
+        assertEquals("qqqqq", StringUtil.padRight(null, 5, 'q'));
+    }
+
+
+
     public void testContains() throws Exception
     {
         assertTrue(StringUtil.contains("foo", "foo"));
