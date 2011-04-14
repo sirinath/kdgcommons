@@ -15,6 +15,7 @@
 package net.sf.kdgcommons.lang;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Random;
 
 
 /**
@@ -325,12 +326,48 @@ public class StringUtil
     }
 
 
+    /**
+     *  Generates a random string consisting of characters from the passed
+     *  string.
+     *
+     *  @param  chars       Defines the set of characters used to create the
+     *                      returned string.
+     *  @param  minLength   Minimum length of the returned string.
+     *  @param  maxLength   Maximum length of the returned string.
+     */
+    public static String randomString(String chars, int minLength, int maxLength)
+    {
+        StringBuilder sb = new StringBuilder(maxLength);
+        int len = minLength + _RNG.nextInt(maxLength - minLength + 1);
+        for (int ii = 0 ; ii < len ; ii++)
+            sb.append(chars.charAt(_RNG.nextInt(chars.length())));
+        return sb.toString();
+    }
+
+
+    /**
+     *  Generates a string containing random ASCII alphabetic characters
+     *  (A-Za-z).
+     *
+     *  @param  minLength   Minimum length of the returned string.
+     *  @param  maxLength   Maximum length of the returned string.
+     */
+    public static String randomAlphaString(int minLength, int maxLength)
+    {
+        return randomString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+                            minLength, maxLength);
+    }
+
+
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
 
     // used by intern()
     private static StringCanon _canon = new StringCanon();
+
+    // used by randomString()
+    private static Random _RNG = new Random(System.currentTimeMillis());
 
 
     /**
