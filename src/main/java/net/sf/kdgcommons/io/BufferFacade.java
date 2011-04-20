@@ -306,6 +306,15 @@ public class BufferFacade
     }
 
 
+    /**
+     *  Returns the capacity of the wrapped buffer.
+     */
+    public long capacity()
+    {
+        return _accessor.capacity();
+    }
+
+
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
@@ -342,6 +351,8 @@ public class BufferFacade
         public void putBytes(long index, byte[] value);
 
         public ByteBuffer slice(long index);
+
+        public long capacity();
     }
 
 
@@ -451,6 +462,11 @@ public class BufferFacade
         {
             _buf.position((int)index + _base);
             return _buf.slice();
+        }
+
+        public long capacity()
+        {
+            return _buf.capacity() - _base;
         }
     }
 
@@ -565,6 +581,11 @@ public class BufferFacade
             buf.position((int)index + _base);
             return buf.slice();
         }
+
+        public long capacity()
+        {
+            return _tl.get().capacity() - _base;
+        }
     }
 
 
@@ -669,6 +690,11 @@ public class BufferFacade
         {
             return _buf.slice(index + _base);
         }
+
+        public long capacity()
+        {
+            return _buf.capacity() - _base;
+        }
     }
 
 
@@ -772,6 +798,11 @@ public class BufferFacade
         public ByteBuffer slice(long index)
         {
             return _tl.get().slice(index + _base);
+        }
+
+        public long capacity()
+        {
+            return _tl.get().capacity() - _base;
         }
     }
 }

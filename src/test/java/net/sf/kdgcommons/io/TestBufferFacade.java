@@ -86,6 +86,8 @@ public class TestBufferFacade extends TestCase
         buf.putInt(100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
+
+        assertEquals(4096, facade.capacity());
     }
 
 
@@ -126,6 +128,8 @@ public class TestBufferFacade extends TestCase
         buf.putInt(1100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
+
+        assertEquals(3096, facade.capacity());
     }
 
     public void testByteBufferTLBasicOps() throws Exception
@@ -169,6 +173,8 @@ public class TestBufferFacade extends TestCase
         buf.putInt(100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
+
+        assertEquals(4096, facade.capacity());
     }
 
 
@@ -210,6 +216,8 @@ public class TestBufferFacade extends TestCase
         buf.putInt(1100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
+
+        assertEquals(3096, facade.capacity());
     }
 
 
@@ -253,6 +261,8 @@ public class TestBufferFacade extends TestCase
         buf.putInt(100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
+
+        assertEquals(4096, facade.capacity());
     }
 
 
@@ -293,6 +303,8 @@ public class TestBufferFacade extends TestCase
         buf.putInt(1100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
+
+        assertEquals(3096, facade.capacity());
     }
 
 
@@ -337,6 +349,8 @@ public class TestBufferFacade extends TestCase
         buf.putInt(100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
+
+        assertEquals(4096, facade.capacity());
     }
 
 
@@ -378,5 +392,7 @@ public class TestBufferFacade extends TestCase
         buf.putInt(1100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
+
+        assertEquals(3096, facade.capacity());
     }
 }
