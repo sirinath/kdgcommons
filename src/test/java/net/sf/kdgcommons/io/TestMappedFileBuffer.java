@@ -236,4 +236,24 @@ extends TestCase
         // ... and the test is dependent on the implementation
         assertNotSame(buf1.buffer(1234), buf2.buffer(1234));
     }
+
+
+    public void testGetFile() throws Exception
+    {
+        writeContent(8191, 0x00);
+        MappedFileBuffer buf = new MappedFileBuffer(_testFile, 1024, true);
+
+        assertSame(_testFile, buf.file());
+    }
+
+
+    public void testIsWritable() throws Exception
+    {
+        writeContent(8191, 0x00);
+        MappedFileBuffer buf1 = new MappedFileBuffer(_testFile, 1024, true);
+        MappedFileBuffer buf2 = new MappedFileBuffer(_testFile, 1024, false);
+
+        assertTrue(buf1.isWritable());
+        assertFalse(buf2.isWritable());
+    }
 }
