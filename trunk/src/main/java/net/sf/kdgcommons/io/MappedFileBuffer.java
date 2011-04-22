@@ -44,8 +44,9 @@ implements Cloneable
 {
     private final static int MAX_SEGMENT_SIZE = Integer.MAX_VALUE / 2;
 
-    private long _fileSize;
-    private long _segmentSize;              // long because it's used long expressions
+    private File _file;
+    private boolean _isWritable;
+    private long _segmentSize;              // long because it's used in long expressions
     private MappedByteBuffer[] _buffers;
 
 
@@ -101,10 +102,11 @@ implements Cloneable
     {
         if (segmentSize > MAX_SEGMENT_SIZE)
             throw new IllegalArgumentException(
-                    "segment size too large (max " + MAX_SEGMENT_SIZE + "): " + segmentSize);
+                    "segment size too large (max is " + MAX_SEGMENT_SIZE + "): " + segmentSize);
 
+        _file = file;
+        _isWritable = readWrite;
         _segmentSize = segmentSize;
-        _fileSize = file.length();
 
         RandomAccessFile mappedFile = null;
         try
@@ -115,11 +117,13 @@ implements Cloneable
             mappedFile = new RandomAccessFile(file, mode);
             FileChannel channel = mappedFile.getChannel();
 
-            _buffers = new MappedByteBuffer[(int)(_fileSize / segmentSize) + 1];
+            long fileSize = file.length();
+
+            _buffers = new MappedByteBuffer[(int)(fileSize / segmentSize) + 1];
             int bufIdx = 0;
-            for (long offset = 0 ; offset < _fileSize ; offset += segmentSize)
+            for (long offset = 0 ; offset < fileSize ; offset += segmentSize)
             {
-                long remainingFileSize = _fileSize - offset;
+                long remainingFileSize = fileSize - offset;
                 long thisSegmentSize = Math.min(2L * segmentSize, remainingFileSize);
                 _buffers[bufIdx++] = channel.map(mapMode, offset, thisSegmentSize);
             }
@@ -131,12 +135,34 @@ implements Cloneable
     }
 
 
+//----------------------------------------------------------------------------
+//  Public methods
+//----------------------------------------------------------------------------
+
     /**
      *  Returns the buffer's capacity -- the size of the mapped file.
      */
     public long capacity()
     {
-        return _fileSize;
+        return _file.length();
+    }
+
+
+    /**
+     *  Returns the file that is mapped by this buffer.
+     */
+    public File file()
+    {
+        return _file;
+    }
+
+
+    /**
+     *  Indicates whether this buffer is read-write or read-only.
+     */
+    public boolean isWritable()
+    {
+        return _isWritable;
     }
 
 
