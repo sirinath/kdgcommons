@@ -19,21 +19,20 @@ import java.util.List;
 
 
 /**
- *  Implementations of Heapsort for various array/collection types. Of particular
- *  note, this class includes an <code>int[]</code> sort that uses an external
- *  comparator (unlike the JDK).
- *  <p>
- *  Heapsort is an in-place sort. Unlike the mergesort used by the JDK's
- *  <code>Collections.sort()</code> and <code>Arrays.sort(Object[])</code>
- *  methods, it does not need to create a working array (which can use up a
- *  surprisingly large amount of memory).
- *  <p>
- *  On the down-side, Heapsort is not a stable sort (objects that compare equal
- *  may occupy different locations in subsequent sorts). It is also slower than
- *  the JDK's sorts (by a factor of 3 for object sorts, a factor of 5 for
- *  integer sorts).
+ *  A collection of static sort routines for random-access data structures
+ *  that provide the following characteristics:
+ *  <ul>
+ *  <li> O(NlogN) performance
+ *  <li> In-place operation; unlike the JDK's list/array sort, does not consume
+ *       additional heap memory
+ *  <li> Allows a comparator for sorting primitive <code>int</code>s
+ *  <li> Supports sorting of arbitrary data structures (eg, records stored in an
+ *       of-heap buffer)
+ *  <li> May <em>not</em> be stable (the current implementation is heapsort,
+ *       which is not stable)
+ *  </u>
  */
-public class Heapsort
+public class InplaceSort
 {
     /**
      *  Implementations of this class compare two primitive <code>int</code>s,
