@@ -42,7 +42,7 @@ import java.nio.channels.FileChannel.MapMode;
 public class MappedFileBuffer
 implements Cloneable
 {
-    private final static int MAX_SEGMENT_SIZE = Integer.MAX_VALUE / 2;
+    private final static int MAX_SEGMENT_SIZE = 0x8000000; // 1 GB, assures alignment
 
     private File _file;
     private boolean _isWritable;
