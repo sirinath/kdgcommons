@@ -14,7 +14,13 @@
 
 package net.sf.kdgcommons.io;
 
+import java.io.BufferedInputStream;
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.GZIPInputStream;
 
 
 /**
@@ -45,5 +51,43 @@ public class IOUtil
         {
             // ignore it
         }
+    }
+
+
+    /**
+     *  Opens a file. The returned stream will be buffered, and if the file's name
+     *  ends in ".gz" will be wrapped with a <codeGZIPInputStream></code>. If any
+     *  step fails, the underlying file will be closed (preventing leakage of file
+     *  descriptors).
+     */
+    public static InputStream openFile(File file)
+    throws IOException
+    {
+        InputStream stream = null;
+        try
+        {
+            stream = new FileInputStream(file);
+            stream = new BufferedInputStream(stream);
+            if (file.getName().endsWith(".gz"))
+                stream = new GZIPInputStream(stream);
+            return stream;
+        }
+        catch (IOException ex)
+        {
+            closeQuietly(stream);
+            throw ex;
+        }
+    }
+
+
+    /**
+     *  Opens a file. The returned stream will be buffered, and if the file's name
+     *  ends in ".gz" will be wrapped with a <code></code>. If any step fails, the
+     *  underlying file will be closed (preventing leakage of file descriptors).
+     */
+    public static InputStream openFile(String fileName)
+    throws IOException
+    {
+        return openFile(new File(fileName));
     }
 }
