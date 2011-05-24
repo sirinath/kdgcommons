@@ -50,7 +50,7 @@ public class InplaceSort
      *  sort code. On the other, it allows direct manipulation of collections
      *  that aren't array-based.
      */
-    private interface Accessor
+    public interface Accessor
     {
         public int size();
         public int compare(int index1, int index2);

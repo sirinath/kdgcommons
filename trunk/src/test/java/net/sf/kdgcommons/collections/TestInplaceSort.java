@@ -22,6 +22,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import net.sf.kdgcommons.collections.InplaceSort.Accessor;
+
 
 public class TestInplaceSort
 extends TestCase
@@ -244,6 +246,36 @@ extends TestCase
         // coverage note: this call is delegated to all other variants
         InplaceSort.sort(src);
         assertEquals(exp, src);
+    }
+
+
+    // accessors are used internally, and I never realized they weren't public
+    public void testAccessorSort() throws Exception
+    {
+        final char[] data = new char[] { 'A', '2', 'R', 'r', 'R', 'x' };
+        char[] exp = new char[] { '2', 'A', 'R', 'R', 'r', 'x' };
+
+        InplaceSort.sort(new Accessor()
+            {
+                public int size()
+                {
+                    return data.length;
+                }
+
+                public int compare(int index1, int index2)
+                {
+                    return data[index1] - data[index2];
+                }
+
+                public void swap(int index1, int index2)
+                {
+                    char tmp = data[index1];
+                    data[index1] = data[index2];
+                    data[index2] = tmp;
+                }
+            });
+
+        assertTrue(Arrays.equals(exp, data));
     }
 
 }
