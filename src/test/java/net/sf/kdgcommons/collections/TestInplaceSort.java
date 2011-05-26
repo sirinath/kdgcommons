@@ -62,7 +62,20 @@ extends TestCase
     }
 
 
-    // we'll throw a twist into the ordering for the int[] tess
+    // this is used for tests where we rely on Comparable objects
+    public static class ForwardIntComparator
+    implements InplaceSort.IntComparator
+    {
+        public int compare(int i1, int i2)
+        {
+            return (i1 > i2) ? 1
+                 : (i1 < i2) ? -1
+                 : 0;
+        }
+    }
+
+
+    // this throws a wrench into int[] tests
     public static class ReversingIntComparator
     implements InplaceSort.IntComparator
     {
@@ -199,6 +212,8 @@ extends TestCase
     }
 
 
+    // along with verifying that we didn't get lucky, this test will verify
+    // that we're O(logN)
     public void testIntSortManyElements() throws Exception
     {
         final int size = 10000;
@@ -219,37 +234,61 @@ extends TestCase
         int[] src = new int[] { 5, 3, 2, 4, 12 };
         int[] exp = new int[] { 5, 4, 3, 2, 12 };
 
-        InplaceSort.sort(src, 1, 3, new ReversingIntComparator());
+        InplaceSort.sort(src, 1, 4, new ReversingIntComparator());
         assertEquals(exp, src);
     }
 
 
     public void testObjectSort() throws Exception
     {
-        int[] base = createRandomArray(1000);
+        int[] base = createRandomArray(100);
         Integer[] src = toObjectArray(base);
-        Integer[] exp = toObjectArray(createSortedCopy(base));
+        Integer[] exp = toObjectArray(base);
+        Arrays.sort(exp);
 
-        // coverage note: this call is delegated to all other variants
         InplaceSort.sort(src);
+        assertEquals(Arrays.asList(exp), Arrays.asList(src));
+    }
+
+
+    public void testObjectSortPortionOfArray() throws Exception
+    {
+        int[] base = createRandomArray(100);
+        Integer[] src = toObjectArray(base);
+        Integer[] exp = toObjectArray(base);
+        Arrays.sort(exp, 4, 8);
+
+        InplaceSort.sort(src, 4, 8);
         assertEquals(Arrays.asList(exp), Arrays.asList(src));
     }
 
 
     public void testListSort() throws Exception
     {
-        List<Integer> base = Arrays.asList(toObjectArray(createRandomArray(1000)));
+        List<Integer> base = Arrays.asList(toObjectArray(createRandomArray(100)));
         List<Integer> src = new ArrayList<Integer>(base);
         List<Integer> exp = new ArrayList<Integer>(base);
         Collections.sort(exp);
 
-        // coverage note: this call is delegated to all other variants
         InplaceSort.sort(src);
         assertEquals(exp, src);
     }
 
 
+    public void testListSortPortionOfArray() throws Exception
+    {
+        Integer[] base = toObjectArray(createRandomArray(100));
+        List<Integer> src = new ArrayList<Integer>(Arrays.asList(base));
+        Arrays.sort(base, 4, 8);
+        List<Integer> exp = new ArrayList<Integer>(Arrays.asList(base));
+
+        InplaceSort.sort(src, 4, 8);
+        assertEquals(exp, src);
+    }
+
+
     // accessors are used internally, and I never realized they weren't public
+    // ... so here's a test that makes sure Accessor is accessible
     public void testAccessorSort() throws Exception
     {
         final char[] data = new char[] { 'A', '2', 'R', 'r', 'R', 'x' };
@@ -257,7 +296,12 @@ extends TestCase
 
         InplaceSort.sort(new Accessor()
             {
-                public int size()
+                public int start()
+                {
+                    return 0;
+                }
+
+                public int end()
                 {
                     return data.length;
                 }
@@ -277,5 +321,4 @@ extends TestCase
 
         assertTrue(Arrays.equals(exp, data));
     }
-
 }
