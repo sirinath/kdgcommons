@@ -23,7 +23,8 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 
-public class TestBufferFacade extends TestCase
+public class TestBufferFacadeFactory
+extends TestCase
 {
 //----------------------------------------------------------------------------
 //  Support Code
@@ -43,13 +44,15 @@ public class TestBufferFacade extends TestCase
 
 
 //----------------------------------------------------------------------------
-//  Test Cases
+//  Test Cases -- all tests compare access via the buffer to access via the
+//                facade ... which means a lot of duplicated code, and no way
+//                to refactor
 //----------------------------------------------------------------------------
 
     public void testByteBufferBasicOps() throws Exception
     {
         ByteBuffer buf = ByteBuffer.allocate(4096);
-        BufferFacade facade = new BufferFacade(buf);
+        BufferFacade facade = BufferFacadeFactory.create(buf);
 
         // all writes should leave a gap, to catch any use of relative positioning
         // for sub-int values, leave high byte clear to prevent sign-extension
@@ -70,18 +73,26 @@ public class TestBufferFacade extends TestCase
         assertEquals(0x1234567890ABCDEFL, buf.getLong(40));
         assertEquals(0x1234567890ABCDEFL, facade.getLong(40));
 
-        facade.putChar(50, 'A');
-        assertEquals('A', buf.getChar(50));
-        assertEquals('A', facade.getChar(50));
+        facade.putFloat(50, 123456.5f);
+        assertEquals(123456.5f, buf.getFloat(50), .01);
+        assertEquals(123456.5f, facade.getFloat(50), .01);
+
+        facade.putDouble(60, 12345678901234.5);
+        assertEquals(12345678901234.5, buf.getDouble(60), .01);
+        assertEquals(12345678901234.5, facade.getDouble(60), .01);
+
+        facade.putChar(70, 'A');
+        assertEquals('A', buf.getChar(70));
+        assertEquals('A', facade.getChar(70));
 
         byte[] bb = new byte[] { (byte)0x5A, (byte)0x00, (byte)0x5A };
-        buf.put(63, (byte)0x01);    // sentinel
-        facade.putBytes(60, bb);
-        assertEquals(0x5A, buf.get(60));
-        assertEquals(0x00, buf.get(61));
-        assertEquals(0x5A, buf.get(62));
-        assertEquals(0x01, buf.get(63));
-        assertTrue(Arrays.equals(bb, facade.getBytes(60, 3)));
+        buf.put(83, (byte)0x01);    // sentinel
+        facade.putBytes(80, bb);
+        assertEquals(0x5A, buf.get(80));
+        assertEquals(0x00, buf.get(81));
+        assertEquals(0x5A, buf.get(82));
+        assertEquals(0x01, buf.get(83));
+        assertTrue(Arrays.equals(bb, facade.getBytes(80, 3)));
 
         buf.putInt(100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
@@ -94,7 +105,7 @@ public class TestBufferFacade extends TestCase
     public void testByteBufferOffsetOps() throws Exception
     {
         ByteBuffer buf = ByteBuffer.allocate(4096);
-        BufferFacade facade = new BufferFacade(buf, 1000);
+        BufferFacade facade = BufferFacadeFactory.create(buf, 1000);
 
         facade.put(10, (byte)0x5A);
         assertEquals(0x5A, buf.get(1010));
@@ -112,18 +123,26 @@ public class TestBufferFacade extends TestCase
         assertEquals(0x1234567890ABCDEFL, buf.getLong(1040));
         assertEquals(0x1234567890ABCDEFL, facade.getLong(40));
 
-        facade.putChar(50, 'A');
-        assertEquals('A', buf.getChar(1050));
-        assertEquals('A', facade.getChar(50));
+        facade.putFloat(50, 123456.5f);
+        assertEquals(123456.5f, buf.getFloat(1050), .01);
+        assertEquals(123456.5f, facade.getFloat(50), .01);
+
+        facade.putDouble(60, 12345678901234.5);
+        assertEquals(12345678901234.5, buf.getDouble(1060), .01);
+        assertEquals(12345678901234.5, facade.getDouble(60), .01);
+
+        facade.putChar(70, 'A');
+        assertEquals('A', buf.getChar(1070));
+        assertEquals('A', facade.getChar(70));
 
         byte[] bb = new byte[] { (byte)0x5A, (byte)0x00, (byte)0x5A };
-        buf.put(1063, (byte)0x01);    // sentinel
-        facade.putBytes(60, bb);
-        assertEquals(0x5A, buf.get(1060));
-        assertEquals(0x00, buf.get(1061));
-        assertEquals(0x5A, buf.get(1062));
-        assertEquals(0x01, buf.get(1063));
-        assertTrue(Arrays.equals(bb, facade.getBytes(60, 3)));
+        buf.put(1083, (byte)0x01);    // sentinel
+        facade.putBytes(80, bb);
+        assertEquals(0x5A, buf.get(1080));
+        assertEquals(0x00, buf.get(1081));
+        assertEquals(0x5A, buf.get(1082));
+        assertEquals(0x01, buf.get(1083));
+        assertTrue(Arrays.equals(bb, facade.getBytes(80, 3)));
 
         buf.putInt(1100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
@@ -135,8 +154,7 @@ public class TestBufferFacade extends TestCase
     public void testByteBufferTLBasicOps() throws Exception
     {
         ByteBuffer buf = ByteBuffer.allocate(4096);
-        ByteBufferThreadLocal tl = new ByteBufferThreadLocal(buf);
-        BufferFacade facade = new BufferFacade(tl);
+        BufferFacade facade = BufferFacadeFactory.createThreadsafe(buf);
 
         // all writes should leave a gap, to catch any use of relative positioning
         // for sub-int values, leave high byte clear to prevent sign-extension
@@ -157,18 +175,26 @@ public class TestBufferFacade extends TestCase
         assertEquals(0x1234567890ABCDEFL, buf.getLong(40));
         assertEquals(0x1234567890ABCDEFL, facade.getLong(40));
 
-        facade.putChar(50, 'A');
-        assertEquals('A', buf.getChar(50));
-        assertEquals('A', facade.getChar(50));
+        facade.putFloat(50, 123456.5f);
+        assertEquals(123456.5f, buf.getFloat(50), .01);
+        assertEquals(123456.5f, facade.getFloat(50), .01);
+
+        facade.putDouble(60, 12345678901234.5);
+        assertEquals(12345678901234.5, buf.getDouble(60), .01);
+        assertEquals(12345678901234.5, facade.getDouble(60), .01);
+
+        facade.putChar(70, 'A');
+        assertEquals('A', buf.getChar(70));
+        assertEquals('A', facade.getChar(70));
 
         byte[] bb = new byte[] { (byte)0x5A, (byte)0x00, (byte)0x5A };
-        buf.put(63, (byte)0x01);    // sentinel
-        facade.putBytes(60, bb);
-        assertEquals(0x5A, buf.get(60));
-        assertEquals(0x00, buf.get(61));
-        assertEquals(0x5A, buf.get(62));
-        assertEquals(0x01, buf.get(63));
-        assertTrue(Arrays.equals(bb, facade.getBytes(60, 3)));
+        buf.put(83, (byte)0x01);    // sentinel
+        facade.putBytes(80, bb);
+        assertEquals(0x5A, buf.get(80));
+        assertEquals(0x00, buf.get(81));
+        assertEquals(0x5A, buf.get(82));
+        assertEquals(0x01, buf.get(83));
+        assertTrue(Arrays.equals(bb, facade.getBytes(80, 3)));
 
         buf.putInt(100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
@@ -181,8 +207,7 @@ public class TestBufferFacade extends TestCase
     public void testByteBufferTLOffsetOps() throws Exception
     {
         ByteBuffer buf = ByteBuffer.allocate(4096);
-        ByteBufferThreadLocal tl = new ByteBufferThreadLocal(buf);
-        BufferFacade facade = new BufferFacade(tl, 1000);
+        BufferFacade facade = BufferFacadeFactory.createThreadsafe(buf, 1000);
 
         facade.put(10, (byte)0x5A);
         assertEquals(0x5A, buf.get(1010));
@@ -200,18 +225,26 @@ public class TestBufferFacade extends TestCase
         assertEquals(0x1234567890ABCDEFL, buf.getLong(1040));
         assertEquals(0x1234567890ABCDEFL, facade.getLong(40));
 
-        facade.putChar(50, 'A');
-        assertEquals('A', buf.getChar(1050));
-        assertEquals('A', facade.getChar(50));
+        facade.putFloat(50, 123456.5f);
+        assertEquals(123456.5f, buf.getFloat(1050), .01);
+        assertEquals(123456.5f, facade.getFloat(50), .01);
+
+        facade.putDouble(60, 12345678901234.5);
+        assertEquals(12345678901234.5, buf.getDouble(1060), .01);
+        assertEquals(12345678901234.5, facade.getDouble(60), .01);
+
+        facade.putChar(70, 'A');
+        assertEquals('A', buf.getChar(1070));
+        assertEquals('A', facade.getChar(70));
 
         byte[] bb = new byte[] { (byte)0x5A, (byte)0x00, (byte)0x5A };
-        buf.put(1063, (byte)0x01);    // sentinel
-        facade.putBytes(60, bb);
-        assertEquals(0x5A, buf.get(1060));
-        assertEquals(0x00, buf.get(1061));
-        assertEquals(0x5A, buf.get(1062));
-        assertEquals(0x01, buf.get(1063));
-        assertTrue(Arrays.equals(bb, facade.getBytes(60, 3)));
+        buf.put(1083, (byte)0x01);    // sentinel
+        facade.putBytes(80, bb);
+        assertEquals(0x5A, buf.get(1080));
+        assertEquals(0x00, buf.get(1081));
+        assertEquals(0x5A, buf.get(1082));
+        assertEquals(0x01, buf.get(1083));
+        assertTrue(Arrays.equals(bb, facade.getBytes(80, 3)));
 
         buf.putInt(1100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
@@ -224,7 +257,7 @@ public class TestBufferFacade extends TestCase
     public void testMappedFileBufferBasicOps() throws Exception
     {
         MappedFileBuffer buf = createMappedFile("testMappedFileBufferBasicOps", 4096);
-        BufferFacade facade = new BufferFacade(buf);
+        BufferFacade facade = BufferFacadeFactory.create(buf);
 
         // all writes should leave a gap, to catch any use of relative positioning
         // for sub-int values, leave high byte clear to prevent sign-extension
@@ -245,18 +278,26 @@ public class TestBufferFacade extends TestCase
         assertEquals(0x1234567890ABCDEFL, buf.getLong(40));
         assertEquals(0x1234567890ABCDEFL, facade.getLong(40));
 
-        facade.putChar(50, 'A');
-        assertEquals('A', buf.getChar(50));
-        assertEquals('A', facade.getChar(50));
+        facade.putFloat(50, 123456.5f);
+        assertEquals(123456.5f, buf.getFloat(50), .01);
+        assertEquals(123456.5f, facade.getFloat(50), .01);
+
+        facade.putDouble(60, 12345678901234.5);
+        assertEquals(12345678901234.5, buf.getDouble(60), .01);
+        assertEquals(12345678901234.5, facade.getDouble(60), .01);
+
+        facade.putChar(70, 'A');
+        assertEquals('A', buf.getChar(70));
+        assertEquals('A', facade.getChar(70));
 
         byte[] bb = new byte[] { (byte)0x5A, (byte)0x00, (byte)0x5A };
-        buf.put(63, (byte)0x01);    // sentinel
-        facade.putBytes(60, bb);
-        assertEquals(0x5A, buf.get(60));
-        assertEquals(0x00, buf.get(61));
-        assertEquals(0x5A, buf.get(62));
-        assertEquals(0x01, buf.get(63));
-        assertTrue(Arrays.equals(bb, facade.getBytes(60, 3)));
+        buf.put(83, (byte)0x01);    // sentinel
+        facade.putBytes(80, bb);
+        assertEquals(0x5A, buf.get(80));
+        assertEquals(0x00, buf.get(81));
+        assertEquals(0x5A, buf.get(82));
+        assertEquals(0x01, buf.get(83));
+        assertTrue(Arrays.equals(bb, facade.getBytes(80, 3)));
 
         buf.putInt(100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
@@ -269,7 +310,7 @@ public class TestBufferFacade extends TestCase
     public void testMappedFileBufferOffsetOps() throws Exception
     {
         MappedFileBuffer buf = createMappedFile("testMappedFileBufferOffsetOps", 4096);
-        BufferFacade facade = new BufferFacade(buf, 1000);
+        BufferFacade facade = BufferFacadeFactory.create(buf, 1000);
 
         facade.put(10, (byte)0x5A);
         assertEquals(0x5A, buf.get(1010));
@@ -287,18 +328,26 @@ public class TestBufferFacade extends TestCase
         assertEquals(0x1234567890ABCDEFL, buf.getLong(1040));
         assertEquals(0x1234567890ABCDEFL, facade.getLong(40));
 
-        facade.putChar(50, 'A');
-        assertEquals('A', buf.getChar(1050));
-        assertEquals('A', facade.getChar(50));
+        facade.putFloat(50, 123456.5f);
+        assertEquals(123456.5f, buf.getFloat(1050), .01);
+        assertEquals(123456.5f, facade.getFloat(50), .01);
+
+        facade.putDouble(60, 12345678901234.5);
+        assertEquals(12345678901234.5, buf.getDouble(1060), .01);
+        assertEquals(12345678901234.5, facade.getDouble(60), .01);
+
+        facade.putChar(70, 'A');
+        assertEquals('A', buf.getChar(1070));
+        assertEquals('A', facade.getChar(70));
 
         byte[] bb = new byte[] { (byte)0x5A, (byte)0x00, (byte)0x5A };
-        buf.put(1063, (byte)0x01);    // sentinel
-        facade.putBytes(60, bb);
-        assertEquals(0x5A, buf.get(1060));
-        assertEquals(0x00, buf.get(1061));
-        assertEquals(0x5A, buf.get(1062));
-        assertEquals(0x01, buf.get(1063));
-        assertTrue(Arrays.equals(bb, facade.getBytes(60, 3)));
+        buf.put(1083, (byte)0x01);    // sentinel
+        facade.putBytes(80, bb);
+        assertEquals(0x5A, buf.get(1080));
+        assertEquals(0x00, buf.get(1081));
+        assertEquals(0x5A, buf.get(1082));
+        assertEquals(0x01, buf.get(1083));
+        assertTrue(Arrays.equals(bb, facade.getBytes(80, 3)));
 
         buf.putInt(1100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
@@ -311,8 +360,7 @@ public class TestBufferFacade extends TestCase
     public void testMappedFileBufferTLBasicOps() throws Exception
     {
         MappedFileBuffer buf = createMappedFile("testMappedFileBufferBasicOps", 4096);
-        MappedFileBufferThreadLocal tl = new MappedFileBufferThreadLocal(buf);
-        BufferFacade facade = new BufferFacade(tl);
+        BufferFacade facade = BufferFacadeFactory.createThreadsafe(buf);
 
         // all writes should leave a gap, to catch any use of relative positioning
         // for sub-int values, leave high byte clear to prevent sign-extension
@@ -333,18 +381,26 @@ public class TestBufferFacade extends TestCase
         assertEquals(0x1234567890ABCDEFL, buf.getLong(40));
         assertEquals(0x1234567890ABCDEFL, facade.getLong(40));
 
-        facade.putChar(50, 'A');
-        assertEquals('A', buf.getChar(50));
-        assertEquals('A', facade.getChar(50));
+        facade.putFloat(50, 123456.5f);
+        assertEquals(123456.5f, buf.getFloat(50), .01);
+        assertEquals(123456.5f, facade.getFloat(50), .01);
+
+        facade.putDouble(60, 12345678901234.5);
+        assertEquals(12345678901234.5, buf.getDouble(60), .01);
+        assertEquals(12345678901234.5, facade.getDouble(60), .01);
+
+        facade.putChar(70, 'A');
+        assertEquals('A', buf.getChar(70));
+        assertEquals('A', facade.getChar(70));
 
         byte[] bb = new byte[] { (byte)0x5A, (byte)0x00, (byte)0x5A };
-        buf.put(63, (byte)0x01);    // sentinel
-        facade.putBytes(60, bb);
-        assertEquals(0x5A, buf.get(60));
-        assertEquals(0x00, buf.get(61));
-        assertEquals(0x5A, buf.get(62));
-        assertEquals(0x01, buf.get(63));
-        assertTrue(Arrays.equals(bb, facade.getBytes(60, 3)));
+        buf.put(83, (byte)0x01);    // sentinel
+        facade.putBytes(80, bb);
+        assertEquals(0x5A, buf.get(80));
+        assertEquals(0x00, buf.get(81));
+        assertEquals(0x5A, buf.get(82));
+        assertEquals(0x01, buf.get(83));
+        assertTrue(Arrays.equals(bb, facade.getBytes(80, 3)));
 
         buf.putInt(100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
@@ -357,8 +413,7 @@ public class TestBufferFacade extends TestCase
     public void testMappedFileBufferTLOffsetOps() throws Exception
     {
         MappedFileBuffer buf = createMappedFile("testMappedFileBufferOffsetOps", 4096);
-        MappedFileBufferThreadLocal tl = new MappedFileBufferThreadLocal(buf);
-        BufferFacade facade = new BufferFacade(tl, 1000);
+        BufferFacade facade = BufferFacadeFactory.createThreadsafe(buf, 1000);
 
         facade.put(10, (byte)0x5A);
         assertEquals(0x5A, buf.get(1010));
@@ -376,18 +431,26 @@ public class TestBufferFacade extends TestCase
         assertEquals(0x1234567890ABCDEFL, buf.getLong(1040));
         assertEquals(0x1234567890ABCDEFL, facade.getLong(40));
 
-        facade.putChar(50, 'A');
-        assertEquals('A', buf.getChar(1050));
-        assertEquals('A', facade.getChar(50));
+        facade.putFloat(50, 123456.5f);
+        assertEquals(123456.5f, buf.getFloat(1050), .01);
+        assertEquals(123456.5f, facade.getFloat(50), .01);
+
+        facade.putDouble(60, 12345678901234.5);
+        assertEquals(12345678901234.5, buf.getDouble(1060), .01);
+        assertEquals(12345678901234.5, facade.getDouble(60), .01);
+
+        facade.putChar(70, 'A');
+        assertEquals('A', buf.getChar(1070));
+        assertEquals('A', facade.getChar(70));
 
         byte[] bb = new byte[] { (byte)0x5A, (byte)0x00, (byte)0x5A };
-        buf.put(1063, (byte)0x01);    // sentinel
-        facade.putBytes(60, bb);
-        assertEquals(0x5A, buf.get(1060));
-        assertEquals(0x00, buf.get(1061));
-        assertEquals(0x5A, buf.get(1062));
-        assertEquals(0x01, buf.get(1063));
-        assertTrue(Arrays.equals(bb, facade.getBytes(60, 3)));
+        buf.put(1083, (byte)0x01);    // sentinel
+        facade.putBytes(80, bb);
+        assertEquals(0x5A, buf.get(1080));
+        assertEquals(0x00, buf.get(1081));
+        assertEquals(0x5A, buf.get(1082));
+        assertEquals(0x01, buf.get(1083));
+        assertTrue(Arrays.equals(bb, facade.getBytes(80, 3)));
 
         buf.putInt(1100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);

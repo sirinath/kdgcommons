@@ -42,7 +42,7 @@ import net.sf.kdgcommons.io.IOUtil;
  *  or call {@link #clone} to create a distinct buffer for each thread.
  */
 public class MappedFileBuffer
-implements Cloneable
+implements BufferFacade, Cloneable
 {
     private final static int MAX_SEGMENT_SIZE = 0x8000000; // 1 GB, assures alignment
 
