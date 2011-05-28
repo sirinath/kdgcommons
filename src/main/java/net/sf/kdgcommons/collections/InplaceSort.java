@@ -45,12 +45,12 @@ public class InplaceSort
 
 
     /**
-     *  The search uses an implementation of this interface to access the
-     *  array-like structure.
+     *  The sort uses an implementation of this interface to access an array-like
+     *  structure. There are internal implementations for Java arrays and lists;
+     *  you will need to provide your own implementation for other structures.
      *  <p>
-     *  This interface is intended to be compatible  with the like-named interface
-     *  defined in {@link BinarySearch}, allowing a single implementation for use
-     *  within a complex data structure.
+     *  It is intended to be compatible  with the like-named interface defined by
+     *  {@link BinarySearch}, allowing a single implementation class for both.
      */
     public interface Accessor
     {
