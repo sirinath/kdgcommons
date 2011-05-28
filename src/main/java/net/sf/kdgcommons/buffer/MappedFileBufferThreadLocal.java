@@ -12,31 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package net.sf.kdgcommons.io;
-
-import java.nio.ByteBuffer;
+package net.sf.kdgcommons.buffer;
 
 
 /**
- *  Holds a source <code>ByteBuffer</code> and makes thread-local copies of it.
- *  <p>
- *  Note that this class only works with <code>ByteBuffer</code>, not the related
- *  primitive buffers. This is because the <code>duplicte()</code> method is
- *  defined on the concrete classes, not the <code>Buffer</code> interface.
+ *  Holds a source {@link MappedFileBuffer} and makes thread-local copies of it.
  */
-public class ByteBufferThreadLocal
-extends ThreadLocal<ByteBuffer>
+public class MappedFileBufferThreadLocal
+extends ThreadLocal<MappedFileBuffer>
 {
-    private ByteBuffer _src;
+    private MappedFileBuffer _src;
 
-    public ByteBufferThreadLocal(ByteBuffer src)
+    public MappedFileBufferThreadLocal(MappedFileBuffer src)
     {
         _src = src;
     }
 
     @Override
-    protected synchronized ByteBuffer initialValue()
+    protected synchronized MappedFileBuffer initialValue()
     {
-        return _src.duplicate();
+        return _src.clone();
     }
 }
