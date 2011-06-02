@@ -159,9 +159,9 @@ public class InplaceSort
      *  @param  array       The array to be sorted
      *  @param  comparator  Used to order array elements
      */
-    public static <T extends Object> void sort(T[] array, Comparator<T> cmp)
+    public static <T extends Object> void sort(T[] array, Comparator<T> comparator)
     {
-        sort(new ObjectArrayAccessor<T>(array, 0, array.length, cmp));
+        sort(new ObjectArrayAccessor<T>(array, 0, array.length, comparator));
     }
 
 
@@ -179,9 +179,9 @@ public class InplaceSort
      *                      pass <code>array.length</code>)
      *  @param  comparator  Used to order array elements
      */
-    public static <T extends Object> void sort(T[] array, int fromIndex, int toIndex, Comparator<T> cmp)
+    public static <T extends Object> void sort(T[] array, int fromIndex, int toIndex, Comparator<T> comparator)
     {
-        sort(new ObjectArrayAccessor<T>(array, fromIndex, toIndex, cmp));
+        sort(new ObjectArrayAccessor<T>(array, fromIndex, toIndex, comparator));
     }
 
 
@@ -230,9 +230,9 @@ public class InplaceSort
      *  @param  list        The list to be sorted
      *  @param  comparator  Used to order list elements
      */
-    public static <T extends Object> void sort(List<T> list, Comparator<T> cmp)
+    public static <T extends Object> void sort(List<T> list, Comparator<T> comparator)
     {
-        sort(new ListAccessor<T>(list, 0, list.size(), cmp));
+        sort(new ListAccessor<T>(list, 0, list.size(), comparator));
     }
 
 
@@ -249,9 +249,9 @@ public class InplaceSort
      *                      pass <code>list.size()</code>)
      *  @param  comparator  Used to order list elements
      */
-    public static <T extends Object> void sort(List<T> list, int fromIndex, int toIndex, Comparator<T> cmp)
+    public static <T extends Object> void sort(List<T> list, int fromIndex, int toIndex, Comparator<T> comparator)
     {
-        sort(new ListAccessor<T>(list, fromIndex, toIndex, cmp));
+        sort(new ListAccessor<T>(list, fromIndex, toIndex, comparator));
     }
 
 

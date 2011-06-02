@@ -29,8 +29,7 @@ import java.util.TreeMap;
  *  appropriate.
  *  <p>
  *  The program's <code>main()</code> will instantiate the subclass and
- *  then call {@link #process}. If it needs to generate a usage message,
- *  it can call {@link #usage}.
+ *  then call {@link #process}.
  *  <p>
  *  At the present time, this class does not support combined arguments.
  *  However, since they will be passed to the subclass' default method,
@@ -49,7 +48,7 @@ public abstract class CommandLineProcessor
      *  Processes the command-line options. This will iterator through the
      *  passed option array, and call handlers for each recognized option.
      *  After all recognized options have been processed, it will call the
-     *  method {@link #handleUnrecognizedOptions}.
+     *  method {@link #handleUnprocessedArguments}.
      */
     public void process(String[] argv)
     {

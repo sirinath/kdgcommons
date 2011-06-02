@@ -221,7 +221,7 @@ public class HtmlUtil
      *  This is often simpler than {@link URLBuilder}, but does not support
      *  multiple values per parameter.
      *
-     *  @param  map         The map of parameter values. This must contain only
+     *  @param  params      The map of parameter values. This must contain only
      *                      scalar values: both key and value are converted to
      *                      strings before being added to the query string.
      *  @param  ignoreEmpty If <code>true</code>, entries with empty or null
