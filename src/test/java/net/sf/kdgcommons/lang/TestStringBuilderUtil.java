@@ -29,40 +29,25 @@ public class TestStringBuilderUtil extends TestCase
 
     public void testAppendHex() throws Exception
     {
+        // test 1: characters fill buffer
         assertEquals("12", StringBuilderUtil.appendHex(
-                           new StringBuilder(), 0x12, 2, 0)
+                           new StringBuilder(), 0x12, 2)
                            .toString());
+
+        // test 2: too-small width
+        assertEquals("ABCDEF0", StringBuilderUtil.appendHex(
+                            new StringBuilder(), 0x9ABCDEF0, 7)
+                            .toString());
+
+        // test 3: width larger than needed
         assertEquals("012", StringBuilderUtil.appendHex(
-                           new StringBuilder(), 0x12, 3, 0)
-                           .toString());
-        assertEquals("2", StringBuilderUtil.appendHex(
-                           new StringBuilder(), 0x12, 1, 0)
-                           .toString());
+                            new StringBuilder(), 0x12, 3)
+                            .toString());
 
-        assertEquals("FF", StringBuilderUtil.appendHex(
-                           new StringBuilder(), -1, 2, 0)
-                           .toString());
-        assertEquals("0FFFFFFFF", StringBuilderUtil.appendHex(
-                           new StringBuilder(), -1, 9, 0)
-                           .toString());
-
-        assertEquals("12345678", StringBuilderUtil.appendHex(
-                           new StringBuilder(), 0x12345678, 8, 0)
-                           .toString());
-        assertEquals("9ABCDEF0", StringBuilderUtil.appendHex(
-                           new StringBuilder(), 0x9ABCDEF0, 8, 0)
-                           .toString());
-
-        assertEquals("00", StringBuilderUtil.appendHex(
-                           new StringBuilder(), 0, 2, 0)
-                           .toString());
-        assertEquals("00  ", StringBuilderUtil.appendHex(
-                           new StringBuilder(), 0, 2, 2)
-                           .toString());
-
-        assertEquals("QQ00  ", StringBuilderUtil.appendHex(
-                           new StringBuilder("QQ"), 0, 2, 2)
-                           .toString());
+        // test 4: append
+        assertEquals("QQ12", StringBuilderUtil.appendHex(
+                            new StringBuilder("QQ"), 0x12, 2)
+                            .toString());
     }
 
 

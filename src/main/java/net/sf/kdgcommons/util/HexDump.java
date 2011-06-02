@@ -266,14 +266,19 @@ public class HexDump
 
         private void appendOffset(StringBuilder buf)
         {
-            StringBuilderUtil.appendHex(buf, _offset, _offsetWidth, _spacesAfterOffset);
+            StringBuilderUtil.appendHex(buf, _offset, _offsetWidth);
+            StringBuilderUtil.appendRepeat(buf, ' ', _spacesAfterOffset);
         }
 
         private void appendBytes(StringBuilder buf)
         {
             _lenThisTime = Math.min(_bytesPerLine, _len);
             for (int ii = 0 ; ii < _lenThisTime ; ii++)
-                StringBuilderUtil.appendHex(buf, _buf[_off + ii], 2, 1);
+            {
+                if (ii > 0)
+                    buf.append(' ');
+                StringBuilderUtil.appendHex(buf, _buf[_off + ii], 2);
+            }
         }
 
         private void appendChars(StringBuilder buf)
