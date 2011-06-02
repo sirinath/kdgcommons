@@ -36,22 +36,19 @@ public class StringBuilderUtil
 
     /**
      *  Converts the passed value into hexadecimal representation, and appends
-     *  that representation to the buffer, left-zero-padded and with spaces
-     *  following.
+     *  that representation to the buffer, left-zero-padded.
      *
      *  @param buf      The buffer to be updated.
-     *  @param value    The value to be converted.
-     *  @param width    Size of the field that will hold the value. If the hex
+     * @param value    The value to be converted.
+     * @param width    Size of the field that will hold the value. If the hex
      *                  representation of the value is smaller, it will be
      *                  left-zero-padded; if greater, the high-order bits will
      *                  be truncated.
-     *  @param spaces   Number of spaces to append to the buffer after
-     *  @return
      */
-    public static StringBuilder appendHex(StringBuilder buf, int value, int width, int spaces)
+    public static StringBuilder appendHex(StringBuilder buf, int value, int width)
     {
-        appendRepeat(buf, ' ', width + spaces);
-        int offset = buf.length() - spaces;
+        appendRepeat(buf, '0', width);
+        int offset = buf.length();
         for (int ii = 1 ; ii <= width ; ii++)
         {
             int nibble = value & 0xF;

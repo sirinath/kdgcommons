@@ -69,7 +69,7 @@ public class TestHexDump extends TestCase
         byte[] data = new byte[] { 0x41 };
 
         Iterator<String> itx = dumper.iterator(data);
-        assertEquals("41 ", itx.next());
+        assertEquals("41", itx.next());
         assertFalse(itx.hasNext());
     }
 
@@ -79,7 +79,7 @@ public class TestHexDump extends TestCase
         HexDump dumper = new HexDump(8, false, 0, 0, false, 0, false, '\0');
         byte[] data = new byte[] { 0x41 };
 
-        assertEquals("41 ", dumper.stringValue(data));
+        assertEquals("41", dumper.stringValue(data));
     }
 
 
@@ -91,7 +91,7 @@ public class TestHexDump extends TestCase
         StringWriter sw = new StringWriter();
         PrintWriter out = new PrintWriter(sw);
         dumper.write(out, data);
-        assertEquals("41 \n", sw.toString());
+        assertEquals("41\n", sw.toString());
     }
 
 
@@ -101,7 +101,7 @@ public class TestHexDump extends TestCase
         byte[] data = new byte[] { 0x41, 0x42, 0x43 };
 
         Iterator<String> itx = dumper.iterator(data);
-        assertEquals("41 42 43 ", itx.next());
+        assertEquals("41 42 43", itx.next());
         assertFalse(itx.hasNext());
     }
 
@@ -112,9 +112,9 @@ public class TestHexDump extends TestCase
         byte[] data = "ABCDEFGHIJK".getBytes("UTF-8");
 
         Iterator<String> itx = dumper.iterator(data);
-        assertEquals("41 42 43 44 ", itx.next());
-        assertEquals("45 46 47 48 ", itx.next());
-        assertEquals("49 4A 4B ", itx.next());
+        assertEquals("41 42 43 44", itx.next());
+        assertEquals("45 46 47 48", itx.next());
+        assertEquals("49 4A 4B", itx.next());
         assertFalse(itx.hasNext());
     }
 
@@ -124,7 +124,7 @@ public class TestHexDump extends TestCase
         HexDump dumper = new HexDump(4, false, 0, 0, false, 0, false, '\0');
         byte[] data = "ABCDEFGHIJK".getBytes("UTF-8");
 
-        assertEquals("41 42 43 44 \n45 46 47 48 \n49 4A 4B ",
+        assertEquals("41 42 43 44\n45 46 47 48\n49 4A 4B",
                      dumper.stringValue(data));
     }
 
@@ -137,7 +137,7 @@ public class TestHexDump extends TestCase
         StringWriter sw = new StringWriter();
         PrintWriter out = new PrintWriter(sw);
         dumper.write(out, data);
-        assertEquals("41 42 43 44 \n45 46 47 48 \n49 4A 4B \n",
+        assertEquals("41 42 43 44\n45 46 47 48\n49 4A 4B\n",
                      sw.toString());
     }
 
@@ -148,7 +148,7 @@ public class TestHexDump extends TestCase
         byte[] data = "ABC".getBytes("UTF-8");
 
         Iterator<String> itx = dumper.iterator(data);
-        assertEquals("41 42 43        ABC", itx.next());
+        assertEquals("41 42 43       ABC", itx.next());
         assertFalse(itx.hasNext());
     }
 
@@ -159,8 +159,8 @@ public class TestHexDump extends TestCase
         byte[] data = "ABCDEF".getBytes("UTF-8");
 
         Iterator<String> itx = dumper.iterator(data);
-        assertEquals("41 42 43 44     ABCD", itx.next());
-        assertEquals("45 46           EF", itx.next());
+        assertEquals("41 42 43 44    ABCD", itx.next());
+        assertEquals("45 46          EF",   itx.next());
         assertFalse(itx.hasNext());
     }
 
@@ -171,7 +171,7 @@ public class TestHexDump extends TestCase
         byte[] data = new byte[] { (byte)0x41, (byte)0x91, (byte)0x92 };
 
         Iterator<String> itx = dumper.iterator(data);
-        assertEquals("41 91 92        A..", itx.next());
+        assertEquals("41 91 92       A..", itx.next());
         assertFalse(itx.hasNext());
     }
 
@@ -181,7 +181,7 @@ public class TestHexDump extends TestCase
         HexDump dumper = new HexDump(4, true, 4, 2, false, 0, false, '\0');
 
         Iterator<String> itx1 = dumper.iterator(new byte[] { 0x41 });
-        assertEquals("0000  41 ", itx1.next());
+        assertEquals("0000  41", itx1.next());
         assertFalse(itx1.hasNext());
     }
 
@@ -191,17 +191,37 @@ public class TestHexDump extends TestCase
         HexDump dumper = new HexDump(4, true, 4, 2, false, 0, false, '\0');
 
         Iterator<String> itx1 = dumper.iterator(new byte[] { 0x41 });
-        assertEquals("0000  41 ", itx1.next());
+        assertEquals("0000  41", itx1.next());
         assertFalse(itx1.hasNext());
         assertFalse(itx1.hasNext());
 
         Iterator<String> itx2 = dumper.iterator(new byte[] { 0x42, 0x43 });
-        assertEquals("0001  42 43 ", itx2.next());
+        assertEquals("0001  42 43", itx2.next());
         assertFalse(itx2.hasNext());
 
         Iterator<String> itx3 = dumper.iterator("123456".getBytes("UTF-8"));
-        assertEquals("0003  31 32 33 34 ", itx3.next());
-        assertEquals("0007  35 36 ", itx3.next());
+        assertEquals("0003  31 32 33 34", itx3.next());
+        assertEquals("0007  35 36", itx3.next());
+        assertFalse(itx3.hasNext());
+    }
+
+
+    public void testOffsetBytesAndCharsMultiLineIterator() throws Exception
+    {
+        HexDump dumper = new HexDump(4, true, 4, 2, true, 4, false, '\0');
+
+        Iterator<String> itx1 = dumper.iterator(new byte[] { 0x41 });
+        assertEquals("0000  41             A", itx1.next());
+        assertFalse(itx1.hasNext());
+        assertFalse(itx1.hasNext());
+
+        Iterator<String> itx2 = dumper.iterator(new byte[] { 0x42, 0x43 });
+        assertEquals("0001  42 43          BC", itx2.next());
+        assertFalse(itx2.hasNext());
+
+        Iterator<String> itx3 = dumper.iterator("123456".getBytes("UTF-8"));
+        assertEquals("0003  31 32 33 34    1234", itx3.next());
+        assertEquals("0007  35 36          56", itx3.next());
         assertFalse(itx3.hasNext());
     }
 }
