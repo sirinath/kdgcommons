@@ -34,7 +34,7 @@ import net.sf.kdgcommons.io.IOUtil;
  *  <p>
  *  This is achieved using a set of overlapping buffers, based on the "segment
  *  size" passed during construction. Segment size is the largest contiguous
- *  sub-buffer that may be accessed (via {@link getBytes} and {@link #putBytes}),
+ *  sub-buffer that may be accessed (via {@link #getBytes} and {@link #putBytes}),
  *  and may be no larger than 1 GB.
  *  <p>
  *  <strong>Warning:</strong>

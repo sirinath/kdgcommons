@@ -245,8 +245,8 @@ public class HashMultimap<K,V>
      *  maps with list behavior; for maps with set behavior, will remove an
      *  arbitrary entry.
      *
-     *  @returns The removed value, <code>null</code> if there was no value
-     *           associated with the key (or the value was null).
+     *  @return The removed value, <code>null</code> if there was no value
+     *          associated with the key (or the value was null).
      */
     public V remove(K key)
     {
@@ -264,8 +264,8 @@ public class HashMultimap<K,V>
     /**
      *  Removes all key-value pairs with the given key.
      *
-     *  @returns The values that were removed. If no values were removed,
-     *           will return an empty collection.
+     *  @return The values that were removed. If no values were removed,
+     *          will return an empty collection.
      */
     public Collection<V> removeAll(K key)
     {
@@ -285,8 +285,8 @@ public class HashMultimap<K,V>
      *  only for maps with list behavior; for maps with set behavior, will remove
      *  an arbitrary entry.
      *
-     *  @returns <code>true</code> if the specified key-value pair was removed,
-     *           <code>false</code> if there was no such pair in the map.
+     *  @return <code>true</code> if the specified key-value pair was removed,
+     *          <code>false</code> if there was no such pair in the map.
      */
     public boolean remove(K key, V value)
     {
@@ -304,8 +304,8 @@ public class HashMultimap<K,V>
     /**
      *  Removes all entries with the given key and value
      *
-     *  @returns <code>true</code> if the specified key-value pair was removed,
-     *           <code>false</code> if there was no such pair in the map.
+     *  @return <code>true</code> if the specified key-value pair was removed,
+     *          <code>false</code> if there was no such pair in the map.
      */
     public Collection<V> removeAll(K key, V value)
     {
