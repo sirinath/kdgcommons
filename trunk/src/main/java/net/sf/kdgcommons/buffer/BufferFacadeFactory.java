@@ -59,9 +59,10 @@ public class BufferFacadeFactory
 
 
     /**
-     *  Creates a thread-safe instance that accesses a standard
-     *  <code>ByteBuffer</code>. All indexes are limited to
-     *  <code>Integer.MAX_VALUE</code>.
+     *  Creates a thread-safe instance that accesses a standard<code>ByteBuffer</code>.
+     *  All indexes are limited to <code>Integer.MAX_VALUE</code>.
+     *  <p>
+     *  See {@link ByteBufferThreadLocal} for important caveats.
      */
     public static BufferFacade createThreadsafe(ByteBuffer buf)
     {
@@ -70,12 +71,15 @@ public class BufferFacadeFactory
 
 
     /**
-     *  Creates a thread-safe instance that accesses a standard
-     *  <code>ByteBuffer</code>, with offsets relative to the specified base
-     *  value. Although the base value is specified as a <code>long</code>
-     *  (for consistency with other methods), it is limited to
-     *  <code>Integer.MAX_VALUE</code> and all indexes are limited to
+     *  Creates a thread-safe instance that accesses a standard <code>ByteBuffer</code>,
+     *  with offsets relative to the specified base value. Although the base value is
+     *  specified as a <code>long</code> (for consistency with other methods), it is
+     *  limited to <code>Integer.MAX_VALUE</code> and all indexes are limited to
      *  <code>Integer.MAX_VALUE - base</code>.
+     *  <p>
+     *  Because this method will create independent buffers for each thread, the
+     *  <code>limit()</code> method may return different values. Setting a limit on
+     *  the underlying buffer will not affect buffers that have already been created.
      */
     public static BufferFacade createThreadsafe(ByteBuffer buf, long base)
     {
@@ -241,6 +245,11 @@ public class BufferFacadeFactory
         {
             return _buf.capacity() - _base;
         }
+
+        public long limit()
+        {
+            return _buf.limit() - _base;
+        }
     }
 
 
@@ -363,6 +372,11 @@ public class BufferFacadeFactory
         {
             return _tl.get().capacity() - _base;
         }
+
+        public long limit()
+        {
+            return  _tl.get().limit() - _base;
+        }
     }
 
 
@@ -477,6 +491,11 @@ public class BufferFacadeFactory
         {
             return _buf.capacity() - _base;
         }
+
+        public long limit()
+        {
+            return  _buf.limit() - _base;
+        }
     }
 
 
@@ -589,6 +608,11 @@ public class BufferFacadeFactory
         public long capacity()
         {
             return _tl.get().capacity() - _base;
+        }
+
+        public long limit()
+        {
+            return  _tl.get().limit() - _base;
         }
     }
 }

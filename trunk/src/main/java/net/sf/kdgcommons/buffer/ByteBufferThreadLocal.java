@@ -23,6 +23,12 @@ import java.nio.ByteBuffer;
  *  Note that this class only works with <code>ByteBuffer</code>, not the related
  *  primitive buffers. This is because the <code>duplicte()</code> method is
  *  defined on the concrete classes, not the <code>Buffer</code> interface.
+ *  <p>
+ *  <em>Warning</em>:
+ *  Because each thread will have its own <code>ByteBuffer</code> instance, the
+ *  mark, position and limit of those buffers will vary independently. Application
+ *  code should never assume that one thread's buffer is in the same state as
+ *  another (except for contents).
  */
 public class ByteBufferThreadLocal
 extends ThreadLocal<ByteBuffer>

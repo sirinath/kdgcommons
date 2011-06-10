@@ -51,8 +51,14 @@ extends TestCase
 
     public void testByteBufferBasicOps() throws Exception
     {
+        // newly created buffers have limit == capacity, so we must set explicitly
         ByteBuffer buf = ByteBuffer.allocate(4096);
+        buf.limit(2048);
+
         BufferFacade facade = BufferFacadeFactory.create(buf);
+
+        assertEquals(4096, facade.capacity());
+        assertEquals(2048, facade.limit());
 
         // all writes should leave a gap, to catch any use of relative positioning
         // for sub-int values, leave high byte clear to prevent sign-extension
@@ -97,15 +103,18 @@ extends TestCase
         buf.putInt(100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
-
-        assertEquals(4096, facade.capacity());
     }
 
 
     public void testByteBufferOffsetOps() throws Exception
     {
         ByteBuffer buf = ByteBuffer.allocate(4096);
+        buf.limit(2048);
+
         BufferFacade facade = BufferFacadeFactory.create(buf, 1000);
+
+        assertEquals(3096, facade.capacity());
+        assertEquals(1048, facade.limit());
 
         facade.put(10, (byte)0x5A);
         assertEquals(0x5A, buf.get(1010));
@@ -147,17 +156,18 @@ extends TestCase
         buf.putInt(1100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
-
-        assertEquals(3096, facade.capacity());
     }
 
     public void testByteBufferTLBasicOps() throws Exception
     {
+        // threadsafe facades REQUIRE us to set limit before the first access
         ByteBuffer buf = ByteBuffer.allocate(4096);
-        BufferFacade facade = BufferFacadeFactory.createThreadsafe(buf);
+        buf.limit(2048);
 
-        // all writes should leave a gap, to catch any use of relative positioning
-        // for sub-int values, leave high byte clear to prevent sign-extension
+        BufferFacade facade = BufferFacadeFactory.create(buf);
+
+        assertEquals(4096, facade.capacity());
+        assertEquals(2048, facade.limit());
 
         facade.put(10, (byte)0x5A);
         assertEquals(0x5A, buf.get(10));
@@ -199,15 +209,18 @@ extends TestCase
         buf.putInt(100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
-
-        assertEquals(4096, facade.capacity());
     }
 
 
     public void testByteBufferTLOffsetOps() throws Exception
     {
         ByteBuffer buf = ByteBuffer.allocate(4096);
+        buf.limit(2048);
+
         BufferFacade facade = BufferFacadeFactory.createThreadsafe(buf, 1000);
+
+        assertEquals(3096, facade.capacity());
+        assertEquals(1048, facade.limit());
 
         facade.put(10, (byte)0x5A);
         assertEquals(0x5A, buf.get(1010));
@@ -249,8 +262,6 @@ extends TestCase
         buf.putInt(1100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
-
-        assertEquals(3096, facade.capacity());
     }
 
 
@@ -259,6 +270,9 @@ extends TestCase
         MappedFileBuffer buf = createMappedFile("testMappedFileBufferBasicOps", 4096);
         BufferFacade facade = BufferFacadeFactory.create(buf);
 
+        assertEquals(4096, facade.capacity());
+        assertEquals(4096, facade.limit());
+
         // all writes should leave a gap, to catch any use of relative positioning
         // for sub-int values, leave high byte clear to prevent sign-extension
 
@@ -302,8 +316,6 @@ extends TestCase
         buf.putInt(100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
-
-        assertEquals(4096, facade.capacity());
     }
 
 
@@ -312,6 +324,9 @@ extends TestCase
         MappedFileBuffer buf = createMappedFile("testMappedFileBufferOffsetOps", 4096);
         BufferFacade facade = BufferFacadeFactory.create(buf, 1000);
 
+        assertEquals(3096, facade.capacity());
+        assertEquals(3096, facade.limit());
+
         facade.put(10, (byte)0x5A);
         assertEquals(0x5A, buf.get(1010));
         assertEquals(0x5A, facade.get(10));
@@ -352,8 +367,6 @@ extends TestCase
         buf.putInt(1100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
-
-        assertEquals(3096, facade.capacity());
     }
 
 
@@ -362,8 +375,8 @@ extends TestCase
         MappedFileBuffer buf = createMappedFile("testMappedFileBufferBasicOps", 4096);
         BufferFacade facade = BufferFacadeFactory.createThreadsafe(buf);
 
-        // all writes should leave a gap, to catch any use of relative positioning
-        // for sub-int values, leave high byte clear to prevent sign-extension
+        assertEquals(4096, facade.capacity());
+        assertEquals(4096, facade.limit());
 
         facade.put(10, (byte)0x5A);
         assertEquals(0x5A, buf.get(10));
@@ -405,8 +418,6 @@ extends TestCase
         buf.putInt(100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
-
-        assertEquals(4096, facade.capacity());
     }
 
 
@@ -414,6 +425,9 @@ extends TestCase
     {
         MappedFileBuffer buf = createMappedFile("testMappedFileBufferOffsetOps", 4096);
         BufferFacade facade = BufferFacadeFactory.createThreadsafe(buf, 1000);
+
+        assertEquals(3096, facade.capacity());
+        assertEquals(3096, facade.limit());
 
         facade.put(10, (byte)0x5A);
         assertEquals(0x5A, buf.get(1010));
@@ -455,7 +469,5 @@ extends TestCase
         buf.putInt(1100, 0x12345678);
         ByteBuffer b2 = facade.slice(100);
         assertEquals(0x12345678, b2.getInt(0));
-
-        assertEquals(3096, facade.capacity());
     }
 }
