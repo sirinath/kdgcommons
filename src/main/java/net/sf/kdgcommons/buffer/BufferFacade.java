@@ -157,4 +157,18 @@ public interface BufferFacade
      *  Returns the capacity of the wrapped buffer.
      */
     public long capacity();
+
+
+    /**
+     *  Returns the limit of the buffer: the highest legal index + 1. Will be
+     *  &le; {@link #capacity}.
+     *  <p>
+     *  Support for this method will depend on the underlying buffer's support
+     *  for limits. {@link MappedFileBuffer} does not support limits, and will
+     *  always return capacity. The non-threadsafe facade created by {@link
+     *  BufferFacadeFactory} does support limits, but the threadsafe facade
+     *  only supports limits <em>that were set before the first facade method
+     *  was invoked</em> (because it clones the buffer).
+     */
+    public long limit();
 }

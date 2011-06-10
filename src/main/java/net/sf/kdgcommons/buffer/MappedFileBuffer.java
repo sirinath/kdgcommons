@@ -151,6 +151,18 @@ implements BufferFacade, Cloneable
 
 
     /**
+     *  Returns the buffer's limit -- the maximum index in the buffer + 1.
+     *  <p>
+     *  This returns the same value as {@link #capacity}; it exists as part of
+     *  the {@link BufferFacade} interface.
+     */
+    public long limit()
+    {
+        return capacity();
+    }
+
+
+    /**
      *  Returns the file that is mapped by this buffer.
      */
     public File file()
