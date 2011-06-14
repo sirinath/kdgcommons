@@ -121,7 +121,9 @@ implements BufferFacade, Cloneable
 
             long fileSize = file.length();
 
-            _buffers = new MappedByteBuffer[(int)(fileSize / segmentSize) + 1];
+            int bufArraySize = (int)(fileSize / segmentSize)
+                             + ((fileSize % segmentSize != 0) ? 1 : 0);
+            _buffers = new MappedByteBuffer[bufArraySize];
             int bufIdx = 0;
             for (long offset = 0 ; offset < fileSize ; offset += segmentSize)
             {
@@ -200,101 +202,207 @@ implements BufferFacade, Cloneable
     }
 
 
+    /**
+     *  Retrieves a single byte from the specified index.
+     */
     public byte get(long index)
     {
         return buffer(index).get();
     }
 
 
+    /**
+     *  Stores a single byte at the specified index.
+     */
     public void put(long index, byte value)
     {
         buffer(index).put(value);
     }
 
 
+    /**
+     *  Retrieves a four-byte integer starting at the specified index.
+     */
     public int getInt(long index)
     {
         return buffer(index).getInt();
     }
 
 
+    /**
+     *  Stores a four-byte integer starting at the specified index.
+     */
     public void putInt(long index, int value)
     {
         buffer(index).putInt(value);
     }
 
 
+    /**
+     *  Retrieves an eight-byte integer starting at the specified index.
+     */
     public long getLong(long index)
     {
         return buffer(index).getLong();
     }
 
 
+    /**
+     *  Stores an eight-byte integer starting at the specified index.
+     */
     public void putLong(long index, long value)
     {
         buffer(index).putLong(value);
     }
 
 
+    /**
+     *  Retrieves a four-byte integer starting at the specified index.
+     */
     public short getShort(long index)
     {
         return buffer(index).getShort();
     }
 
 
+    /**
+     *  Stores a four-byte integer starting at the specified index.
+     */
     public void putShort(long index, short value)
     {
         buffer(index).putShort(value);
     }
 
 
+    /**
+     *  Retrieves a four-byte floating-point number starting at the specified
+     *  index.
+     */
     public float getFloat(long index)
     {
         return buffer(index).getFloat();
     }
 
 
+    /**
+     *  Stores a four-byte floating-point number starting at the specified
+     *  index.
+     */
     public void putFloat(long index, float value)
     {
         buffer(index).putFloat(value);
     }
 
 
+    /**
+     *  Retrieves an eight-byte floating-point number starting at the specified
+     *  index.
+     */
     public double getDouble(long index)
     {
         return buffer(index).getDouble();
     }
 
 
+    /**
+     *  Stores an eight-byte floating-point number starting at the specified
+     *  index.
+     */
     public void putDouble(long index, double value)
     {
         buffer(index).putDouble(value);
     }
 
 
+    /**
+     *  Retrieves a two-byte character starting at the specified  index (note
+     *  that a Unicode code point may require calling this method twice).
+     */
     public char getChar(long index)
     {
         return buffer(index).getChar();
     }
 
 
+    /**
+     *  Stores a two-byte character starting at the specified  index.
+     */
     public void putChar(long index, char value)
     {
         buffer(index).putChar(value);
     }
 
 
+    /**
+     *  Retrieves <code>len</code> bytes starting at the specified index,
+     *  storing them in a newly created <code>byte[]</code>. Will span
+     *  segments if necessary to retrieve the requested number of bytes.
+     *
+     *  @throws IndexOutOfBoundsException if the request would read past
+     *          the end of file.
+     */
     public byte[] getBytes(long index, int len)
     {
         byte[] ret = new byte[len];
-        buffer(index).get(ret);
-        return ret;
+        return getBytes(index, ret, 0, len);
     }
 
 
+    /**
+     *  Retrieves <code>len</code> bytes starting at the specified index,
+     *  storing them in an existing <code>byte[]</code> at the specified
+     *  offset. Returns the array as a convenience. Will span segments as
+     *  needed.
+     *
+     *  @throws IndexOutOfBoundsException if the request would read past
+     *          the end of file.
+     */
+    public byte[] getBytes(long index, byte[] array, int off, int len)
+    {
+        while (len > 0)
+        {
+            ByteBuffer buf = buffer(index);
+            int count = Math.min(len, buf.remaining());
+            buf.get(array, off, count);
+            index += count;
+            off += count;
+            len -= count;
+        }
+        return array;
+    }
+
+
+    /**
+     *  Stores the contents of the passed byte array, starting at the given index.
+     *  Will span segments as needed.
+     *
+     *  @throws IndexOutOfBoundsException if the request would write past
+     *          the end of file.
+     */
     public void putBytes(long index, byte[] value)
     {
-        buffer(index).put(value);
+        putBytes(index, value, 0, value.length);
+    }
+
+
+    /**
+     *  Stores a section of the passed byte array, defined by <code>off</code> and
+     *  <code>len</code>, starting at the given index. Will span segments as needed.
+     *
+     *  @throws IndexOutOfBoundsException if the request would write past
+     *          the end of file.
+     */
+    public void putBytes(long index, byte[] value, int off, int len)
+    {
+        while (len > 0)
+        {
+            ByteBuffer buf = buffer(index);
+            int count = Math.min(len, buf.remaining());
+            buf.put(value, off, count);
+            index += count;
+            off += count;
+            len -= count;
+        }
     }
 
 
@@ -311,10 +419,11 @@ implements BufferFacade, Cloneable
     /**
      *  Iterates through the underlying buffers, calling <code>force()</code>
      *  on each; this will cause the buffers' contents to be written to disk.
+     *  Note, however, that the OS may not physically write the buffers until
+     *  a future time.
      */
     public void force()
     {
-        checkState();
         for (MappedByteBuffer buf : _buffers)
             buf.force();
     }
@@ -351,17 +460,9 @@ implements BufferFacade, Cloneable
 //  Internals
 //----------------------------------------------------------------------------
 
-    private void checkState()
-    {
-        if (_buffers == null)
-            throw new IllegalStateException("buffer has been closed");
-    }
-
-
     // this is exposed for a white-box test of cloning
     protected ByteBuffer buffer(long index)
     {
-        checkState();
         ByteBuffer buf = _buffers[(int)(index / _segmentSize)];
         buf.position((int)(index % _segmentSize));
         return buf;
