@@ -90,4 +90,17 @@ public class IOUtil
     {
         return openFile(new File(fileName));
     }
+
+
+    /**
+     *  Creates a temporary file that will be deleted when the JVM exits (unlike the
+     *  similarly-named method in <code>File</code>).
+     */
+    public static File createTempFile(String prefix, String suffix)
+    throws IOException
+    {
+        File file = File.createTempFile(prefix, suffix);
+        file.deleteOnExit();
+        return file;
+    }
 }
