@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.zip.GZIPInputStream;
 
 
@@ -93,14 +94,31 @@ public class IOUtil
 
 
     /**
-     *  Creates a temporary file that will be deleted when the JVM exits (unlike the
-     *  similarly-named method in <code>File</code>).
+     *  Creates a temporary file in the default temporary-file directory. Unlike the
+     *  similarly-named method in <code>File</code>, this method adds a shutdown hook
+     *  to delete the file, always uses the suffix ".tmp", and will create files of
+     *  arbitrary size. The content of the file will be undefined.
+     *
+     *  @param  prefix  The prefix used to construct the file's name. Must be at least
+     *                  three characters long (per <code>File</code> API).
+     *  @param  size    The size of the file, in bytes.
      */
-    public static File createTempFile(String prefix, String suffix)
+    public static File createTempFile(String prefix, long size)
     throws IOException
     {
-        File file = File.createTempFile(prefix, suffix);
+        File file = File.createTempFile(prefix, null);
         file.deleteOnExit();
+
+        RandomAccessFile raf = null;
+        try
+        {
+            raf = new RandomAccessFile(file, "rw");
+            raf.setLength(size);
+        }
+        finally
+        {
+            closeQuietly(raf);
+        }
         return file;
     }
 }

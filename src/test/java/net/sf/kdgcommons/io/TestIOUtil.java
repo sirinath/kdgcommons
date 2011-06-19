@@ -120,12 +120,15 @@ extends TestCase
 
 
     // this doesn't fully test the method; we'd have to restart the JVM to do that
-    // ... but there's at least some value in demonstrating that it does indeed
-    // create a file
     public void testCreateTempFile() throws Exception
     {
-        File file = IOUtil.createTempFile("testCreateTempFile", ".tmp");
+        final String prefix = "testCreateTempFile";
+        final long size = 8192;
+
+        File file = IOUtil.createTempFile(prefix, size);
         assertTrue(file.exists());
-        assertEquals(0, file.length());
+        assertTrue("prefix", file.getName().startsWith(prefix));
+        assertTrue("suffix", file.getName().endsWith(".tmp"));
+        assertEquals("size", size, file.length());
     }
 }
