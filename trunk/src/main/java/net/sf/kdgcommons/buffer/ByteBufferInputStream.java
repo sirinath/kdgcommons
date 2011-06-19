@@ -99,7 +99,7 @@ extends InputStream
         if (available() <= 0)
             return -1;
 
-        return _buf.get();
+        return _buf.get() & 0xFF;
     }
 
 
