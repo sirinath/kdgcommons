@@ -98,7 +98,7 @@ extends InputStream
     public int read() throws IOException
     {
         if (isAvailable())
-            return _buf[_off++];
+            return _buf[_off++] & 0xFF;
         else
             return -1;
     }

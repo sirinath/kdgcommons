@@ -38,7 +38,7 @@ extends TestCase
         for (int ii = 0 ; ii < expected.length ; ii++)
         {
             int e = expected[ii] & 0xFF;
-            int a = in.read() & 0xFF;
+            int a = in.read();
             assertEquals("byte " + ii, e, a);
         }
 
@@ -165,5 +165,19 @@ extends TestCase
                 Charset.forName("UTF-16"),
                 Charset.forName("UTF-8"));
         assertStreamContent(expected, in);
+    }
+
+
+    // cross-library regression test
+    public void testSingleByteReadDoesNotSignExtend() throws Exception
+    {
+        TranslatingInputStream in = new TranslatingInputStream(
+                new ByteArrayInputStream(new byte[] { (byte)0xA4 }),
+                Charset.forName("ISO-8859-1"),
+                Charset.forName("UTF-8"));
+
+        assertEquals(0xC2, in.read());
+        assertEquals(0xA4, in.read());
+        assertEquals(-1, in.read());
     }
 }

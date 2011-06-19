@@ -84,7 +84,8 @@ extends InputStream
 
         if (_byteBuf.remaining() == 0)
             return -1;
-        return _byteBuf.get();
+
+        return _byteBuf.get() & 0xFF;
     }
 
 

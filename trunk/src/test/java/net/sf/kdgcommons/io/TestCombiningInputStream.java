@@ -401,4 +401,19 @@ public class TestCombiningInputStream extends TestCase
         assertEquals('D', in.read());
         assertEquals('E', in.read());
     }
+
+
+    // cross-library regression test (did not find failure)
+    public void testSingleByteReadDoesNotSignExtend() throws Exception
+    {
+        InputStream in = new CombiningInputStream(
+                            new ByteArrayInputStream(
+                                    new byte[] {0x01, (byte)0xFF}),
+                            new ByteArrayInputStream(
+                                    new byte[] {0x02}));
+        assertEquals(0x01, in.read());
+        assertEquals(0xFF, in.read());
+        assertEquals(0x02, in.read());
+        assertEquals(-1, in.read());
+    }
 }
