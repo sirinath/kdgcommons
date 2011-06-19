@@ -179,4 +179,23 @@ public class TestTeeInputStream extends TestCase
         assertEquals((byte)TEST_DATA.charAt(10), out[4]);
         assertEquals((byte)TEST_DATA.charAt(11), out[5]);
     }
+
+
+    // cross-library regression test
+    public void testSingleByteReadDoesNotSignExtend() throws Exception
+    {
+        _base = new ByteArrayInputStream(new byte[] { 0x01, (byte)0xFF, 0x02 });
+        _test = new TeeInputStream(_base, _tee);
+
+        assertEquals(0x01, _test.read());
+        assertEquals(0xFF, _test.read());
+        assertEquals(0x02, _test.read());
+        assertEquals(-1, _test.read());
+
+        byte[] bytes = _tee.toByteArray();
+        assertEquals(3, bytes.length);
+        assertEquals(0x01, bytes[0]);
+        assertEquals(0xFF, bytes[1] & 0xFF);
+        assertEquals(0x02, bytes[2] & 0xFF);
+    }
 }

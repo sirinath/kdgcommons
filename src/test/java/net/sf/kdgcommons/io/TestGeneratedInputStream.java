@@ -199,4 +199,22 @@ public class TestGeneratedInputStream extends TestCase
         assertEquals(4L, in.skip(5L));
         assertEquals(-1, in.read());
     }
+
+
+    // cross-library regression test 
+    public void testSingleByteReadDoesNotSignExtend() throws Exception
+    {
+        InputStream in = new GeneratedInputStream()
+        {
+            @Override
+            protected byte[] nextBuffer()
+            {
+                return new byte[] { (byte)0xFF, 0x01 };
+            }
+        };
+        
+        assertEquals(0xFF, in.read());
+        assertEquals(0x01, in.read());
+        // will never return a real EOF
+    }
 }

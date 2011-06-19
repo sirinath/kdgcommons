@@ -313,4 +313,15 @@ public class TestBOMExclusionInputStream extends TestCase
         in.close();
         del.assertCloseCalled();
     }
+
+
+    // cross-library regression test (did not find failure)
+    public void testSingleByteReadDoesNotSignExtend() throws Exception
+    {
+        byte[] data = new byte[] {(byte)0xFF, 0x01};
+        InputStream in = new BOMExclusionInputStream(new ByteArrayInputStream(data));
+        assertEquals(0xFF, in.read());
+        assertEquals(0x01, in.read());
+        assertEquals(-1, in.read());
+    }
 }
