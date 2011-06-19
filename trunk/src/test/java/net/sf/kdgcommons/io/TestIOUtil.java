@@ -117,4 +117,15 @@ extends TestCase
             // success ... now we just need to measure open FDs
         }
     }
+
+
+    // this doesn't fully test the method; we'd have to restart the JVM to do that
+    // ... but there's at least some value in demonstrating that it does indeed
+    // create a file
+    public void testCreateTempFile() throws Exception
+    {
+        File file = IOUtil.createTempFile("testCreateTempFile", ".tmp");
+        assertTrue(file.exists());
+        assertEquals(0, file.length());
+    }
 }
