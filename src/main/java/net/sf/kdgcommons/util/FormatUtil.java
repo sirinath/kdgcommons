@@ -14,6 +14,7 @@
 
 package net.sf.kdgcommons.util;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -91,6 +92,16 @@ public class FormatUtil
     }
 
 
+    /**
+     *  Formats an arbitrary numeric object according to the current locale.
+     *  Relies on auto-boxing for primitives.
+     */
+    public static String formatNumber(Number value, String format)
+    {
+        return getNumberFormatter(format).format(value);
+    }
+
+
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
@@ -102,6 +113,9 @@ public class FormatUtil
 
     private static Map<String,Map<String,ThreadLocal<SimpleDateFormat>>> tzDateFormatters
             = new ConcurrentHashMap<String,Map<String,ThreadLocal<SimpleDateFormat>>>();
+
+    private static Map<String,ThreadLocal<DecimalFormat>> decimalFormatters
+            = new ConcurrentHashMap<String,ThreadLocal<DecimalFormat>>();
 
 
     private static SimpleDateFormat getDateFormatter(final String format, final String zoneId)
@@ -127,6 +141,25 @@ public class FormatUtil
                 }
             };
             zoneFormatters.put(format, threadLocal);
+        }
+        return threadLocal.get();
+    }
+
+
+    private static DecimalFormat getNumberFormatter(final String format)
+    {
+        ThreadLocal<DecimalFormat> threadLocal = decimalFormatters.get(format);
+        if (threadLocal == null)
+        {
+            threadLocal = new ThreadLocal<DecimalFormat>()
+            {
+                @Override
+                protected DecimalFormat initialValue()
+                {
+                    return new DecimalFormat(format);
+                }
+            };
+            decimalFormatters.put(format, threadLocal);
         }
         return threadLocal.get();
     }
