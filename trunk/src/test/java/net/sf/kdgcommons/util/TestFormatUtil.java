@@ -45,4 +45,13 @@ public class TestFormatUtil extends TestCase
         assertEquals("2011-06-30 08:14:15", FormatUtil.formatDate(date.getTime(), "yyyy-MM-dd HH:mm:ss", "GMT-0500"));
     }
 
+
+    public void testNumberFormatting() throws Exception
+    {
+        assertEquals("1,234.56", FormatUtil.formatNumber(1234.5602, "#,##0.00"));
+        assertEquals("1,234.00", FormatUtil.formatNumber(1234, "#,##0.00"));
+        assertEquals("1,234.00", FormatUtil.formatNumber(1234L, "#,##0.00"));
+    }
+
+
 }
