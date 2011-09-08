@@ -68,8 +68,10 @@ public class TestHtmlUtil extends TestCase
     {
         assertEquals("", HtmlUtil.escape(null));
         assertEquals("foo", HtmlUtil.escape("foo"));
-        assertEquals("foo&amp;&lt;&gt;&%39;&quot;bar",
+        assertEquals("foo&amp;&lt;&gt;&#39;&quot;bar",
                      HtmlUtil.escape("foo&<>\'\"bar"));
+        assertEquals("f&#xf6;o&#x2738;",
+                     HtmlUtil.escape("f\u00f6o\u2738"));
     }
 
 
@@ -101,7 +103,7 @@ public class TestHtmlUtil extends TestCase
 
         StringBuilder buf2 = new StringBuilder();
         HtmlUtil.appendAttribute(buf2, "foo", "b'a\"r");
-        assertEquals(" foo='b&%39;a&quot;r'", buf2.toString());
+        assertEquals(" foo='b&#39;a&quot;r'", buf2.toString());
 
         StringBuilder buf3 = new StringBuilder();
         HtmlUtil.appendAttribute(buf3, "foo", null);
