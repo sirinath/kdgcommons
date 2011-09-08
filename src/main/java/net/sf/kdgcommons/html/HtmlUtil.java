@@ -84,7 +84,10 @@ public class HtmlUtil
      *  <li> &gt; replaced with &amp;gt;
      *  <li> &amp; replaced with &amp;amp;
      *  <li> " replaced with &amp;quot;
-     *  <li> ' replaced with &amp;%39;
+     *  <li> ' replaced with &amp;#39; (this allows single quotes to be used
+     *       in attribute values that are delimited by single quotes)
+     *  <li> any non-ASCII character (ie, those with codepoints > 127) with a
+     *       hexadecimal Unicode escape
      *  </ul>
      *  If passed <code>null</code>, returns an empty string.
      */
@@ -109,13 +112,16 @@ public class HtmlUtil
                     sb.append("&gt;");
                     break;
                 case '\'' :
-                    sb.append("&%39;");
+                    sb.append("&#39;");
                     break;
                 case '\"' :
                     sb.append("&quot;");
                     break;
                 default :
-                    sb.append(c);
+                    if (c < 128)
+                        sb.append(c);
+                    else
+                        sb.append("&#x").append(Integer.toString((int)c, 16).toLowerCase()).append(";");
             }
         }
         return sb.toString();
@@ -124,10 +130,14 @@ public class HtmlUtil
 
     /**
      *  Replaces entity references in the passed string with their character
-     *  values. Supports named entity references from the HTML 4.01 spec
-     *  (http://www.w3.org/TR/html401), along with numeric references. Any
-     *  unrecognized references or invalid character sequences (ie, &amp;
-     *  without a corresponding ;) are passed through unchanged.
+     *  values. Supports the following four named entities, as well as both
+     *  hexadecimal and decimal numeric entities.
+     *  <ul>
+     *  <li> &amp;lt;
+     *  <li> &amp;gt;
+     *  <li> &amp;amp;
+     *  <li> &amp;quot;
+     *  </ul>
      *  <p>
      *  If passed <code>null</code>, returns an empty string. If passed a
      *  string without any entity escapes, returns that string unchanged.
