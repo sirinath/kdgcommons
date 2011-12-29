@@ -1,0 +1,19 @@
+<document xmlns="http://maven.apache.org/changes/1.0.0">
+	<properties>
+		<title>KDGCommons Change Log</title>
+	</properties>
+
+	<body>
+        <release version="1.0.1" date="2011-12-29"
+            description="Minor enhancements">
+            <action dev='kdgregory' type='add'>
+                CombiningIterable: use a single loop to iterate multiple collections
+            </action>
+            <action dev='kdgregory' type='update'>
+                HtmlUtil.escape(): bugfix for escaped single quotes; add escaping of all non-ASCII characters
+            </action>
+        </release>
+
+        <release version="1.0.0" date="2011-08-27" description="Initial public release"/>
+	</body>
+</document>
