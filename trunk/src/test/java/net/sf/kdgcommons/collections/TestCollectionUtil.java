@@ -207,4 +207,25 @@ public class TestCollectionUtil extends TestCase
         assertEquals("foo", list.get(0));
         assertEquals("foo", list.get(1));
     }
+
+
+    public void testJoin() throws Exception
+    {
+        // part 1: join various numbers of elements
+        assertEquals("",            CollectionUtil.join(Arrays.asList(), ","));
+        assertEquals("foo",         CollectionUtil.join(Arrays.asList("foo"), ","));
+        assertEquals("foo,bar",     CollectionUtil.join(Arrays.asList("foo", "bar"), ","));
+        assertEquals("foo,bar,baz", CollectionUtil.join(Arrays.asList("foo", "bar", "baz"), ","));
+
+        // part 2: arbitrary objects
+        assertEquals("1,foo,2",     CollectionUtil.join(Arrays.asList(new Integer(1), "foo", new Long(2)), ","));
+
+        // part 3: nulls in various places
+        assertEquals("",            CollectionUtil.join(null, ","));
+        assertEquals("foo,,baz",    CollectionUtil.join(Arrays.asList("foo", null, "baz"), ","));
+        assertEquals(",,baz",       CollectionUtil.join(Arrays.asList(null, null, "baz"), ","));
+        assertEquals("foo,,",       CollectionUtil.join(Arrays.asList("foo", null, null), ","));
+        assertEquals(",bar,",       CollectionUtil.join(Arrays.asList(null, "bar", null), ","));
+    }
+
 }
