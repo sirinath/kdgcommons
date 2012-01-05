@@ -105,9 +105,12 @@ public class CollectionUtil
 
     /**
      *  Resizes the passed list to N entries. Will add the specified object if
-     *  the list is smaller than the desired size, remove entries if larger.
+     *  the list is smaller than the desired size, discard trailing entries if
+     *  larger. This is primarily used to presize a list that will be accessed
+     *  by index, but it may also be used to truncate a list for display.
      *
      *  @return The list, as a convenience for callers
+     *
      *  @throws UnsupportedOperationException if the list does not implement
      *          <code>RandomAccess</code> and its list iterator does not
      *          support the <code>remove()</code> operation
@@ -146,8 +149,9 @@ public class CollectionUtil
 
     /**
      *  Resizes the passed list to N entries. Will add nulls if the list is
-     *  smaller than the desired size, remove entries if larger. Returns the
-     *  list, as a convenience.
+     *  smaller than the desired size, discard trailing entries if larger.
+     *  This is primarily used to presize a list that will be accessed by
+     *  index, but it may also be used to truncate a list for display.
      *
      *  @return The list, as a convenience for callers
      *  @throws UnsupportedOperationException if the list does not implement
@@ -157,5 +161,31 @@ public class CollectionUtil
     public static <T> List<T> resize(List<T> list, int newSize)
     {
         return resize(list, newSize, null);
+    }
+
+
+    /**
+     *  Iterates the passed collection, converts its elements to strings, then
+     *  concatenates those strings with the specified delimiter between them.
+     *  Nulls are converted to empty strings.
+     */
+    public static <T> String join(Iterable<T> coll, String delim)
+    {
+        if (coll == null)
+            return "";
+
+        boolean isFirst = true;
+        StringBuilder buf = new StringBuilder(1024);
+        for (T item : coll)
+        {
+            if (isFirst)
+                isFirst = false;
+            else
+                buf.append(delim);
+
+            if (item != null)
+                buf.append(String.valueOf(item));
+        }
+        return buf.toString();
     }
 }
