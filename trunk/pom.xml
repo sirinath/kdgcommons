@@ -4,32 +4,16 @@
 
   <groupId>net.sf.kdgcommons</groupId>
   <artifactId>kdgcommons</artifactId>
-  <packaging>jar</packaging>
   <version>1.0.2-SNAPSHOT</version>
+
   <name>KDG Commons</name>
+  <packaging>jar</packaging>
   <url>http://sourceforge.net/projects/kdgcommons/</url>
 
   <description>
     A collection of utility classes for Java, supplementing and in some cases
     replacing Jakarta Commons and Google Guava.
   </description>
-
-  <mailingLists>
-    <mailingList>
-      <name>kdgcommons-commits</name>
-      <subscribe>http://lists.sourceforge.net/mailman/listinfo/kdgcommons-commits</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/mailman/listinfo/kdgcommons-commits</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=kdgcommons-commits</archive>
-    </mailingList>
-  </mailingLists>
-
-  <developers>
-    <developer>
-        <id>kdgregory</id>
-        <name>Keith D Gregory</name>
-        <url>http://www.kdgregory.com</url>
-    </developer>
-  </developers>
 
   <licenses>
     <license>
@@ -44,6 +28,23 @@
     <developerConnection>scm:svn:https://kdgcommons.svn.sourceforge.net/svnroot/kdgcommons</developerConnection>
     <url>http://kdgcommons.svn.sourceforge.net/viewvc/kdgcommons/</url>
   </scm>
+
+  <developers>
+    <developer>
+        <id>kdgregory</id>
+        <name>Keith D Gregory</name>
+        <url>http://www.kdgregory.com</url>
+    </developer>
+  </developers>
+
+  <mailingLists>
+    <mailingList>
+      <name>kdgcommons-commits</name>
+      <subscribe>http://lists.sourceforge.net/mailman/listinfo/kdgcommons-commits</subscribe>
+      <unsubscribe>http://lists.sourceforge.net/mailman/listinfo/kdgcommons-commits</unsubscribe>
+      <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=kdgcommons-commits</archive>
+    </mailingList>
+  </mailingLists>
 
   <build>
     <plugins>
@@ -105,12 +106,12 @@
     </dependency>
   </dependencies>
 
-
   <distributionManagement>
     <repository>
         <id>build</id>
-        <name>KDG-Commons Build-Deploy Directory</name>
+        <name>Local Deployment Directory</name>
         <url>file://${project.build.directory}/deploy</url>
     </repository>
   </distributionManagement>
+
 </project>
