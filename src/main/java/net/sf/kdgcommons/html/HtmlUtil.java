@@ -309,6 +309,46 @@ public class HtmlUtil
     }
 
 
+    /**
+     *  Converts HTML to plain text, according to the following rules:
+     *  <ul>
+     *  <li> Replaces any newlines or carriage returns in the source text with single spaces.
+     *  <li> Replaces <code>&lt;P&gt;</code> and <code>&lt;BR&gt;</code> with newlines.
+     *  <li> Replaces <code>&lt;LI&gt;</code> with newline followed by "* ".
+     *  <li> Removes all other tags, including their attributes.
+     *  <li> Leaves text behind.
+     *  </ul>
+     */
+    public static String htmlToText(String input)
+    {
+        if (input == null)
+            input = "";
+
+        input = input.replaceAll("[\r\n]+", " ");
+
+        StringBuilder buf = new StringBuilder(input.trim());
+        int openIdx = 0;
+        while ((openIdx = buf.indexOf("<", openIdx)) >= 0)
+        {
+            int closeIdx = buf.indexOf(">", openIdx);
+            if (closeIdx < 0)
+            {
+                // punt on unclosed tag
+                buf.delete(openIdx, buf.length());
+                break;
+            }
+            String tag = buf.substring(openIdx + 1, closeIdx).trim().toUpperCase();
+            buf.delete(openIdx, closeIdx + 1);
+            tag = tag.replaceAll("\\s+.*", "");
+            if (tag.equals("P") || tag.startsWith("BR"))
+                buf.insert(openIdx, "\n");
+            else if (tag.equals("LI"))
+                buf.insert(openIdx, "\n* ");
+        }
+        return buf.toString();
+    }
+
+
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------

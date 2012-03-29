@@ -288,4 +288,60 @@ public class TestHtmlUtil extends TestCase
             // success
         }
     }
+
+
+    public void testHtmlToTextNullAndEmpty() throws Exception
+    {
+        assertEquals("", HtmlUtil.htmlToText(null));
+        assertEquals("", HtmlUtil.htmlToText(""));
+    }
+
+
+    public void testHtmlToTextSimple() throws Exception
+    {
+        String input = "<html>this is some text</html>";
+        assertEquals("this is some text", HtmlUtil.htmlToText(input));
+    }
+
+
+    public void testHtmlToTextMultipleEmbeddedTags() throws Exception
+    {
+        String input = "<html>this <em>is</em> some <b>bold</b> text</html>";
+        assertEquals("this is some bold text", HtmlUtil.htmlToText(input));
+    }
+
+
+    public void testHtmlToTextParaAndBreakReplacement() throws Exception
+    {
+        String input = "<html>this is <p>a new<P> paragraph<br/>and a new line</html>";
+        assertEquals("this is \na new\n paragraph\nand a new line", HtmlUtil.htmlToText(input));
+    }
+
+
+    public void testHtmlToTextParaAndBreakReplacementWithAttributes() throws Exception
+    {
+        String input = "<html>this is <p class='foo'>a new paragraph<br class='bar'/>and a new line</html>";
+        assertEquals("this is \na new paragraph\nand a new line", HtmlUtil.htmlToText(input));
+    }
+
+
+    public void testHtmlToTextListItemReplacement() throws Exception
+    {
+        String input = "<html>this is <li>the first <li class='foo'>and the second</html>";
+        assertEquals("this is \n* the first \n* and the second", HtmlUtil.htmlToText(input));
+    }
+
+
+    public void testHtmlToTextWithUnclosedTag() throws Exception
+    {
+        String input = "<html>this is <lithe first and the second";
+        assertEquals("this is ", HtmlUtil.htmlToText(input));
+    }
+
+
+    public void testHtmlToTextExistingNewlinesRemoved() throws Exception
+    {
+        String input = "<html>this is\nthe first line\r\nthis is the second\n\rand this is the third";
+        assertEquals("this is the first line this is the second and this is the third", HtmlUtil.htmlToText(input));
+    }
 }
