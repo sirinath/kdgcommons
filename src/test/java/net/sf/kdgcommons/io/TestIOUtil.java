@@ -14,6 +14,8 @@
 
 package net.sf.kdgcommons.io;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -60,6 +62,32 @@ extends TestCase
     {
         // getting through here is sufficient
         IOUtil.closeQuietly(null);
+    }
+
+
+    public void testCopy() throws Exception
+    {
+        // whitebox test: we want to read at least one full buffer, so need
+        // to create a large string to copy
+        StringBuilder buf = new StringBuilder();
+        while (buf.length() < 65536)
+            buf.append("12345678901234567890");
+        String content = buf.toString();
+
+        ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes("UTF-8"));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        assertEquals("bytes copied", content.length(), IOUtil.copy(in, out));
+        assertEquals("content", content, new String(out.toByteArray(), "UTF-8"));
+    }
+
+
+    public void testCopyWithNullParams() throws Exception
+    {
+        assertEquals("input null",
+                     0, IOUtil.copy(null, new ByteArrayOutputStream()));
+        assertEquals("output null",
+                     0, IOUtil.copy(new ByteArrayInputStream(new byte[4]), null));
     }
 
 
@@ -130,5 +158,16 @@ extends TestCase
         assertTrue("prefix", file.getName().startsWith(prefix));
         assertTrue("suffix", file.getName().endsWith(".tmp"));
         assertEquals("size", size, file.length());
+    }
+
+
+    public void testCreateTempFileFromString() throws Exception
+    {
+        String content = "this is a test";
+        ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes("UTF-8"));
+
+        File file = IOUtil.createTempFile(in, "testCreateTempFileFromString");
+        assertEquals("file size", content.length(), (int)file.length());
+        // I see no reason to verify the content; another test validated copy()
     }
 }

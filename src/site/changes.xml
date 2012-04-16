@@ -4,6 +4,22 @@
 	</properties>
 
 	<body>
+        <release version="1.0.2" date="2012-04-16"
+            description="Added functionality">
+            <action dev='kdgregory' type='update'>
+                HtmlUtil.escape(): bugfix for escaped single quotes; add escaping of all non-ASCII characters
+            </action>
+            <action dev='kdgregory' type='update'>
+                CollectionUtil.join(): turns a collection into a string, with separator
+            </action>
+            <action dev='kdgregory' type='add'>
+                IOUtil.copy(): copies input stream to output stream; exists to eliminate dependencies
+            </action>
+            <action dev='kdgregory' type='add'>
+                IOUtil.createTempFile(): variant that will fill file from InputStream
+            </action>
+        </release>
+
         <release version="1.0.1" date="2011-12-29"
             description="Minor enhancements">
             <action dev='kdgregory' type='add'>
