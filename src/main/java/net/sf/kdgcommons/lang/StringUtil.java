@@ -15,10 +15,7 @@
 package net.sf.kdgcommons.lang;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-import java.util.regex.Pattern;
 
 
 /**
@@ -359,29 +356,6 @@ public class StringUtil
     {
         return randomString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
                             minLength, maxLength);
-    }
-
-
-    /**
-     *  Applies the given regex to every string in the passed list, building
-     *  a new list from those strings that either match or do not match.
-     *
-     *  @param  list    The source list; this is unmodified.
-     *  @param  regex   Regex applied to every string in the list.
-     *  @param  include If <code>true</code>, strings that match are copied
-     *                  to the output list; if <code>false</code>, strings
-     *                  that don't match are copied.
-     */
-    public static List<String> filter(List<String> list, String regex, boolean include)
-    {
-        Pattern pattern = Pattern.compile(regex);
-        List<String> result = new ArrayList<String>(list.size());
-        for (String str : list)
-        {
-            if (pattern.matcher(str).matches() == include)
-                result.add(str);
-        }
-        return result;
     }
 
 

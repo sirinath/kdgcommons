@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.RandomAccess;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  *  Static utility methods for working with collections -- particularly
@@ -187,5 +188,31 @@ public class CollectionUtil
                 buf.append(String.valueOf(item));
         }
         return buf.toString();
+    }
+
+
+    /**
+     *  Applies the given regex to the string value of every item in the passed
+     *  list, building a new list from those value that either match or do not
+     *  match. Null entries are treated as an empty string for matching, but
+     *  will be returned as null.
+     *
+     *  @param  list    The source list; this is unmodified.
+     *  @param  regex   Regex applied to every string in the list.
+     *  @param  include If <code>true</code>, strings that match are copied
+     *                  to the output list; if <code>false</code>, strings
+     *                  that don't match are copied.
+     */
+    public static <T> List<T> filter(List<T> list, String regex, boolean include)
+    {
+        Pattern pattern = Pattern.compile(regex);
+        List<T> result = new ArrayList<T>(list.size());
+        for (T obj : list)
+        {
+            String str = (obj == null) ? "" : obj.toString();
+            if (pattern.matcher(str).matches() == include)
+                result.add(obj);
+        }
+        return result;
     }
 }

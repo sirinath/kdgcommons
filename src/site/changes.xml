@@ -4,10 +4,10 @@
 	</properties>
 
 	<body>
-        <release version="1.0.3" date="2012-04-21"
+        <release version="1.0.3" date="2012-04-22"
             description="Added functionality">
             <action dev='kdgregory' type='add'>
-                StringUtil.filter(): produces one list from another by applying a regex
+                CollectionUtil.filter(): produces one list from another by applying a regex
             </action>
         </release>
 
