@@ -16,7 +16,6 @@ package net.sf.kdgcommons.collections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -227,53 +226,6 @@ public class TestCollectionUtil extends TestCase
         assertEquals(",,baz",       CollectionUtil.join(Arrays.asList(null, null, "baz"), ","));
         assertEquals("foo,,",       CollectionUtil.join(Arrays.asList("foo", null, null), ","));
         assertEquals(",bar,",       CollectionUtil.join(Arrays.asList(null, "bar", null), ","));
-    }
-
-
-    public void testFilterStringList() throws Exception
-    {
-        List<String> src = Arrays.asList("foo", "bar", "baz", "");
-
-        assertEquals(Arrays.asList("foo", "bar", "baz"),
-                     CollectionUtil.filter(src, ".+", true));
-        assertEquals(Arrays.asList(""),
-                     CollectionUtil.filter(src, ".+", false));
-
-        assertEquals(Arrays.asList("bar", "baz"),
-                     CollectionUtil.filter(src, ".a.", true));
-        assertEquals(Arrays.asList("foo", ""),
-                     CollectionUtil.filter(src, ".a.", false));
-    }
-
-
-    public void testFilterNonStringList() throws Exception
-    {
-        Integer i1 = Integer.valueOf(1);
-        Integer i2 = Integer.valueOf(2);
-        Integer i3 = Integer.valueOf(12);
-
-        List<Integer> src = Arrays.asList(i1, i2, i3);
-
-        assertEquals(Arrays.asList(i1, i2, i3),
-                     CollectionUtil.filter(src, ".+", true));
-        assertEquals(Collections.emptyList(),
-                     CollectionUtil.filter(src, ".+", false));
-
-        assertEquals(Arrays.asList(i2, i3),
-                     CollectionUtil.filter(src, ".*2.*", true));
-        assertEquals(Arrays.asList(i1),
-                     CollectionUtil.filter(src, ".*2.*", false));
-    }
-
-
-    public void testFilterListWithNull() throws Exception
-    {
-        List<String> src = Arrays.asList("foo", null, "bar");
-
-        assertEquals(Arrays.asList("foo", "bar"),
-                     CollectionUtil.filter(src, ".+", true));
-        assertEquals(Arrays.asList((String)null),
-                     CollectionUtil.filter(src, ".+", false));
     }
 
 }

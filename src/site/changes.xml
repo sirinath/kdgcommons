@@ -4,13 +4,6 @@
 	</properties>
 
 	<body>
-        <release version="1.0.3" date="2012-04-22"
-            description="Added functionality">
-            <action dev='kdgregory' type='add'>
-                CollectionUtil.filter(): produces one list from another by applying a regex
-            </action>
-        </release>
-
         <release version="1.0.2" date="2012-04-16"
             description="Added functionality">
             <action dev='kdgregory' type='update'>

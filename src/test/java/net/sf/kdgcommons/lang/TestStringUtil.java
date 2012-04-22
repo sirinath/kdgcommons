@@ -14,10 +14,10 @@
 
 package net.sf.kdgcommons.lang;
 
+
 import junit.framework.TestCase;
 
 import net.sf.kdgcommons.test.NumericAsserts;
-
 
 public class TestStringUtil extends TestCase
 {
