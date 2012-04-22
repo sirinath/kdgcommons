@@ -15,6 +15,10 @@
 package net.sf.kdgcommons.lang;
 
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import net.sf.kdgcommons.test.NumericAsserts;
@@ -300,5 +304,21 @@ public class TestStringUtil extends TestCase
         String s3 = StringUtil.intern(s1);
         String s4 = StringUtil.intern(s2);
         assertSame(s3, s4);
+    }
+
+
+    public void testFilter() throws Exception
+    {
+        List<String> src = Arrays.asList("foo", "bar", "baz");
+
+        assertEquals(Arrays.asList("foo", "bar", "baz"),
+                     StringUtil.filter(src, ".*", true));
+        assertEquals(Collections.emptyList(),
+                     StringUtil.filter(src, ".*", false));
+
+        assertEquals(Arrays.asList("bar", "baz"),
+                     StringUtil.filter(src, ".a.", true));
+        assertEquals(Arrays.asList("foo"),
+                     StringUtil.filter(src, ".a.", false));
     }
 }
