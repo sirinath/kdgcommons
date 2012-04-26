@@ -9,6 +9,9 @@
             <action dev='kdgregory' type='add'>
                 ClassUtil: utilities to muck with Class objects
             </action>
+            <action dev='kdgregory' type='add'>
+                IOUtil.readFully(): actually does what everyone things InputStream.read() does
+            </action>
         </release>
         
         <release version="1.0.3" date="2012-04-22"
