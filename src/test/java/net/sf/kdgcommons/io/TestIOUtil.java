@@ -170,4 +170,57 @@ extends TestCase
         assertEquals("file size", content.length(), (int)file.length());
         // I see no reason to verify the content; another test validated copy()
     }
+
+
+    public void testReadFully() throws Exception
+    {
+        // to test this, I need an InputStream that won't read its entire data
+        // in a single pass; since ByteArrayInputstream will let me manage the
+        // data easily, it will be the base ... note that the bytes follow a
+        // pattern (1..127), so we can easily verify reads
+
+        byte[] orig = new byte[1024];
+        for (int ii = 0 ; ii < orig.length ; ii++)
+            orig[ii] = (byte)(ii % 127 + 1);
+
+        final int readLimit = 256;
+
+        InputStream in = new ByteArrayInputStream(orig)
+        {
+            @Override
+            public synchronized int read(byte[] b, int off, int len)
+            {
+                len = Math.min(len, readLimit);
+                return super.read(b, off, len);
+            }
+
+            @Override
+            public int read(byte[] b) throws IOException
+            {
+                return read(b, 0, b.length);
+            }
+        };
+
+        // first assert that raw reads reads are limited
+        byte[] b0 = new byte[512];
+        int r0 = in.read(b0);
+        assertEquals("raw reads are limited",   readLimit, r0);
+        assertEquals("read first byte",         orig[0], b0[0]);
+        assertEquals("read last byte",          orig[readLimit - 1], b0[readLimit - 1]);
+        assertEquals("did not over-read",       0, b0[readLimit]);
+
+        // then assert that readFully() does its thing
+        byte[] b1 = new byte[514];
+        int r1 = IOUtil.readFully(in, b1);
+        assertEquals("read desired length", b1.length, r1);
+        assertEquals("read first byte",     orig[r0], b1[0]);
+        assertEquals("read last byte",      orig[r0 + r1 - 1], b1[r1 - 1]);
+
+        // finally assert that we return at end-of-file
+        byte[] b2 = new byte[512];
+        int r2 = IOUtil.readFully(in, b2);
+        assertEquals("read to EOF",         (orig.length - (r0 + r1)), r2);
+        assertEquals("read first byte",     orig[r0 + r1], b2[0]);
+        assertEquals("read last byte",      orig[orig.length - 1], b2[r2 - 1]);
+    }
 }

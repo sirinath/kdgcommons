@@ -182,4 +182,23 @@ public class IOUtil
         }
         return file;
     }
+
+
+    /**
+     *  Repeatedly reads the passed stream, until either the buffer is full or EOF
+     *  is reached. Returns the number of bytes actually read.
+     */
+    public static int readFully(InputStream in, byte[] dest)
+    throws IOException
+    {
+        int off = 0;
+        int len = dest.length;
+        int cc = 0;
+        while ((len > 0) && ((cc = in.read(dest, off, len)) >= 0))
+        {
+            off += cc;
+            len -= cc;
+        }
+        return off;
+    }
 }
