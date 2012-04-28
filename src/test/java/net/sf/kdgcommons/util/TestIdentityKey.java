@@ -23,11 +23,17 @@ public class TestIdentityKey extends TestCase
 {
     public void testEquals() throws Exception
     {
+        // these two values will be equal but not have the same identity
         Integer i1 = new Integer(123);
         Integer i2 = new Integer(123);
 
         assertTrue(new IdentityKey(i1).equals(new IdentityKey(i1)));
         assertFalse(new IdentityKey(i1).equals(new IdentityKey(i2)));
+        
+        // test null and a bogus value to make sure nothing explodes        
+        assertFalse(new IdentityKey(null).equals(null)); 
+        assertFalse(new IdentityKey(i1).equals(null));
+        assertFalse(new IdentityKey(new Object()).equals(new IdentityKey(new Object())));
     }
 
 
