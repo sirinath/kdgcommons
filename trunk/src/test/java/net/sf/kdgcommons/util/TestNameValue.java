@@ -35,6 +35,42 @@ public class TestNameValue extends TestCase
     }
 
 
+    public void testEqualsAndHashCode() throws Exception
+    {
+        NameValue<Integer> nv1  = new NameValue<Integer>("foo", new Integer(1));
+        NameValue<Integer> nv1b = new NameValue<Integer>("foo", new Integer(1));
+        NameValue<Integer> nv2  = new NameValue<Integer>("foo", new Integer(2));
+        NameValue<Integer> nv3  = new NameValue<Integer>("bar", new Integer(2));
+
+        assertTrue("same name, same value",       nv1.equals(nv1b));
+        assertFalse("same name, different value", nv1.equals(nv2));
+        assertFalse("different name, same value", nv2.equals(nv3));
+
+        assertFalse("null",  nv1.equals(null));
+        assertFalse("bogus", nv1.equals(new Object()));
+
+        // note: second/third assertion depends on values chosen
+        assertTrue(nv1.hashCode() == nv1b.hashCode());
+        assertFalse(nv1.hashCode() == nv2.hashCode());
+        assertFalse(nv1.hashCode() == nv3.hashCode());
+    }
+
+
+    public void testToString() throws Exception
+    {
+        // this test exists primarily to ensure that toString() doesn't blow up
+        String value = new NameValue<String>("foo", "bar").toString();
+
+        // but we might as well make some assertions
+        assertTrue(value.contains("foo"));
+        assertTrue(value.contains("bar"));
+
+        // and if we're going to blow up, null values are the place to do it
+        // ... so just try to create, don't assert content
+        new NameValue<String>(null, null).toString();
+    }
+
+
     public void testComparison() throws Exception
     {
         NameValue<Object> n1 = new NameValue<Object>("foo", null);
