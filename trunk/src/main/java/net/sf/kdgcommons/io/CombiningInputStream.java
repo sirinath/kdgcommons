@@ -27,6 +27,8 @@ import java.io.InputStream;
  *  changes; see {@link #available} and {@link #mark} for details. Also, note
  *  that this class will not close its consituent streams unless you call
  *  {@link #close}.
+ *  <p>
+ *  This class is not thread-safe.
  */
 public class CombiningInputStream
 extends InputStream
@@ -212,7 +214,7 @@ extends InputStream
      *  will occur during {@link #reset}.
      */
     @Override
-    public synchronized void mark(int readlimit)
+    public void mark(int readlimit)
     {
         if (!isEOF())
         {
@@ -224,7 +226,7 @@ extends InputStream
 
 
     @Override
-    public synchronized void reset() throws IOException
+    public void reset() throws IOException
     {
         if (_marked < 0)
             throw new IOException("no mark set");

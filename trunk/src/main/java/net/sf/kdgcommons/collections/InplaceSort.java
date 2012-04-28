@@ -14,6 +14,7 @@
 
 package net.sf.kdgcommons.collections;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
@@ -458,8 +459,10 @@ public class InplaceSort
 //----------------------------------------------------------------------------
 
     private static class ComparableComparator<T extends Comparable<T>>
-    implements Comparator<T>
+    implements Comparator<T>, Serializable
     {
+        private static final long serialVersionUID = 1L;
+
         public int compare(T o1, T o2)
         {
             return o1.compareTo(o2);

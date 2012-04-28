@@ -14,6 +14,8 @@
 
 package net.sf.kdgcommons.util;
 
+import net.sf.kdgcommons.lang.UnreachableCodeException;
+
 
 /**
  *  Static utility methods to convert to/from Base64, as described by RFC 2045.
@@ -256,8 +258,10 @@ public class Base64Converter
                 dst[doff + 1] = (byte)ENCODE_TABLE[current];
                 current = (src[off + 0] & 0xFC) >> 2;
                 dst[doff + 0] = (byte)ENCODE_TABLE[current];
+            case 0 :
+                break;
             default :
-                // there better not be a default!
+                throw new UnreachableCodeException("invalid encode length");
         }
     }
 

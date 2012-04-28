@@ -14,13 +14,14 @@
 
 package net.sf.kdgcommons.util;
 
+import java.io.UnsupportedEncodingException;
+
 
 /**
- * This class manages a variable-length array of bytes. It's primary use is
- * as a replacement for <code>StringBuffer</code>, for those cases where we
- * do not need (and do not want to pay the cost of) Unicode conversions. As
- * many existing applications are limited to 8-bit characters, this provides
- * an easy way to interact with them.
+ * This class manages a variable-length array of bytes. It's primary use is as
+ * a replacement for <code>StringBuffer</code> for applications that need to
+ * deal with 8-bit character strings (eg, those that exchange data with legacy
+ * C programs).
  */
 
 public class ByteArray
@@ -64,14 +65,28 @@ public class ByteArray
 
 
     /**
-     *  Constructs a new <code>ByteArray</code> from a <code>String</code>.
-     *  The source string is converted to bytes, then coped into the new
-     *  object with some room to grow, and it is given a default expansion
-     *  factor.
+     *  Constructs a new <code>ByteArray</code> from a <code>String</code>, using
+     *  ISO-8859-1 encoding. The array is given the default expansion factor. Null
+     *  strings will be converted to a zero-length array.
+     *
+     *  @throws IllegalArgumentException if the passed string contains characters
+     *          outside the 8-bit range.
      */
     public ByteArray(String src)
     {
-        this(src.getBytes());
+        this(convertToISO8859(src));
+    }
+
+
+    /**
+     *  Constructs a new <code>ByteArray</code> from a <code>String</code>, using
+     *  the specified encoding. The array is given the default expansion factor.
+     * @throws UnsupportedEncodingException
+     */
+    public ByteArray(String src, String encoding)
+    throws UnsupportedEncodingException
+    {
+        this(src.getBytes(encoding));
     }
 
 
@@ -130,13 +145,23 @@ public class ByteArray
 
 
     /**
-     *  Adds a <code>String</code> to the end of this array. The string is
-     *  converted to bytes using the platform's default character encoding;
-     *  note that this may result in multi-byte character data.
+     *  Adds a <code>String</code> to the end of this array, converting it
+     *  with ISO-8859-1 encoding.
      */
     public void add(String src)
     {
-        add(src.getBytes());
+        add(convertToISO8859(src));
+    }
+
+
+    /**
+     *  Adds a <code>String</code> to the end of this array, using the specified
+     *  encoding. Note that this may result in multi-byte characters.
+     */
+    public void add(String src, String encoding)
+    throws UnsupportedEncodingException
+    {
+        add(src.getBytes(encoding));
     }
 
 
@@ -404,6 +429,27 @@ public class ByteArray
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
+
+    /**
+     *  Converts a string using ISO-8859-1 encoding, throwing if the string
+     *  cannot be translated.
+     */
+    private static byte[] convertToISO8859(String src)
+    {
+        // String.getBytes() doesn't throw if the encoding is invalid, so we'd
+        // have to check every character anyway; given that, there's no reason
+        // not to just copy manually
+        byte[] result = new byte[src.length()];
+        for (int ii = 0 ; ii < result.length ; ii++)
+        {
+            char c = src.charAt(ii);
+            if (c > 255)
+                throw new IllegalArgumentException("invalid character at position " + ii);
+            result[ii] = (byte)c;
+        }
+        return result;
+    }
+
 
     /**
      *  Verifies that the array can accept an insert of the specified size,
