@@ -4,7 +4,7 @@
 
   <groupId>net.sf.kdgcommons</groupId>
   <artifactId>kdgcommons</artifactId>
-  <version>1.0.4-SNAPSHOT</version>
+  <version>1.0.4</version>
 
   <name>KDG Commons</name>
   <packaging>jar</packaging>
@@ -23,12 +23,6 @@
     </license>
   </licenses>
 
-  <scm>
-    <connection>scm:svn:https://kdgcommons.svn.sourceforge.net/svnroot/kdgcommons</connection>
-    <developerConnection>scm:svn:https://kdgcommons.svn.sourceforge.net/svnroot/kdgcommons</developerConnection>
-    <url>http://kdgcommons.svn.sourceforge.net/viewvc/kdgcommons/</url>
-  </scm>
-
   <developers>
     <developer>
         <id>kdgregory</id>
@@ -45,6 +39,12 @@
       <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=kdgcommons-commits</archive>
     </mailingList>
   </mailingLists>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
 
   <build>
     <plugins>
@@ -113,6 +113,12 @@
         <version>3.8.2</version>
     </dependency>
   </dependencies>
+
+  <scm>
+    <connection>scm:svn:https://kdgcommons.svn.sourceforge.net/svnroot/kdgcommons</connection>
+    <developerConnection>scm:svn:https://kdgcommons.svn.sourceforge.net/svnroot/kdgcommons</developerConnection>
+    <url>http://kdgcommons.svn.sourceforge.net/viewvc/kdgcommons/</url>
+  </scm>
 
   <distributionManagement>
     <repository>
