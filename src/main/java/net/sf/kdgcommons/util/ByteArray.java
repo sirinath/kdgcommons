@@ -292,7 +292,7 @@ public class ByteArray
     {
         // have to check bounds before delegating, because offsets may be
         // outside controlled bounds, while inside physical bounds
-        if (srcOff > src.size())
+        if ((srcOff < 0) || (srcOff > src.size()))
             throw new IllegalArgumentException("invalid src offset: " + srcOff);
         if (srcOff + srcLen > src.size())
             throw new IllegalArgumentException("invalid src length: " + srcLen);
@@ -331,9 +331,9 @@ public class ByteArray
      */
     public void insert(int off, byte[] src, int srcOff, int srcLen)
     {
-        if (off > _size)
+        if ((off < 0) || (off > _size))
             throw new IllegalArgumentException("invalid dst offset: " + off);
-        if (srcOff > src.length)
+        if ((srcOff < 0) || (srcOff > src.length))
             throw new IllegalArgumentException("invalid src offset: " + srcOff);
         if (srcOff + srcLen > src.length)
             throw new IllegalArgumentException("invalid src length: " + srcLen);
@@ -372,17 +372,13 @@ public class ByteArray
      */
     public void remove(int off, int len)
     {
-        if ((off < 0) || (off + len > _size))
-            throw new ArrayIndexOutOfBoundsException();
+        if ((off < 0) || (off + len >= _size))
+            throw new IllegalArgumentException("invalid offset/length: " + off + "/" + len);
 
-        for (int i = 0 ; i < len ; i++)
-        {
-            if ((off + len + i) < _size)
-            {
-                _data[off + i] = _data[off + len + i];
-                _size--;
-            }
-        }
+        int srcPos = off + len;
+        int count = _size - srcPos;
+        System.arraycopy(_data, srcPos, _data, off, count);
+        _size -= len;
     }
 
 
