@@ -21,8 +21,7 @@ import net.sf.kdgcommons.lang.ObjectUtil;
  *  An immutable 2-tuple that associates a name with a value. This is
  *  particularly useful for programs that perform database operations,
  *  as a way of managing the data coming back from JDBC.
-**/
-
+ */
 public class NameValue<T>
     implements Comparable<NameValue<T>>
 {
@@ -62,7 +61,7 @@ public class NameValue<T>
      *  name and value components are equal.
      */
     @Override
-    public boolean equals(Object obj)
+    public final boolean equals(Object obj)
     {
         if (obj instanceof NameValue)
         {
@@ -77,7 +76,7 @@ public class NameValue<T>
     @Override
     public int hashCode()
     {
-        return ObjectUtil.hashCode(_name) ^ ObjectUtil.hashCode(_value);
+        return ObjectUtil.hashCode(_name) * 31 + ObjectUtil.hashCode(_value);
     }
 
 
@@ -99,13 +98,8 @@ public class NameValue<T>
     /**
      *  Compares two <CODE>NameValue</CODE> instances. Instances are ordered
      *  by name first. If two instances have the same name, then the value is
-     *  examined: if this object's value implements <code>Comparable</code>,
-     *  we call <code>compareTo()</code>; otherwise, if the two objects are
-     *  equal, we return 0; finally, we compare the string representation of
-     *  the values.
-     *
-     *  @throws ClassCastException if the passed object is not a <code>
-     *          NameValue</code> instance.
+     *  examined. If the value implements Comparable, this is straightforward;
+     *  if not, the values are converted to strings and then compared.
      */
     public int compareTo(NameValue<T> that)
     {
