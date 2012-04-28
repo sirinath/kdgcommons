@@ -19,21 +19,55 @@ import junit.framework.TestCase;
 
 public class TestByteArray extends TestCase
 {
-    public void testConstructors() throws Exception
+    public void testDefaultConstructor() throws Exception
     {
-        ByteArray a1 = new ByteArray();
-        assertEquals(0, a1.size());
-
-        ByteArray a2 = new ByteArray(new byte[4]);
-        assertEquals(4, a2.size());
-
-        // only ASCII characters in string, please
-        ByteArray a3 = new ByteArray("ABC");
-        assertEquals(3, a3.size());
+        ByteArray arr = new ByteArray();
+        assertEquals(0, arr.size());
     }
 
 
-    public void testAddGet() throws Exception
+    public void testByteArrayConstructor() throws Exception
+    {
+        byte[] src = new byte[] { (byte)1, (byte)2, (byte)3, (byte)4 };
+
+        ByteArray arr = new ByteArray(src);
+        assertEquals(src.length, arr.size());
+        assertEquals(1, arr.get(0));
+        assertEquals(4, arr.get(3));
+    }
+
+
+    public void testStringConstructors() throws Exception
+    {
+        // only ISO-8869-1 allowed with default constructor
+        ByteArray a1 = new ByteArray("ABC\u00AB");
+        assertEquals(4, a1.size());
+        assertEquals('A', a1.get(0));
+        assertEquals('B', a1.get(1));
+        assertEquals('C', a1.get(2));
+        assertEquals((byte)0xAB, a1.get(3));
+
+        // passing > 8 bits to default constructor should throw
+        try
+        {
+            new ByteArray("\u1234");
+            fail("converted invalid character");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success!
+        }
+
+        // you get what you get with explicit contructor
+        ByteArray a2 = new ByteArray("\u1234", "UTF-8");
+        assertEquals(3, a2.size());
+        assertEquals((byte)0xE1, a2.get(0));
+        assertEquals((byte)0x88, a2.get(1));
+        assertEquals((byte)0xB4, a2.get(2));
+    }
+
+
+    public void testAdd() throws Exception
     {
         ByteArray array = new ByteArray();
 
@@ -54,22 +88,28 @@ public class TestByteArray extends TestCase
         assertEquals(5, array.size());
         assertEquals((byte)43, array.get(4));
 
-        // ascii chars only!
-        array.add("ABC");
-        assertEquals(8, array.size());
+        array.add("ABC\u00AC");
+        assertEquals(9, array.size());
         assertEquals((byte)65, array.get(5));
         assertEquals((byte)66, array.get(6));
         assertEquals((byte)67, array.get(7));
+        assertEquals((byte)0xAC, array.get(8));
+
+        array.add("\u1234", "UTF-8");
+        assertEquals(12, array.size());
+        assertEquals((byte)0xE1, array.get(9));
+        assertEquals((byte)0x88, array.get(10));
+        assertEquals((byte)0xB4, array.get(11));
 
         array.add(new ByteArray("abc"));
-        assertEquals(11, array.size());
-        assertEquals((byte)97, array.get(8));
-        assertEquals((byte)98, array.get(9));
-        assertEquals((byte)99, array.get(10));
+        assertEquals(15, array.size());
+        assertEquals((byte)97, array.get(12));
+        assertEquals((byte)98, array.get(13));
+        assertEquals((byte)99, array.get(14));
 
         try
         {
-            array.get(11);
+            array.get(15);
             fail("able to get outside array bounds");
         }
         catch (IndexOutOfBoundsException e)

@@ -63,7 +63,7 @@ public class DataTable
         {
             throw new IllegalArgumentException(
                 "colClasses not same size as colNames"
-                + " (expected: " + _colNames.length
+                + " (expected: " + colNames.length
                 + ", got: " + colClasses.length + ")");
         }
 
