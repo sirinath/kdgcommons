@@ -12,6 +12,9 @@
             <action dev='kdgregory' type='add'>
                 IOUtil.readFully(): actually does what everyone things InputStream.read() does
             </action>
+            <action dev='kdgregory' type='add'>
+                UnreachableCodeException: a trap for branches that should never execute
+            </action>
         </release>
         
         <release version="1.0.3" date="2012-04-22"
