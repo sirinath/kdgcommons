@@ -18,6 +18,9 @@
             <action dev='kdgregory' type='update'>
                 ByteArray: String conversions now enforce 8-bit character limitation
             </action>
+            <action dev='kdgregory' type='update'>
+                ByteArray: fixed bug in remove()
+            </action>
         </release>
 
         <release version="1.0.3" date="2012-04-22"

@@ -119,6 +119,30 @@ public class TestByteArray extends TestCase
     }
 
 
+    public void testGetOutOfBounds() throws Exception
+    {
+        ByteArray array = new ByteArray("ABCDEFGHIJKL");
+
+        try
+        {
+            array.get(-1);
+        }
+        catch (ArrayIndexOutOfBoundsException ex)
+        {
+            // success
+        }
+
+        try
+        {
+            array.get(12);
+        }
+        catch (ArrayIndexOutOfBoundsException ex)
+        {
+            // success
+        }
+    }
+
+
     public void testGetArray() throws Exception
     {
         ByteArray array = new ByteArray("ABCDEFGHIJKL");
@@ -147,6 +171,42 @@ public class TestByteArray extends TestCase
     }
 
 
+    public void testGetArrayIllegalArgument() throws Exception
+    {
+        ByteArray array = new ByteArray("ABCDEFGHIJKL");
+
+        try
+        {
+            array.getBytes(-1, 04);
+            fail("didn't throw with negative offset");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+
+        try
+        {
+            array.getBytes(200, 0);
+            fail("didn't throw with offset out of bounds");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+
+        try
+        {
+            array.getBytes(5, 200);
+            fail("didn't throw with range out of bounds");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+    }
+
+
     public void testInsert() throws Exception
     {
         ByteArray array = new ByteArray();
@@ -167,16 +227,6 @@ public class TestByteArray extends TestCase
         assertEquals(13, array.get(2));
         assertEquals(2, array.get(3));
         assertEquals(3, array.get(4));
-
-        try
-        {
-            array.insert(1, new byte[] {11, 12, 13}, 1, 17);
-            fail("able to insert invalid source offsets");
-        }
-        catch (IllegalArgumentException e)
-        {
-            // success
-        }
 
         array.insert(1, new ByteArray());
         assertEquals(5, array.size());
@@ -203,6 +253,185 @@ public class TestByteArray extends TestCase
         assertEquals(13, array.get(6));
         assertEquals(2, array.get(7));
         assertEquals(3, array.get(8));
+    }
+
+
+    // this test just uses byte[] source
+    public void testInsertInvalidArgument1() throws Exception
+    {
+        ByteArray array = new ByteArray("ABCDEFGHIJKL");
+
+        try
+        {
+            array.insert(-1, new byte[0], 0, 0);
+            fail("able to insert with negative offset");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+
+        try
+        {
+            array.insert(13, new byte[0], 0, 0);
+            fail("able to insert after end of array");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+
+        try
+        {
+            array.insert(6, new byte[0], -1, 0);
+            fail("able to insert with invalid source index");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+
+        try
+        {
+            array.insert(6, new byte[0], 1, 0);
+            fail("able to insert with invalid source index");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+
+        try
+        {
+            array.insert(6, new byte[3], 1, 3);
+            fail("able to insert with invalid source length");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+    }
+
+
+    // repeated for ByteArray source
+    public void testInsertInvalidArgument2() throws Exception
+    {
+        ByteArray array = new ByteArray("ABCDEFGHIJKL");
+
+        try
+        {
+            array.insert(-1, new ByteArray(), 0, 0);
+            fail("able to insert with negative offset");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+
+        try
+        {
+            array.insert(13, new ByteArray(), 0, 0);
+            fail("able to insert after end of array");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+
+        try
+        {
+            array.insert(6, new ByteArray(), -1, 0);
+            fail("able to insert with invalid source index");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+
+        try
+        {
+            array.insert(6, new ByteArray(), 1, 0);
+            fail("able to insert with invalid source index");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+
+        try
+        {
+            array.insert(6, new ByteArray("ABC"), 1, 3);
+            fail("able to insert with invalid source length");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+    }
+
+
+    public void testRemove() throws Exception
+    {
+        ByteArray array = new ByteArray("ABCDEFGHIJKL");
+        assertEquals(12, array.size());
+
+        array.remove(3);
+        assertEquals(11, array.size());
+        assertEquals('E', array.get(3));
+        assertEquals('L', array.get(10));
+
+        array.remove(3, 2);
+        assertEquals(9, array.size());
+        assertEquals('G', array.get(3));
+        assertEquals('L', array.get(8));
+
+        array.removeLast();
+        assertEquals(8, array.size());
+    }
+
+
+    public void testRemoveInvalidArguments() throws Exception
+    {
+        ByteArray array = new ByteArray("ABCDEFGHIJKL");
+
+        try
+        {
+            array.remove(-1, 0);
+            fail("able to remove with negative offset");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+
+        try
+        {
+            array.remove(12, 0);
+            fail("able to remove after end of array");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+
+        try
+        {
+            array.remove(10, 2);
+            fail("able to remove too-long segment");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // success
+        }
+    }
+
+
+    // this test is here for coverage; not throwing is success
+    public void testRemoveLastFromEmptyArray() throws Exception
+    {
+        ByteArray array = new ByteArray();
+        array.removeLast();
+        assertEquals(0, array.size());
     }
 
 
