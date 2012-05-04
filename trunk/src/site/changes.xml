@@ -3,8 +3,16 @@
 		<title>KDGCommons Change Log</title>
 	</properties>
 
+    <body>
+        <release version="1.0.5" date="TBD"
+            description="Added functionality">
+            <action dev='kdgregory' type='add'>
+                ThreadUtil.sleepQuietly(): catches and ignores InterruptedException
+            </action>
+        </release>
+
 	<body>
-        <release version="1.0.4" date="TBD"
+        <release version="1.0.4" date="2012-04-28"
             description="Added functionality">
             <action dev='kdgregory' type='add'>
                 ClassUtil: utilities to muck with Class objects
