@@ -7,6 +7,9 @@
         <release version="1.0.5" date="TBD"
             description="Added functionality">
             <action dev='kdgregory' type='add'>
+                NamedThreadFactory: allows thread pools to name their threads
+            </action>
+            <action dev='kdgregory' type='add'>
                 ThreadUtil.sleepQuietly(): catches and ignores InterruptedException
             </action>
         </release>
