@@ -79,7 +79,9 @@ public class Introspection
     /**
      *  Introspects the specified class, per the rules above.
      *
-     *  @throws ConversionException on any error.
+     *  @throws IntrospectionException on any error (this will always wrap
+     *          an underlying exception, typically one of the checked exceptions
+     *          thrown by the reflection mechanism).
      */
     public Introspection(Class<?> klass)
     {
