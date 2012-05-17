@@ -7,6 +7,10 @@
         <release version="1.0.5" date="TBD"
             description="Added functionality">
             <action dev='kdgregory' type='add'>
+                Introspection, IntrospectionCache: a replacement for the JDK's introspector;
+                originally written for PracticalXml
+            </action>
+            <action dev='kdgregory' type='add'>
                 MapBuilder: create and populate a Map in one expression
             </action>
             <action dev='kdgregory' type='add'>
