@@ -52,7 +52,7 @@ public class IntrospectionCache
     /**
      *  Returns an {@link Introspection} of the passed class.
      *
-     *  @throws ConversionError if unable to introspect the class.
+     *  @throws IntrospectionException if unable to introspect the class.
      */
     public synchronized Introspection lookup(Class<?> klass)
     {
