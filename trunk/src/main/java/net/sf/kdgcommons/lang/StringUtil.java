@@ -359,6 +359,53 @@ public class StringUtil
     }
 
 
+    /**
+     *  Returns a substring of the source string, from its start up to <em>but
+     *  not including</em> the first occurrence of the target string. Returns
+     *  an empty string if passed a null source or target, or if the target is
+     *  not contained in the source.
+     *  <p>
+     *  This method is used to divide a string based on an optional delimiter;
+     *  for example, dividing "host;port" at ":".
+     *
+     *  @since 1.0.5
+     */
+    public static String extractLeft(String source, String target)
+    {
+        if ((source == null) || (target == null))
+            return "";
+
+        int idx = source.indexOf(target);
+        if (idx < 0)
+            return "";
+
+        return source.substring(0, idx);
+    }
+
+
+    /**
+     *  Returns a substring of the source string, from immediately <em>after</em>
+     *  the first occurrence of the target string, to the end of the source.
+     *  Returns  an empty string if passed a null source or target, or if the
+     *  target is not contained in the source.
+     *  <p>
+     *  This method is used to divide a string based on an optional delimiter;
+     *  for example, dividing "host;port" at ":".
+     *
+     *  @since 1.0.5
+     */
+    public static String extractRight(String source, String target)
+    {
+        if ((source == null) || (target == null))
+            return "";
+        int idx = source.indexOf(target);
+        if (idx < 0)
+            return "";
+
+        return source.substring(idx + target.length());
+    }
+
+
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------

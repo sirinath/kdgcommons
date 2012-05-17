@@ -300,5 +300,31 @@ public class TestStringUtil extends TestCase
         String s3 = StringUtil.intern(s1);
         String s4 = StringUtil.intern(s2);
         assertSame(s3, s4);
+
+        // to fully validate the behavior of intern(), we need to force a
+        // garbage collection that actually cleans up the weak references
+        // ... that's really difficult to do reliable, so we'll punt
+    }
+
+
+    public void testExtract() throws Exception
+    {
+        // the happy path
+        assertEquals("foo", StringUtil.extractLeft("foobazbar", "baz"));
+        assertEquals("bar", StringUtil.extractRight("foobazbar", "baz"));
+
+        // the sad path
+        assertEquals("", StringUtil.extractLeft("foobar", "baz"));
+        assertEquals("", StringUtil.extractRight("foobar", "baz"));
+
+        // the bozo path
+        assertEquals("", StringUtil.extractLeft(null, "baz"));
+        assertEquals("", StringUtil.extractRight(null, "baz"));
+        assertEquals("", StringUtil.extractLeft("foobar", null));
+        assertEquals("", StringUtil.extractRight("foobar", null));
+
+        // the strange path (it's how indexOf() works)
+        assertEquals("", StringUtil.extractLeft("foobar", ""));
+        assertEquals("foobar", StringUtil.extractRight("foobar", ""));
     }
 }
