@@ -4,7 +4,10 @@
 	</properties>
 
     <body>
-        <release version="1.0.5" date="TBD"
+        <release version="1.0.6" date="TBD"
+        </release>
+
+        <release version="1.0.5" date="2012-05-17"
             description="Added functionality">
             <action dev='kdgregory' type='add'>
                 Introspection, IntrospectionCache: a replacement for the JDK's introspector;
@@ -25,7 +28,6 @@
             </action>
         </release>
 
-	<body>
         <release version="1.0.4" date="2012-04-28"
             description="Added functionality">
             <action dev='kdgregory' type='add'>
