@@ -169,6 +169,8 @@ public class CollectionUtil
      *  Iterates the passed collection, converts its elements to strings, then
      *  concatenates those strings with the specified delimiter between them.
      *  Nulls are converted to empty strings.
+     *
+     *  @ince 1.0.2
      */
     public static <T> String join(Iterable<T> coll, String delim)
     {
@@ -196,6 +198,8 @@ public class CollectionUtil
      *  list, building a new list from those value that either match or do not
      *  match. Null entries are treated as an empty string for matching, but
      *  will be returned as null.
+     *
+     *  @since 1.0.3
      *
      *  @param  list    The source list; this is unmodified.
      *  @param  regex   Regex applied to every string in the list.
