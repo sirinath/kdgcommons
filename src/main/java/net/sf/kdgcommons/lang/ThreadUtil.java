@@ -17,6 +17,8 @@ package net.sf.kdgcommons.lang;
 
 /**
  *  Static utility methods for working with threads.
+ *
+ *  @since 1.0.5
  */
 public class ThreadUtil
 {
@@ -24,6 +26,8 @@ public class ThreadUtil
      *  Sleeps for the specified number of milliseconds, catching and ignoring
      *  any <code>InterruptedException</code>. Returns the number of milliseconds
      *  actually slept.
+     *
+     *  @since 1.0.5
      */
     public static long sleepQuietly(long millis)
     {

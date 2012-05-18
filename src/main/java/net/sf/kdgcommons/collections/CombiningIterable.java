@@ -31,6 +31,8 @@ import java.util.NoSuchElementException;
  *  that do not; the combined iterator will throw for part of the iteration, and
  *  not throw for another part. It's best not to use <code>remove()</code> unless
  *  you know that all underlying collections support it.
+ *
+ *  @since 1.0.1
  */
 public class CombiningIterable<T>
 implements Iterable<T>

@@ -27,6 +27,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  *  All threads created by this factory are named "<code>PREFIX-thread-NN</code>",
  *  where PREFIX is provided by the caller, and NN is an auto-incremented number
  *  starting with 0.
+ *
+ *  @since 1.0.5
  */
 public class NamedThreadFactory
 implements ThreadFactory

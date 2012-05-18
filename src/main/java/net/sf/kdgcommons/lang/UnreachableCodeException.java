@@ -18,6 +18,8 @@ package net.sf.kdgcommons.lang;
 /**
  *  Use this exception as a trap for code paths that you never expect to
  *  be executed (eg, the default clause in an enum-based switch).
+ *
+ *  @since 1.0.4
  */
 public class UnreachableCodeException
 extends RuntimeException

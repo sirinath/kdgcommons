@@ -318,6 +318,8 @@ public class HtmlUtil
      *  <li> Removes all other tags, including their attributes.
      *  <li> Leaves text behind.
      *  </ul>
+     *
+     *  @since 1.0.2
      */
     public static String htmlToText(String input)
     {

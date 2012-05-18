@@ -23,6 +23,8 @@ import java.util.Arrays;
 /**
  *  Static utility methods for working with class instances.
  *  reflection to do their work.
+ *
+ *  @since 1.0.4
  */
 public class ClassUtil
 {

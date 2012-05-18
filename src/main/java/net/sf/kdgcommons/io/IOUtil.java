@@ -68,6 +68,8 @@ public class IOUtil
      *  This method also exists (with many variants) in Jakarta Commons IO.
      *  It's here so that this library can be self-contained.
      *
+     *  @since 1.0.2
+     *
      *  @return The number of bytes copied.
      */
     public static long copy(InputStream in, OutputStream out)
@@ -165,6 +167,8 @@ public class IOUtil
      *  Creates a temporary file via {@link #createTempFile}, then copies the
      *  contents of the passed stream to it. Caller is responsible for closing
      *  the input stream.
+     *
+     *  @since 1.0.2
      */
     public static File createTempFile(InputStream in, String prefix)
     throws IOException
@@ -187,6 +191,8 @@ public class IOUtil
     /**
      *  Repeatedly reads the passed stream, until either the buffer is full or EOF
      *  is reached. Returns the number of bytes actually read.
+     *
+     *  @since 1.0.4
      */
     public static int readFully(InputStream in, byte[] dest)
     throws IOException
