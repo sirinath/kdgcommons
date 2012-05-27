@@ -360,45 +360,129 @@ public class StringUtil
 
 
     /**
-     *  Returns a substring of the source string, from its start up to <em>but
-     *  not including</em> the first occurrence of the target string. Returns
-     *  an empty string if passed a null source or target, or if the target is
-     *  not contained in the source.
+     *  Returns a substring of the source string, from its start up to but not
+     *  including the first occurrence of the target string. If the target does
+     *  not exist in the source, returns the source string. If the source or
+     *  target strings are null, they are treated as empty strings (and an
+     *  empty target will not exist in the source).
      *  <p>
      *  This method is used to divide a string based on an optional delimiter;
-     *  for example, dividing "host;port" at ":".
+     *  for example, dividing "host:port" at ":".
+     *  <p>
+     *  See also {@link #extractLeftOfLast}.
      *
-     *  @since 1.0.5
+     *  @since 1.0.6
      */
     public static String extractLeft(String source, String target)
     {
-        if ((source == null) || (target == null))
-            return "";
+        if (source == null)
+            source = "";
+        if (target == null)
+            target = "";
+
+        if (target.length() == 0)
+            return source;
 
         int idx = source.indexOf(target);
         if (idx < 0)
-            return "";
+            return source;
 
         return source.substring(0, idx);
     }
 
 
     /**
-     *  Returns a substring of the source string, from immediately <em>after</em>
-     *  the first occurrence of the target string, to the end of the source.
-     *  Returns  an empty string if passed a null source or target, or if the
-     *  target is not contained in the source.
+     *  Returns a substring of the source string, from immediately after the
+     *  first occurrence of the target string, to the end of the source. If the
+     *  target does not exist in the source, returns an empty string. If the
+     *  source or target strings are null, they are treated as empty strings
+     *  (and an empty target will not exist in the source).
      *  <p>
      *  This method is used to divide a string based on an optional delimiter;
-     *  for example, dividing "host;port" at ":".
+     *  for example, dividing "host:port" at ":".
+     *  <p>
+     *  See also {@link #extractRightOfLast}.
      *
-     *  @since 1.0.5
+     *  @since 1.0.6
      */
     public static String extractRight(String source, String target)
     {
-        if ((source == null) || (target == null))
+        if (source == null)
+            source = "";
+        if (target == null)
+            target = "";
+
+        if (target.length() == 0)
             return "";
+
         int idx = source.indexOf(target);
+        if (idx < 0)
+            return "";
+
+        return source.substring(idx + target.length());
+    }
+
+
+
+    /**
+     *  Returns a substring of the source string, from its start up to but not
+     *  including the last occurrence of the target string. If the target does
+     *  not exist in the source, returns the source string. If the source or
+     *  target strings are null, they are treated as empty strings (and an
+     *  empty target will not exist in the source).
+     *  <p>
+     *  This method is used to incrementally partition a string, for example,
+     *  extracting components from a filepath (eg: "/foo/bar/baz.txt", with a
+     *  target of "/" results in "/foo/bar").
+     *  <p>
+     *  See also {@link #extractLeft}.
+     *
+     *  @since 1.0.6
+     */
+    public static String extractLeftOfLast(String source, String target)
+    {
+        if (source == null)
+            source = "";
+        if (target == null)
+            target = "";
+
+        if (target.length() == 0)
+            return source;
+
+        int idx = source.lastIndexOf(target);
+        if (idx < 0)
+            return source;
+
+        return source.substring(0, idx);
+    }
+
+
+    /**
+     *  Returns a substring of the source string, from immediately after the
+     *  last occurrence of the target string, to the end of the source. If the
+     *  target does not exist in the source, returns an empty string. If the
+     *  source or target strings are null, they are treated as empty strings
+     *  (and an empty target will not exist in the source).
+     *  <p>
+     *  This method is used to incrementally partition a string, for example,
+     *  extracting components from a filepath (eg: "/foo/bar/baz.txt", with a
+     *  target of "/" results in "baz.txt").
+     *  <p>
+     *  See also {@link #extractRight}.
+     *
+     *  @since 1.0.6
+     */
+    public static String extractRightOfLast(String source, String target)
+    {
+        if (source == null)
+            source = "";
+        if (target == null)
+            target = "";
+
+        if (target.length() == 0)
+            return "";
+
+        int idx = source.lastIndexOf(target);
         if (idx < 0)
             return "";
 

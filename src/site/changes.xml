@@ -4,11 +4,16 @@
 	</properties>
 
     <body>
-        <release version="1.0.6" date="TBD"
+        <release version="1.0.6" date="2012-05-27"
+            description="Strings">
+            <action dev='kdgregory' type='add'>
+                StringUtil.extractLeft(), extractRight(), extractLeftOfLast(), extractRightOfLast():
+                methods to partition a string around a delimiter
+            </action>
         </release>
 
         <release version="1.0.5" date="2012-05-17"
-            description="Added functionality">
+            description="Beans, Threads, Collections">
             <action dev='kdgregory' type='add'>
                 Introspection, IntrospectionCache: a replacement for the JDK's introspector;
                 originally written for PracticalXml
@@ -18,10 +23,6 @@
             </action>
             <action dev='kdgregory' type='add'>
                 NamedThreadFactory: allows thread pools to name their threads
-            </action>
-            <action dev='kdgregory' type='add'>
-                StringUtil.extractLeft(), StringUtil.extractRight(): substring() and
-                index() in one
             </action>
             <action dev='kdgregory' type='add'>
                 ThreadUtil.sleepQuietly(): catches and ignores InterruptedException

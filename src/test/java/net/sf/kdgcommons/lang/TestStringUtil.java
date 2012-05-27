@@ -310,21 +310,47 @@ public class TestStringUtil extends TestCase
     public void testExtract() throws Exception
     {
         // the happy path
-        assertEquals("foo", StringUtil.extractLeft("foobazbar", "baz"));
-        assertEquals("bar", StringUtil.extractRight("foobazbar", "baz"));
+        assertEquals("foo",         StringUtil.extractLeft("foo:bar", ":"));
+        assertEquals("bar",         StringUtil.extractRight("foo:bar", ":"));
 
         // the sad path
-        assertEquals("", StringUtil.extractLeft("foobar", "baz"));
-        assertEquals("", StringUtil.extractRight("foobar", "baz"));
+        assertEquals("foobar",      StringUtil.extractLeft("foobar", ":"));
+        assertEquals("",            StringUtil.extractRight("foobar", ":"));
 
-        // the bozo path
-        assertEquals("", StringUtil.extractLeft(null, "baz"));
-        assertEquals("", StringUtil.extractRight(null, "baz"));
-        assertEquals("", StringUtil.extractLeft("foobar", null));
-        assertEquals("", StringUtil.extractRight("foobar", null));
+        // the bozo paths
+        assertEquals("foobar",      StringUtil.extractLeft("foobar", ""));
+        assertEquals("",            StringUtil.extractRight("foobar", ""));
+        assertEquals("foobar",      StringUtil.extractLeft("foobar", null));
+        assertEquals("",            StringUtil.extractRight("foobar", null));
+        assertEquals("",            StringUtil.extractLeft(null, "baz"));
+        assertEquals("",            StringUtil.extractRight(null, "baz"));
 
-        // the strange path (it's how indexOf() works)
-        assertEquals("", StringUtil.extractLeft("foobar", ""));
-        assertEquals("foobar", StringUtil.extractRight("foobar", ""));
+        // and a test to make sure that we handle a multi-character target
+        assertEquals("foo",         StringUtil.extractLeft("foobazbar", "baz"));
+        assertEquals("bar",         StringUtil.extractRight("foobazbar", "baz"));
+    }
+
+
+    public void testExtractFromLast() throws Exception
+    {
+        // the happy path
+        assertEquals("/foo/bar",     StringUtil.extractLeftOfLast("/foo/bar/baz", "/"));
+        assertEquals("baz",          StringUtil.extractRightOfLast("/foo/bar/baz", "/"));
+
+        // the sad path
+        assertEquals("/foo/bar/baz", StringUtil.extractLeftOfLast("/foo/bar/baz", ":"));
+        assertEquals("",             StringUtil.extractRightOfLast("/foo/bar/baz", ":"));
+
+        // the bozo paths
+        assertEquals("/foo/bar/baz", StringUtil.extractLeftOfLast("/foo/bar/baz", ""));
+        assertEquals("",             StringUtil.extractRightOfLast("/foo/bar/baz", ""));
+        assertEquals("/foo/bar/baz", StringUtil.extractLeftOfLast("/foo/bar/baz", null));
+        assertEquals("",             StringUtil.extractRightOfLast("/foo/bar/baz", null));
+        assertEquals("",             StringUtil.extractLeftOfLast(null, "/"));
+        assertEquals("",             StringUtil.extractRightOfLast(null, "/"));
+
+        // and a check for multi-character separators
+        assertEquals("foobazbar",    StringUtil.extractLeftOfLast("foobazbarbazbif", "baz"));
+        assertEquals("bif",          StringUtil.extractRightOfLast("foobazbarbazbif", "baz"));
     }
 }
