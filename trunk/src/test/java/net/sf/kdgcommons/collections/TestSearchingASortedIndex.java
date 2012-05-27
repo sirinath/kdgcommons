@@ -33,16 +33,21 @@ extends TestCase
         final Integer[] data = new Integer[size];
         final int[] index = new int[size];
 
-        Random rnd = new Random();
+        // note: I saw a test failure in the binary search, but was unable to
+        //       reproduce in several dozen runs; if it happens again, the seed
+        //       will be logged and a regression written
+        long seed = System.currentTimeMillis();
+        Random rnd = new Random(seed);
         for (int ii = 0 ; ii < size ; ii++)
         {
-            data[ii] = rnd.nextInt();
+            data[ii] = new Integer(rnd.nextInt());
             index[ii] = ii;
         }
 
         InplaceSort.IntComparator sortComparator = new InplaceSort.IntComparator()
         {
-            // note: this is passed values from the index array, *not* indexes into the array
+            // note: this is passed values from the index array, which must be used
+            //       to index the actual data array
             public int compare(int i1, int i2)
             {
                 Integer v1 = data[i1];
@@ -64,7 +69,7 @@ extends TestCase
 
         BinarySearch.IndexedComparator<Integer> searchComparator = new BinarySearch.IndexedComparator<Integer>()
         {
-            // note: idx is already dereferenced, it is an index into the data array
+            // note: again, idx is an index into the data array
             public int compare(Integer value, int idx)
             {
                 return value.compareTo(data[idx]);
@@ -76,7 +81,7 @@ extends TestCase
         for (int ii = 0 ; ii < size ; ii++)
         {
             int ret = BinarySearch.search(index, data[index[ii]], searchComparator);
-            assertEquals(ii, ret);
+            assertEquals("BinarySearch failed; seed was " + seed, ii, ret);
         }
     }
 }
