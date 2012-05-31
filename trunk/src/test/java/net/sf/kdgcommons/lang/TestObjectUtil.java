@@ -61,4 +61,27 @@ public class TestObjectUtil extends TestCase
         assertTrue(fooStr.contains("@"));
         assertTrue(fooStr.contains(String.valueOf(System.identityHashCode(foo))));
     }
+
+
+    public void testDefaultValue() throws Exception
+    {
+        assertEquals("non-default", "foo", ObjectUtil.defaultValue("foo", "bar"));
+        assertEquals("default",     "bar", ObjectUtil.defaultValue(null, "bar"));
+    }
+
+
+    public void testDefaultValueFromFactory() throws Exception
+    {
+        ObjectFactory<String> fact = new ObjectFactory<String>()
+        {
+            public String newInstance()
+            {
+                return "bar";
+            }
+        };
+
+        assertEquals("non-default", "foo", ObjectUtil.defaultValue("foo", fact));
+        assertEquals("default",     "bar", ObjectUtil.defaultValue(null, fact));
+    }
+
 }

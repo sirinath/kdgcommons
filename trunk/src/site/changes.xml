@@ -5,10 +5,14 @@
 
     <body>
         <release version="1.0.6" date="2012-05-27"
-            description="Strings">
+            description="Strings, Objects">
             <action dev='kdgregory' type='add'>
                 StringUtil.extractLeft(), extractRight(), extractLeftOfLast(), extractRightOfLast():
                 methods to partition a string around a delimiter
+            </action>
+            <action dev='kdgregory' type='add'>
+                ObjectUtil.defaultValue(): replaces nulls with a default value, either literal or
+                created from a factory
             </action>
         </release>
 
