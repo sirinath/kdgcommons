@@ -18,6 +18,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.kdgcommons.lang.ObjectFactory;
+
 
 /**
  *  A <code>Map</code> decorator that will return a default value from {@link #get}
@@ -45,7 +47,7 @@ public class DefaultMap<K,V>
 implements Map<K,V>
 {
     private Map<K,V> _delegate;
-    private ValueFactory<V> _valueFactory;
+    private ObjectFactory<V> _valueFactory;
     private boolean _updateMap;
 
     /**
@@ -57,7 +59,7 @@ implements Map<K,V>
      *                      value is returned, <code>false</code> to return the value
      *                      and leave the mapping missing.
      */
-    public DefaultMap(Map<K,V> delegate, ValueFactory<V> factory, boolean update)
+    public DefaultMap(Map<K,V> delegate, ObjectFactory<V> factory, boolean update)
     {
         _delegate = delegate;
         _valueFactory = factory;
@@ -85,7 +87,7 @@ implements Map<K,V>
      *  @param  delegate    The underlying <code>Map</code>.
      *  @param  factory     A factory for new values.
      */
-    public DefaultMap(Map<K,V> delegate, ValueFactory<V> factory)
+    public DefaultMap(Map<K,V> delegate, ObjectFactory<V> factory)
     {
         this(delegate, factory, true);
     }
@@ -99,6 +101,7 @@ implements Map<K,V>
      *  This interface defines a factory for default values.
      */
     public interface ValueFactory<T>
+    extends ObjectFactory<T>
     {
         public T newInstance();
     }
