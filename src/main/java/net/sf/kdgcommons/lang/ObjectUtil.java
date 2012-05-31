@@ -85,4 +85,24 @@ public class ObjectUtil
                ? "null"
                : obj.getClass().getName() + "@" + System.identityHashCode(obj);
     }
+
+
+    /**
+     *  Returns the passed <code>value</code>, unless it's null, in which case
+     *  the <code>defaultValue</code> is returned.
+     */
+    public static <T> T defaultValue(T value, T defaultValue)
+    {
+        return (value != null) ? value : defaultValue;
+    }
+
+
+    /**
+     *  Returns the passed <code>value</code>, unless it's null, in which case
+     *  the <code>objectFactory</code> is queried for a value.
+     */
+    public static <T> T defaultValue(T value, ObjectFactory<T> fact)
+    {
+        return (value != null) ? value : fact.newInstance();
+    }
 }
