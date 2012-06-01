@@ -353,4 +353,15 @@ public class TestStringUtil extends TestCase
         assertEquals("foobazbar",    StringUtil.extractLeftOfLast("foobazbarbazbif", "baz"));
         assertEquals("bif",          StringUtil.extractRightOfLast("foobazbarbazbif", "baz"));
     }
+
+
+    public void testIsIn() throws Exception
+    {
+        assertTrue("happy path",        StringUtil.isIn("foo", "foo", "bar", "baz"));
+        assertFalse("sad path",         StringUtil.isIn("bif", "foo", "bar", "baz"));
+
+        assertTrue("null target",       StringUtil.isIn("foo", null, "foo", "bar", "baz"));
+        assertFalse("null test",        StringUtil.isIn(null,  "foo", "bar", "baz"));
+        assertTrue("null teest/target", StringUtil.isIn(null, "foo", null, "bar", "baz"));
+    }
 }
