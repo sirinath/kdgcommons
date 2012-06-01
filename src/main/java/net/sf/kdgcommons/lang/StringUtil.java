@@ -490,6 +490,25 @@ public class StringUtil
     }
 
 
+    /**
+     *  Returns <code>true</code> if the passed string is equal to one of
+     *  the target strings, <code>false</code> otherwise. This will typically
+     *  be invoked with a variable <code>str</code> and literal values for
+     *  <code>target</code>.
+     */
+    public static boolean isIn(String str, String... targets)
+    {
+        for (String target : targets)
+        {
+            if ((str == null) && (target == null))
+                return true;
+            else if ((str != null) && str.equals(target))
+                return true;
+        }
+        return false;
+    }
+
+
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
