@@ -103,6 +103,23 @@ public class TestClassUtil extends TestCase
 //  Testcases
 //----------------------------------------------------------------------------
 
+    public void testInternalNameToExternal() throws Exception
+    {
+        assertEquals("void",                 ClassUtil.internalNameToExternal("V"));
+        assertEquals("boolean",              ClassUtil.internalNameToExternal("Z"));
+        assertEquals("char",                 ClassUtil.internalNameToExternal("C"));
+        assertEquals("byte",                 ClassUtil.internalNameToExternal("B"));
+        assertEquals("short",                ClassUtil.internalNameToExternal("S"));
+        assertEquals("int",                  ClassUtil.internalNameToExternal("I"));
+        assertEquals("float",                ClassUtil.internalNameToExternal("F"));
+        assertEquals("long",                 ClassUtil.internalNameToExternal("J"));
+        assertEquals("double",               ClassUtil.internalNameToExternal("D"));
+        assertEquals("java.lang.Object",     ClassUtil.internalNameToExternal("Ljava/lang/Object;"));
+        assertEquals("int[]",                ClassUtil.internalNameToExternal("[I"));
+        assertEquals("java.lang.Object[][]", ClassUtil.internalNameToExternal("[[Ljava/lang/Object;"));
+    }
+
+
     public void testGetAllMethods() throws Exception
     {
         Method[] methods = ClassUtil.getAllMethods(Child.class);

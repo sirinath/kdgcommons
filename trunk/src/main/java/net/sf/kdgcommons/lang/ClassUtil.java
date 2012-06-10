@@ -29,6 +29,59 @@ import java.util.Arrays;
 public class ClassUtil
 {
     /**
+     *  Converts the "internal" name of a class (eg: "[Ljava/lang/String;") to its
+     *  "external" representation (eg: "java.lang.String[]").
+     */
+    public static String internalNameToExternal(String name)
+    {
+        if (name.length() == 1)
+        {
+            switch (name.charAt(0))
+            {
+                case 'V':
+                    return "void";
+                case 'Z':
+                    return "boolean";
+                case 'C':
+                    return "char";
+                case 'B':
+                    return "byte";
+                case 'S':
+                    return "short";
+                case 'I':
+                    return "int";
+                case 'J':
+                    return "long";
+                case 'F':
+                    return "float";
+                case 'D':
+                    return "double";
+                default :
+                    throw new IllegalArgumentException("invalid type name: " + name);
+            }
+        }
+        
+        int arrayCount = name.lastIndexOf("[") + 1;
+        String arraySuffix = "";
+        for (int ii = 0 ; ii < arrayCount ; ii++)
+            arraySuffix += "[]";
+        
+        if (arrayCount > 0)
+            name = name.substring(arrayCount);
+        
+        if (name.startsWith("L"))
+        {
+            name = name.substring(1, name.length() - 1);
+            name = name.replace('/', '.');
+        }
+        else
+            name = internalNameToExternal(name);
+        
+        return name + arraySuffix;
+    }
+    
+    
+    /**
      *  Returns all methods defined by the class and its superclasses.
      *  Equivalent to recursively calling <code>Class.getDeclaredMethods()</code>.
      */
@@ -66,11 +119,7 @@ public class ClassUtil
         }
         return result.toArray(new Method[result.size()]);
     }
-
-
-//----------------------------------------------------------------------------
-//  Internals
-//----------------------------------------------------------------------------
+    
 
     /**
      *  Determines whether a given method is overridden by methods in the
@@ -86,4 +135,9 @@ public class ClassUtil
         }
         return false;
     }
+
+
+//----------------------------------------------------------------------------
+//  Internals
+//----------------------------------------------------------------------------
 }
