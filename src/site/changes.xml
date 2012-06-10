@@ -4,8 +4,12 @@
 	</properties>
 
     <body>
-        <release version="1.0.6" date="2012-06-03"
-            description="Strings, Objects">
+        <release version="1.0.6" date="2012-06-10"
+            description="Lang">
+            <action dev='kdgregory' type='add'>
+                ClassUtil.internalNameToExternal(): turns the type names from reflective
+                signatures into actual classes
+            </action>
             <action dev='kdgregory' type='add'>
                 ObjectUtil.defaultValue(): replaces nulls with a default value, either literal or
                 created from a factory
