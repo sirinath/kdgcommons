@@ -71,6 +71,45 @@ public class StringBuilderUtil
     }
 
 
+    /**
+     *  Appends the passed string to a <code>StringBuilder</code>, unless
+     *  it ends with the test string. This is useful when constructing a
+     *  string from repeated values, where you want all but the first to
+     *  be separated by a comma.
+     *
+     *  @param  sb      The builder to be updated.
+     *  @param  test    The test string.
+     *  @param  str     The string to append <em>unless<em> the builder ends
+     *                  with the test string.
+     *
+     *  @return The <code>StringBuilder</code>, as a convenience for callers.
+     */
+    public static StringBuilder appendUnless(StringBuilder sb, String test, String str)
+    {
+        int idx = sb.length() - test.length();
+
+        // if the test string is longer than the builder, the test can't be true
+        if (idx < 0)
+        {
+            sb.append(str);
+            return sb;
+        }
+
+        // otherwise, we look at every character in common
+        for (int ii = 0 ; ii < test.length() ; ii++)
+        {
+            if (sb.charAt(idx + ii) != test.charAt(ii))
+            {
+                sb.append(str);
+                return sb;
+            }
+        }
+
+        // and if we get here, the builder ends with the test string, so do nothing
+        return sb;
+    }
+
+
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
