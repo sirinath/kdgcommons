@@ -4,7 +4,7 @@
 	</properties>
 
     <body>
-        <release version="1.0.6" date="2012-06-10"
+        <release version="1.0.6" date="2012-06-16"
             description="Lang">
             <action dev='kdgregory' type='add'>
                 ClassUtil.internalNameToExternal(): turns the type names from reflective
@@ -20,6 +20,10 @@
             </action>
             <action dev='kdgregory' type='add'>
                 StringUtil.isIn(): tests a string against multiple candidates
+            <action dev='kdgregory' type='add'>
+                StringBuilderUtil.appendUnless(): used to build up argument lists, where a comma
+                goes before every element but the first
+            </action>
             </action>
         </release>
 

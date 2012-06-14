@@ -59,4 +59,30 @@ public class TestStringBuilderUtil extends TestCase
         assertEquals('\0', StringBuilderUtil.lastChar(null));
     }
 
+
+    public void testAppendUnless() throws Exception
+    {
+        StringBuilder sb = new StringBuilder("(");
+
+        // test 1: ends with paren, so nothing should be appended
+        StringBuilderUtil.appendUnless(sb, "(", ",");
+        assertEquals("(", sb.toString());
+
+        // test 2: once the paren is no longer the end, then the comma is appended
+        sb.append("foo");
+        StringBuilderUtil.appendUnless(sb, "(", ",");
+        assertEquals("(foo,", sb.toString());
+
+        // test 3: a test string > 1 char that won't apply
+        StringBuilderUtil.appendUnless(sb, "foo,", "bar,");
+        assertEquals("(foo,", sb.toString());
+
+        // test 4: and one that will
+        StringBuilderUtil.appendUnless(sb, "baz,", "bar,");
+        assertEquals("(foo,bar,", sb.toString());
+
+        // test 5: a test string that's longer than the builder
+        StringBuilderUtil.appendUnless(sb, "(foo,bar,baz", "biff");
+        assertEquals("(foo,bar,biff", sb.toString());
+    }
 }
