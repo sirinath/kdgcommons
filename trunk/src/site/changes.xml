@@ -4,7 +4,7 @@
 	</properties>
 
     <body>
-        <release version="1.0.6" date="2012-06-16"
+        <release version="1.0.6" date="2012-06-30"
             description="Lang">
             <action dev='kdgregory' type='add'>
                 ClassUtil.internalNameToExternal(): turns the type names from reflective
