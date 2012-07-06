@@ -16,6 +16,7 @@ package net.sf.kdgcommons.collections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -276,4 +277,38 @@ public class TestCollectionUtil extends TestCase
                      CollectionUtil.filter(src, ".+", false));
     }
 
+
+    public void testIsEmpty() throws Exception
+    {
+        assertTrue(CollectionUtil.isEmpty(null));
+        assertTrue(CollectionUtil.isEmpty(Arrays.asList()));
+        assertFalse(CollectionUtil.isEmpty(Arrays.asList("foo")));
+
+        assertFalse(CollectionUtil.isNotEmpty(null));
+        assertFalse(CollectionUtil.isNotEmpty(Arrays.asList()));
+        assertTrue(CollectionUtil.isNotEmpty(Arrays.asList("foo")));
+    }
+
+
+    public void testDefaultIfNull() throws Exception
+    {
+        Iterable<String> it1 = CollectionUtil.defaultIfNull(Arrays.asList("foo"), Arrays.asList("bar"));
+        assertEquals("foo", it1.iterator().next());
+
+        Iterable<String> it2 = CollectionUtil.defaultIfNull(null, Arrays.asList("bar"));
+        assertEquals("bar", it2.iterator().next());
+    }
+
+
+    public void testDefaultIfEmpty() throws Exception
+    {
+        Collection<String> c1 = CollectionUtil.defaultIfEmpty(Arrays.asList("foo"), Arrays.asList("bar"));
+        assertEquals("foo", c1.iterator().next());
+
+        Collection<String> c2 = CollectionUtil.defaultIfEmpty(Arrays.<String>asList(), Arrays.asList("bar"));
+        assertEquals("bar", c2.iterator().next());
+
+        Collection<String> c3 = CollectionUtil.defaultIfEmpty(null, Arrays.asList("bar"));
+        assertEquals("bar", c3.iterator().next());
+    }
 }

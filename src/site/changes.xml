@@ -5,7 +5,18 @@
 
     <body>
         <release version="1.0.7" date="TBD"
-            description="TBD">
+            description="Collections">
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.isEmpty(), isNotEmpty(): null-safe tests for collection contents
+            </action>
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.defaultIfNull(): enables a null-safe for loop without explicit
+                test/replace (applies to any iterable)
+            </action>
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.defaultIfEmpty(): used to eliminate "if for action else action"
+                constructs
+            </action>
         </release>
 
         <release version="1.0.6" date="2012-06-30"
@@ -32,7 +43,7 @@
         </release>
 
         <release version="1.0.5" date="2012-05-17"
-            description="Beans, Threads, Collections">
+            description="Beans, Collections, Threads">
             <action dev='kdgregory' type='add'>
                 Introspection, IntrospectionCache: a replacement for the JDK's introspector;
                 originally written for PracticalXml
@@ -49,7 +60,7 @@
         </release>
 
         <release version="1.0.4" date="2012-04-28"
-            description="Added functionality">
+            description="Buffer, Lang, IO">
             <action dev='kdgregory' type='add'>
                 ClassUtil: utilities to muck with Class objects
             </action>
@@ -68,14 +79,14 @@
         </release>
 
         <release version="1.0.3" date="2012-04-22"
-            description="Added functionality">
+            description="Collections">
             <action dev='kdgregory' type='add'>
                 CollectionUtil.filter(): produces one list from another by applying a regex
             </action>
         </release>
 
         <release version="1.0.2" date="2012-04-16"
-            description="Added functionality">
+            description="Collections, Html, IO">
             <action dev='kdgregory' type='update'>
                 HtmlUtil.escape(): bugfix for escaped single quotes; add escaping of all non-ASCII characters
             </action>
@@ -91,7 +102,7 @@
         </release>
 
         <release version="1.0.1" date="2011-12-29"
-            description="Minor enhancements">
+            description="Collections, Html">
             <action dev='kdgregory' type='add'>
                 CombiningIterable: use a single loop to iterate multiple collections
             </action>

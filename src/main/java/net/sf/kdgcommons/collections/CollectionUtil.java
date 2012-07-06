@@ -219,4 +219,45 @@ public class CollectionUtil
         }
         return result;
     }
+
+
+    /**
+     *  Returns <code>true</code> if the passed collection is either <code>null</code>
+     *  or has size 0.
+     */
+    public static boolean isEmpty(Collection<?> c)
+    {
+        return (c == null)
+             ? true
+             : (c.size() == 0);
+    }
+
+
+    /**
+     *  Returns <code>true</code> if the passed collection is not <code>null</code>
+     *  and has size &gt; 0.
+     */
+    public static boolean isNotEmpty(Collection<?> c)
+    {
+        return (c != null) && (c.size() > 0);
+    }
+
+
+    /**
+     *  Returns the default <code>Iterable</code> if the regular object is null.
+     *  This is used for a null-safe for loop.
+     */
+    public static <T> Iterable<T> defaultIfNull(Iterable<T> reg, Iterable<T> def)
+    {
+        return (reg == null) ? def : reg;
+    }
+
+
+    /**
+     *  Returns the default collection if the regular object is null or empty.
+     */
+    public static <T> Collection<T> defaultIfEmpty(Collection<T> reg, Collection<T> def)
+    {
+        return ((reg == null) || (reg.size() == 0)) ? def : reg;
+    }
 }
