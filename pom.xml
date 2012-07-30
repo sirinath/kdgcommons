@@ -112,10 +112,11 @@
 
   <dependencies>
     <dependency>
-        <!-- note, scope is not limited to testing: I include test-support classes -->
+        <!-- note, scope is "provided"; this library has some JUnit enhancements -->
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>3.8.2</version>
+        <scope>provided</scope>
     </dependency>
   </dependencies>
 
