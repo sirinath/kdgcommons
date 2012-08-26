@@ -198,9 +198,17 @@ extends TestCase
             orig[ii] = (byte)(ii % 127 + 1);
 
         final int readLimit = 256;
+        final AtomicBoolean wasClosed = new AtomicBoolean(false);
 
         InputStream in = new ByteArrayInputStream(orig)
         {
+            @Override
+            public void close() throws IOException
+            {
+                wasClosed.set(true);
+                super.close();
+            }
+
             @Override
             public synchronized int read(byte[] b, int off, int len)
             {
@@ -222,19 +230,22 @@ extends TestCase
         assertEquals("read first byte",         orig[0], b0[0]);
         assertEquals("read last byte",          orig[readLimit - 1], b0[readLimit - 1]);
         assertEquals("did not over-read",       0, b0[readLimit]);
+        assertFalse("stream was closed",        wasClosed.get());
 
         // then assert that readFully() does its thing
         byte[] b1 = new byte[514];
         int r1 = IOUtil.readFully(in, b1);
-        assertEquals("read desired length", b1.length, r1);
-        assertEquals("read first byte",     orig[r0], b1[0]);
-        assertEquals("read last byte",      orig[r0 + r1 - 1], b1[r1 - 1]);
+        assertEquals("read desired length",     b1.length, r1);
+        assertEquals("read first byte",         orig[r0], b1[0]);
+        assertEquals("read last byte",          orig[r0 + r1 - 1], b1[r1 - 1]);
+        assertFalse("stream was closed",        wasClosed.get());
 
         // finally assert that we return at end-of-file
         byte[] b2 = new byte[512];
         int r2 = IOUtil.readFully(in, b2);
-        assertEquals("read to EOF",         (orig.length - (r0 + r1)), r2);
-        assertEquals("read first byte",     orig[r0 + r1], b2[0]);
-        assertEquals("read last byte",      orig[orig.length - 1], b2[r2 - 1]);
+        assertEquals("read to EOF",             (orig.length - (r0 + r1)), r2);
+        assertEquals("read first byte",         orig[r0 + r1], b2[0]);
+        assertEquals("read last byte",          orig[orig.length - 1], b2[r2 - 1]);
+        assertFalse("stream was closed",        wasClosed.get());
     }
 }
