@@ -1,0 +1,156 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
+    <groupId>net.sf.kdgcommons</groupId>
+    <artifactId>kdgcommons</artifactId>
+    <version>1.0.7</version>
+
+    <name>KDG Commons</name>
+    <packaging>jar</packaging>
+    <url>http://sourceforge.net/projects/kdgcommons/</url>
+
+    <description>
+        A collection of utility classes for Java, supplementing and in some cases
+        replacing Jakarta Commons and Google Guava.
+    </description>
+
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+
+    <developers>
+        <developer>
+            <id>kdgregory</id>
+            <name>Keith D Gregory</name>
+            <url>http://www.kdgregory.com</url>
+        </developer>
+    </developers>
+
+
+    <mailingLists>
+        <mailingList>
+            <name>kdgcommons-commits</name>
+            <subscribe>http://lists.sourceforge.net/mailman/listinfo/kdgcommons-commits</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/mailman/listinfo/kdgcommons-commits</unsubscribe>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=kdgcommons-commits</archive>
+        </mailingList>
+    </mailingLists>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                    <compilerArgument>-g</compilerArgument>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <bottom>
+                        &lt;a
+                        href="http://sourceforge.net/projects/kdgcommons/"&gt;
+                        &lt;img
+                        src="http://sflogo.sourceforge.net/sflogo.php?group_id=234884&amp;type=3"&gt;
+                        &lt;/a&gt; </bottom>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <configuration>
+                    <instrumentation>
+                        <excludes>
+                            <exclude>**/Test*.class</exclude>
+                            <exclude>**/AbstractTestCase.class</exclude>
+                        </excludes>
+                    </instrumentation>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>clean</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.4.0</version>
+                <configuration>
+                    <excludeFilterFile>src/site/findbugs-filter.xml</excludeFilterFile>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changes-plugin</artifactId>
+                <version>2.7.1</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>changes-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+
+
+    <dependencies>
+        <dependency>
+            <!-- note, scope is "provided"; this library has some JUnit enhancements -->
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.2</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+
+    <scm>
+        <connection>scm:svn:https://kdgcommons.svn.sourceforge.net/svnroot/kdgcommons</connection>
+        <developerConnection>scm:svn:https://kdgcommons.svn.sourceforge.net/svnroot/kdgcommons</developerConnection>
+        <url>http://kdgcommons.svn.sourceforge.net/viewvc/kdgcommons/</url>
+    </scm>
+
+
+    <distributionManagement>
+        <repository>
+            <id>build</id>
+            <name>Local Deployment Directory</name>
+            <url>file://${project.build.directory}/deploy</url>
+        </repository>
+    </distributionManagement>
+
+</project>
