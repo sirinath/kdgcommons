@@ -18,9 +18,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -228,6 +230,51 @@ public class TestCollectionUtil extends TestCase
         assertEquals(",,baz",       CollectionUtil.join(Arrays.asList(null, null, "baz"), ","));
         assertEquals("foo,,",       CollectionUtil.join(Arrays.asList("foo", null, null), ","));
         assertEquals(",bar,",       CollectionUtil.join(Arrays.asList(null, "bar", null), ","));
+    }
+
+
+    public void testCombineList() throws Exception
+    {
+        List<String> dest = CollectionUtil.combine(new ArrayList<String>(),
+                                                  Arrays.asList("foo", "bar", "baz"),
+                                                  Arrays.asList("baz", "bargle", "bazzle"));
+
+        assertEquals("number of elements",      6, dest.size());
+        assertEquals("first item from src1",    "foo", dest.get(0));
+        assertEquals("last item from src1",     "baz", dest.get(2));
+        assertEquals("first item from src2",    "baz", dest.get(3));
+        assertEquals("last item from src2",     "bazzle", dest.get(5));
+    }
+
+
+    public void testCombineSet() throws Exception
+    {
+        Set<String> dest = CollectionUtil.combine(new HashSet<String>(),
+                                                  Arrays.asList("foo", "bar", "baz"),
+                                                  Arrays.asList("baz", "bargle", "bazzle"));
+
+        assertEquals("number of elements",  5, dest.size());
+        assertTrue("item from src1",        dest.contains("foo"));
+        assertTrue("item from src2",        dest.contains("bazzle"));
+    }
+
+
+    public void testCombineMap() throws Exception
+    {
+        Map<String,String> src1 = new MapBuilder<String,String>(new HashMap<String,String>())
+                                  .put("foo", "bar")
+                                  .put("argle", "bargle")
+                                  .toMap();
+        Map<String,String> src2 = new MapBuilder<String,String>(new HashMap<String,String>())
+                                  .put("foo", "baz")
+                                  .put("bazzle", "bizzle")
+                                  .toMap();
+        Map<String,String> dest = CollectionUtil.combine(new HashMap<String,String>(), src1, src2);
+
+        assertEquals("number of elements",  3, dest.size());
+        assertEquals("item from src1",      "bargle", dest.get("argle"));
+        assertEquals("item from src2",      "bizzle", dest.get("bazzle"));
+        assertEquals("item in both",        "baz", dest.get("foo"));
     }
 
 

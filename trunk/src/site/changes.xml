@@ -5,7 +5,10 @@
 
     <body>
         <release version="1.0.7" date="TBD"
-            description="Collections">
+            description="Collections, IO">
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.combine(): combines collections, returning result
+            </action>
             <action dev='kdgregory' type='add'>
                 CollectionUtil.isEmpty(), isNotEmpty(): null-safe tests for collection contents
             </action>
