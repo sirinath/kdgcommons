@@ -4,7 +4,7 @@
 	</properties>
 
     <body>
-        <release version="1.0.7" date="TBD"
+        <release version="1.0.7" date="2012-08-26"
             description="Collections, IO">
             <action dev='kdgregory' type='add'>
                 CollectionUtil.combine(): combines collections, returning result
@@ -22,6 +22,10 @@
             </action>
             <action dev='kdgregory' type='update'>
                 IOUtil.createTempFile(InputStream): now closes stream after copy
+            </action>
+            <action dev='kdgregory' type='update'>
+                This library no longer establishes a transitive dependency on JUnit 3.8.x. If you
+                use the assertion classes, you will need to provide your own JUnit dependency.
             </action>
         </release>
 
