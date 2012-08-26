@@ -194,6 +194,8 @@ public class IOUtil
     /**
      *  Repeatedly reads the passed stream, until either the buffer is full or EOF
      *  is reached. Returns the number of bytes actually read.
+     *  <p>
+     *  The stream will not be closed by this method, even if EOF is reached.
      *
      *  @since 1.0.4
      */
