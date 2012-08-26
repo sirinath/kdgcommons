@@ -21,4 +21,11 @@
         <!-- intentionally returns internal state, documented as such -->
     </Match>
 
+    <Match>
+        <Class name='net.sf.kdgcommons.lang.ClassUtil' />
+        <Method name='internalNameToExternal' />
+        <Bug pattern='SBSC_USE_STRINGBUFFER_CONCATENATION' />
+        <!-- this is a loop with few iterations (almost always < 3), not worth replacing -->
+    </Match>
+
 </FindBugsFilter>
