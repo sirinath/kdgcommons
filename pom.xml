@@ -10,7 +10,7 @@
 
     <groupId>net.sf.kdgcommons</groupId>
     <artifactId>kdgcommons</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8-SNAPSHOT</version>
 
     <name>KDG Commons</name>
     <packaging>jar</packaging>
