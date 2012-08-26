@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.RandomAccess;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -190,6 +191,60 @@ public class CollectionUtil
                 buf.append(String.valueOf(item));
         }
         return buf.toString();
+    }
+
+
+    /**
+     *  Adds all elements of the <code>src</code> collections to <code>dest</code>,
+     *  returning <code>dest</code>. This is typically used when you need to combine
+     *  collections temporarily for a method argument.
+     *
+     *  @since 1.0.7
+     */
+    public static <T> List<T> combine(List<T> dest, Collection<T>... src)
+    {
+        for (Collection<T> cc : src)
+        {
+            dest.addAll(cc);
+        }
+        return dest;
+    }
+
+
+    /**
+     *  Adds all elements of the <code>src</code> collections to <code>dest</code>,
+     *  returning <code>dest</code>. This is typically used when you need to combine
+     *  collections temporarily for a method argument.
+     *
+     *  @since 1.0.7
+     */
+    public static <T> Set<T> combine(Set<T> dest, Collection<T>... src)
+    {
+        for (Collection<T> cc : src)
+        {
+            dest.addAll(cc);
+        }
+        return dest;
+    }
+
+
+    /**
+     *  Adds all elements of the <code>src</code> collections to <code>dest</code>,
+     *  returning <code>dest</code>. This is typically used when you need to combine
+     *  collections temporarily for a method argument.
+     *  <p>
+     *  Note: source maps are added in order; if the same keys are present in multiple
+     *  sources, the last one wins.
+     *
+     *  @since 1.0.7
+     */
+    public static <K,V> Map<K,V> combine(Map<K,V> dest, Map<K,V>... src)
+    {
+        for (Map<K,V> cc : src)
+        {
+            dest.putAll(cc);
+        }
+        return dest;
     }
 
 
