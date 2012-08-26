@@ -20,6 +20,9 @@
                 CollectionUtil.defaultIfEmpty(): used to eliminate "if for action else action"
                 constructs
             </action>
+            <action dev='kdgregory' type='update'>
+                IOUtil.createTempFile(InputStream): now closes stream after copy
+            </action>
         </release>
 
         <release version="1.0.6" date="2012-06-30"

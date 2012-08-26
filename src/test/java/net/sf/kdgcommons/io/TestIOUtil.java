@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPOutputStream;
 
 import junit.framework.TestCase;
@@ -161,14 +162,27 @@ extends TestCase
     }
 
 
-    public void testCreateTempFileFromString() throws Exception
+    public void testCreateTempFileFromStream() throws Exception
     {
-        String content = "this is a test";
-        ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes("UTF-8"));
+        byte[] content = "this is a test".getBytes("UTF-8");
 
-        File file = IOUtil.createTempFile(in, "testCreateTempFileFromString");
-        assertEquals("file size", content.length(), (int)file.length());
-        // I see no reason to verify the content; another test validated copy()
+        // I need to track that the input stream was closed, so need an override
+        final AtomicBoolean wasClosed = new AtomicBoolean(false);
+        ByteArrayInputStream in = new ByteArrayInputStream(content)
+        {
+            @Override
+            public void close() throws IOException
+            {
+                wasClosed.set(true);
+                super.close();
+            }
+        };
+
+        File file = IOUtil.createTempFile(in, "testCreateTempFileFromStream");
+        assertEquals("file size", content.length, (int)file.length());
+        assertTrue("file was closed", wasClosed.get());
+
+        // whitebox: this method is based on copy(), so no need to validate content if length is right
     }
 
 

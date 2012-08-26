@@ -62,8 +62,8 @@ public class IOUtil
 
 
     /**
-     *  Copies the input stream to the output stream. Does not close either.
-     *  Either parameter may be null, in which case this method is a no-op.
+     *  Copies the input stream to the output stream, leaving both open.
+     *  Either parameter may be null, in which case this method does nothing.
      *  <p>
      *  This method also exists (with many variants) in Jakarta Commons IO.
      *  It's here so that this library can be self-contained.
@@ -165,23 +165,26 @@ public class IOUtil
 
     /**
      *  Creates a temporary file via {@link #createTempFile}, then copies the
-     *  contents of the passed stream to it. Caller is responsible for closing
-     *  the input stream.
+     *  contents of the passed stream to it. The input stream will be closed,
+     *  whether or not the method completed normally (including cases where the
+     *  file could not be created).
      *
      *  @since 1.0.2
      */
     public static File createTempFile(InputStream in, String prefix)
     throws IOException
     {
-        File file = createTempFile(prefix, 0);
+        File file = null;
         FileOutputStream fos = null;
         try
         {
+            file = createTempFile(prefix, 0);
             fos = new FileOutputStream(file);
             copy(in, fos);
         }
         finally
         {
+            closeQuietly(in);
             closeQuietly(fos);
         }
         return file;
