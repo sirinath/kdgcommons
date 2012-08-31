@@ -4,6 +4,13 @@
 	</properties>
 
     <body>
+        <release version="1.0.8" date="TBD"
+            description="IO">
+            <action dev='kdgregory' type='add'>
+                IOUtil.skipFully(): offers a higher level of skipping than InputStream.skip()
+            </action>
+        </release>
+
         <release version="1.0.7" date="2012-08-26"
             description="Collections, IO">
             <action dev='kdgregory' type='add'>
