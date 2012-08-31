@@ -212,4 +212,33 @@ public class IOUtil
         }
         return off;
     }
+
+
+    /**
+     *  Repeatedly calls <code>skip()/code> on the underlying stream, until either the
+     *  desired number of bytes have been read or EOF is reached. Returns the number
+     *  of bytes actually skipped.
+     *
+     *  @since  1.0.8
+     */
+    public static long skipFully(InputStream in, long bytesToSkip)
+    throws IOException
+    {
+        // implementation note: Inputstream.skip() won't tell us when we've reached EOF,
+        // so we have to resort to repeated reads ... this buffer should fit in Eden
+        byte[] buf = new byte[8192];
+        long bytesSkipped = 0;
+        while (bytesToSkip > 0)
+        {
+            int len = (int)Math.min(buf.length, bytesToSkip);
+            if (len == 0)
+                break;
+            int count = in.read(buf, 0, len);
+            if (count < 0)
+                return bytesSkipped;
+            bytesSkipped += count;
+            bytesToSkip -= count;
+        }
+        return bytesSkipped;
+    }
 }

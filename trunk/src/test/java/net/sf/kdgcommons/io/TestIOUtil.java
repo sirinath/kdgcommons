@@ -32,6 +32,91 @@ import net.sf.kdgcommons.test.SimpleMock;
 public class TestIOUtil
 extends TestCase
 {
+//----------------------------------------------------------------------------
+//  Support Code
+//----------------------------------------------------------------------------
+
+    /**
+     *  A stream that will only play out its data a smidge at a time. Rather
+     *  than give it data, we simply walk the byte values 0..127.
+     */
+    private static class ReadLimitedInputStream
+    extends InputStream
+    {
+        private int _readLimit;
+        private int _max;
+        private int _next;
+        private boolean _wasClosed = false;
+
+        public ReadLimitedInputStream(int readLimit, int max)
+        {
+            _readLimit = readLimit;
+            _max = max;
+        }
+
+        private byte nextByte()
+        {
+            return (byte)(_next++ % 128);
+        }
+
+        public boolean isClosed()
+        {
+            return _wasClosed;
+        }
+
+
+        @Override
+        public void close() throws IOException
+        {
+            _wasClosed = true;
+        }
+
+        @Override
+        public int read() throws IOException
+        {
+            return (_next < _max) ? nextByte() : -1;
+        }
+
+        @Override
+        public synchronized int read(byte[] b, int off, int len)
+        {
+            int ret = 0;
+            for (int ii = 0 ; ii < Math.min(len, _readLimit) ; ii++)
+            {
+                if (_next >= _max)
+                    break;
+                b[off + ii] = nextByte();
+                ret++;
+            }
+            if (ret > 0)
+                return ret;
+            if (_next >= _max)
+                return -1;
+            return 0;
+        }
+
+        @Override
+        public int read(byte[] b) throws IOException
+        {
+            return read(b, 0, b.length);
+        }
+
+        @Override
+        public long skip(long n) throws IOException
+        {
+            int toSkip = (int)Math.min(_readLimit, n);
+            if ((_next + toSkip) > _max)
+                toSkip = _max - _next;
+            _next += toSkip;
+            return toSkip;
+        }
+    }
+
+
+//----------------------------------------------------------------------------
+//  Testcases
+//----------------------------------------------------------------------------
+
     public void testCloseQuietly() throws Exception
     {
         SimpleMock proxy = new SimpleMock();
@@ -188,64 +273,62 @@ extends TestCase
 
     public void testReadFully() throws Exception
     {
-        // to test this, I need an InputStream that won't read its entire data
-        // in a single pass; since ByteArrayInputstream will let me manage the
-        // data easily, it will be the base ... note that the bytes follow a
-        // pattern (1..127), so we can easily verify reads
-
-        byte[] orig = new byte[1024];
-        for (int ii = 0 ; ii < orig.length ; ii++)
-            orig[ii] = (byte)(ii % 127 + 1);
-
-        final int readLimit = 256;
-        final AtomicBoolean wasClosed = new AtomicBoolean(false);
-
-        InputStream in = new ByteArrayInputStream(orig)
-        {
-            @Override
-            public void close() throws IOException
-            {
-                wasClosed.set(true);
-                super.close();
-            }
-
-            @Override
-            public synchronized int read(byte[] b, int off, int len)
-            {
-                len = Math.min(len, readLimit);
-                return super.read(b, off, len);
-            }
-
-            @Override
-            public int read(byte[] b) throws IOException
-            {
-                return read(b, 0, b.length);
-            }
-        };
+        ReadLimitedInputStream in = new ReadLimitedInputStream(250, 1024);
 
         // first assert that raw reads reads are limited
-        byte[] b0 = new byte[512];
-        int r0 = in.read(b0);
-        assertEquals("raw reads are limited",   readLimit, r0);
-        assertEquals("read first byte",         orig[0], b0[0]);
-        assertEquals("read last byte",          orig[readLimit - 1], b0[readLimit - 1]);
-        assertEquals("did not over-read",       0, b0[readLimit]);
-        assertFalse("stream was closed",        wasClosed.get());
+        byte[] b1 = new byte[512];
+        int r1 = in.read(b1);
+        assertEquals("raw reads are limited",   250, r1);
+        assertEquals("read first byte",         0, b1[0]);
+        assertEquals("read last byte",          121, b1[249]);
+        assertEquals("did not over-read",       0, b1[250]);
+        assertFalse("stream was closed",        in.isClosed());
 
         // then assert that readFully() does its thing
-        byte[] b1 = new byte[514];
-        int r1 = IOUtil.readFully(in, b1);
-        assertEquals("read desired length",     b1.length, r1);
-        assertEquals("read first byte",         orig[r0], b1[0]);
-        assertEquals("read last byte",          orig[r0 + r1 - 1], b1[r1 - 1]);
-        assertFalse("stream was closed",        wasClosed.get());
-
-        // finally assert that we return at end-of-file
-        byte[] b2 = new byte[512];
+        byte[] b2 = new byte[514];
         int r2 = IOUtil.readFully(in, b2);
-        assertEquals("read to EOF",             (orig.length - (r0 + r1)), r2);
-        assertEquals("read first byte",         orig[r0 + r1], b2[0]);
-        assertEquals("read last byte",          orig[orig.length - 1], b2[r2 - 1]);
-        assertFalse("stream was closed",        wasClosed.get());
+        assertEquals("read desired length",     b2.length, r2);
+        assertEquals("read first byte",         122, b2[0]);
+        assertEquals("read last byte",          123, b2[513]);
+        assertFalse("stream was closed",        in.isClosed());
+
+        // assert that we return at end-of-file
+        byte[] b3 = new byte[512];
+        int r3 = IOUtil.readFully(in, b3);
+        assertEquals("read to EOF",             260, r3);
+        assertEquals("read first byte",         124, b3[0]);
+        assertEquals("read last byte",          127, b3[259]);
+        assertFalse("stream was closed",        in.isClosed());
+
+        // and attempting to read past EOF doesn't return anything
+        byte[] b4 = new byte[512];
+        int r4 = IOUtil.readFully(in, b4);
+        assertEquals("read past EOF",           0, r4);
+        assertFalse("stream was closed",        in.isClosed());
+    }
+
+
+    public void testSkipFully() throws Exception
+    {
+        ReadLimitedInputStream in = new ReadLimitedInputStream(250, 1024);
+
+        // as above, check built-in function
+        long s1 = in.skip(256);
+        assertEquals("bytes skipped by stream", 250, s1);
+        assertEquals("next byte",               122, in.read());    // 250 % 128
+
+        // then a complete skip
+        long s2 = IOUtil.skipFully(in, 700);
+        assertEquals("bytes skipped",           700, s2);
+        assertEquals("next byte",               55, in.read());     // 951 % 128
+
+        // then skip to end
+        long s3 = IOUtil.skipFully(in, 700);
+        assertEquals("bytes skipped",           72, s3);
+        assertEquals("next byte",               -1, in.read());
+
+        // skipping past end should do nothing
+        long s4 = IOUtil.skipFully(in, 700);
+        assertEquals("bytes skipped",           0, s4);
     }
 }
