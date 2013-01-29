@@ -101,20 +101,40 @@ public class SimpleCLIParser
         while (itx.hasNext())
         {
             String arg = itx.next();
+            String argSansParam = arg.contains("=")
+                                ? arg.substring(0, arg.indexOf("="))
+                                : arg;
 
-            OptionDefinition def = defsByStr.get(arg);
+            OptionDefinition def = defsByStr.get(argSansParam);
             if (def != null)
             {
-                Option opt = new Option(def, arg);
-                for (int ii = 0 ; ii < def.numParams ; ii++)
-                {
-                    opt.addParameter(itx.next());
-                }
+                Option opt = new Option(def, argSansParam);
+                processOptionParams(opt, def, arg, itx);
                 options.put(def.key, opt);
             }
             else
             {
                 nonOptions.add(arg);
+            }
+        }
+    }
+
+
+    private void processOptionParams(Option opt, OptionDefinition def, String arg, Iterator<String> argItx)
+    {
+        if (arg.contains("="))
+        {
+            String params = arg.substring(arg.indexOf("=") + 1);
+            for (String param : params.split(","))
+            {
+                opt.addParameter(param);
+            }
+        }
+        else
+        {
+            for (int ii = 0 ; ii < def.numParams ; ii++)
+            {
+                opt.addParameter(argItx.next());
             }
         }
     }
@@ -284,6 +304,11 @@ public class SimpleCLIParser
          *  Constructor for an option that takes zero or more parameters. Such
          *  options are disabled by default; they must be explicitly specified
          *  on the command-line.
+         *  <p>
+         *  Parameters may be specified in one of two ways: either as subsequent
+         *  arguments on the command line, or in the form :<code>OPTION=PARAM1,...</code>".
+         *  At present, there is no support for an option that has a name that
+         *  includes an "=".
          *
          *  @param  key             A key used to retrieve this option's value
          *                          from the parsed command line. For readability,

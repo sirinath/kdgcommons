@@ -36,7 +36,7 @@ public class TestSimpleCLIParser extends TestCase
     public final static String  OPT2_ENABLE     = "--enableTwo";
     public final static String  OPT2_DISABLE    = "--disableTwo";
     public final static int     OPT2_NUMPARAM   = 0;
-    public final static String  OPT2_DESC       = "option 1 description";
+    public final static String  OPT2_DESC       = "option 2 description";
 
 
 //----------------------------------------------------------------------------
@@ -162,6 +162,30 @@ public class TestSimpleCLIParser extends TestCase
     }
 
 
+    public void testEmbeddedParameters() throws Exception
+    {
+        SimpleCLIParser parser1 = new ParamParser(OPT1_ENABLE + "=foo");
+
+        assertEquals("getOptions()",        Arrays.asList(OPT1),
+                                            parser1.getOptions());
+        assertEquals("getParameters()",     Collections.emptyList(),
+                                            parser1.getParameters());
+        assertEquals("getOptionParameters()", Arrays.asList("foo"),
+                                            parser1.getOptionParameters(OPT1));
+
+        // note that we don't pay attention to the defined parameter count
+
+        SimpleCLIParser parser2 = new ParamParser(OPT1_ENABLE + "=foo,bar");
+
+        assertEquals("getOptions()",        Arrays.asList(OPT1),
+                                            parser2.getOptions());
+        assertEquals("getParameters()",     Collections.emptyList(),
+                                            parser2.getParameters());
+        assertEquals("getOptionParameters()", Arrays.asList("foo","bar"),
+                                            parser2.getOptionParameters(OPT1));
+    }
+
+
     public void testOptionWithoutParameters() throws Exception
     {
         // opt2 isn't present, so it's "disabled"
@@ -201,5 +225,6 @@ public class TestSimpleCLIParser extends TestCase
         assertTrue("option 1 disable",       helpText.contains(OPT1_DISABLE));
         assertTrue("option 1 description",   helpText.contains(OPT1_DESC));
     }
+
 
 }
