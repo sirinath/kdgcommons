@@ -33,16 +33,19 @@ import net.sf.kdgcommons.lang.StringUtil;
  *  options (and optionally exits with error code 1).
  *  <p>
  *  This class can be used on its own, but is normally subclassed. The subclass
- *  is responsible for defining the set of legal arguments, and presenting a
- *  constructor that just takes the command-line argument vector. The subclass
- *  also normally defines an <code>enum</code> that corresponds to the available
- *  options, as a shorthand for accessing the option values.
+ *  is responsible for defining the set of options and presenting a constructor
+ *  that just takes the command-line argument vector. The subclass also normally
+ *  defines an <code>enum</code> that corresponds to the available options, as
+ *  a shorthand for accessing the option values.
  *  <p>
  *  The {@link #Option} class is how the caller defines legal options. Options
- *  have an "enable" value, an optional "disable" value, and take an optional
- *  number of parameters. Each option is also identified by a key (typically an
- *  <code>enum</code>), that is used to examine option values.
- *  <p>
+ *  have two forms:
+ *  <dl>
+ *  <dt> Enable/disable
+ *  <dd> The option always has a value. The user has distinct strings to enable
+ *       or disable it, and there is a default value.
+ *   <
+ *  </dl>
  *  The non-option command-line parameters are available in a number of ways.
  *  They can be retrieved all at once using the {@link #getArgs} method, or one
  *  at a time using the {@link #shift} method.
@@ -108,9 +111,15 @@ public class SimpleCLIParser
             OptionDefinition def = defsByStr.get(argSansParam);
             if (def != null)
             {
-                Option opt = new Option(def, argSansParam);
+                // for enable/disable options, first one wins
+                Option opt = options.get(def.key);
+                if (opt == null)
+                {
+                    opt = new Option(def, argSansParam);
+                    options.put(def.key, opt);
+                }
+
                 processOptionParams(opt, def, arg, itx);
-                options.put(def.key, opt);
             }
             else
             {
@@ -319,8 +328,7 @@ public class SimpleCLIParser
          *                          will be shifted from the argument list.
          *  @param  description     A description of the option.
          */
-        public OptionDefinition(Object key, String enableVal, int numParams,
-                      String description)
+        public OptionDefinition(Object key, String enableVal, int numParams, String description)
         {
             this.key = key;
             this.enableVal = enableVal;
