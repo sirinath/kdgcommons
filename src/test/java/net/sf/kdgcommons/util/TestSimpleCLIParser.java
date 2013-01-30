@@ -186,9 +186,32 @@ public class TestSimpleCLIParser extends TestCase
     }
 
 
+    public void testMultipleOptionsWithParameters() throws Exception
+    {
+        // variant 1: options and parameters specified separately 
+        SimpleCLIParser parser1 = new ParamParser(OPT1_ENABLE, "foo", OPT1_ENABLE, "bar");
+
+        assertEquals("getOptions()",        Arrays.asList(OPT1),
+                                            parser1.getOptions());
+        assertEquals("getParameters()",     Collections.emptyList(),
+                                            parser1.getParameters());
+        assertEquals("getOptionParameters()", Arrays.asList("foo", "bar"),
+                                            parser1.getOptionParameters(OPT1));
+        
+        // variant 2: embedded parameters
+        SimpleCLIParser parser2 = new ParamParser(OPT1_ENABLE + "=foo", OPT1_ENABLE + "=bar");
+
+        assertEquals("getOptions()",        Arrays.asList(OPT1),
+                                            parser2.getOptions());
+        assertEquals("getParameters()",     Collections.emptyList(),
+                                            parser2.getParameters());
+        assertEquals("getOptionParameters()", Arrays.asList("foo", "bar"),
+                                            parser2.getOptionParameters(OPT1));
+    }
+
+
     public void testOptionWithoutParameters() throws Exception
     {
-        // opt2 isn't present, so it's "disabled"
         SimpleCLIParser parser = new ParamParser(OPT2_ENABLE, "foo", "bar");
 
         assertFalse("opt1", parser.isOptionEnabled(OPT1));
@@ -225,6 +248,4 @@ public class TestSimpleCLIParser extends TestCase
         assertTrue("option 1 disable",       helpText.contains(OPT1_DISABLE));
         assertTrue("option 1 description",   helpText.contains(OPT1_DESC));
     }
-
-
 }
