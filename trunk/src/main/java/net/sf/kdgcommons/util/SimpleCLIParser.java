@@ -179,21 +179,40 @@ public class SimpleCLIParser
     public String getHelp()
     {
         StringBuilder sb = new StringBuilder(1024);
-        sb.append("\n");
         for (OptionDefinition def : optionDefs)
         {
-            sb.append("    ").append(def.enableVal);
-            if (def.enableByDefault)
-                sb.append(" (default)");
             sb.append("\n");
-            if (! StringUtil.isEmpty(def.disableVal))
+            if (def.type == OptionDefinition.Type.BINARY)
             {
-                sb.append("    ").append(def.disableVal);
-                if (! def.enableByDefault)
+                sb.append("    ").append(def.enableVal);
+                if (def.enableByDefault)
                     sb.append(" (default)");
                 sb.append("\n");
+                if (! StringUtil.isEmpty(def.disableVal))
+                {
+                    sb.append("    ").append(def.disableVal);
+                    if (! def.enableByDefault)
+                        sb.append(" (default)");
+                    sb.append("\n");
+                }
             }
-            sb.append("\n").append(def.description).append("\n");
+            else
+            {
+                sb.append("    ").append(def.enableVal);
+                for (int ii = 0 ; ii < def.numParams ; ii++)
+                {
+                    if (ii == 0)
+                    {
+                        sb.append("=PARAM").append(ii + 1);
+                    }
+                    else
+                    {
+                        sb.append(",PARAM").append(ii + 1);
+                    }
+                    sb.append("\n");
+                }
+            }
+            sb.append("\n    ").append(def.description).append("\n");
         }
         return sb.toString();
     }
@@ -280,6 +299,9 @@ public class SimpleCLIParser
      */
     public static class OptionDefinition
     {
+        public enum Type { BINARY, PARAMETERIZED }
+
+        public Type type;
         public Object key;
         public String enableVal;
         public String disableVal;
@@ -308,6 +330,7 @@ public class SimpleCLIParser
         public OptionDefinition(Object key, String enableVal, String disableVal, boolean enableByDefault,
                       String description)
         {
+            this.type = type.BINARY;
             this.key = key;
             this.enableVal = enableVal;
             this.disableVal = disableVal;
@@ -338,6 +361,7 @@ public class SimpleCLIParser
          */
         public OptionDefinition(Object key, String enableVal, int numParams, String description)
         {
+            this.type = Type.PARAMETERIZED;
             this.key = key;
             this.enableVal = enableVal;
             this.enableByDefault = false;

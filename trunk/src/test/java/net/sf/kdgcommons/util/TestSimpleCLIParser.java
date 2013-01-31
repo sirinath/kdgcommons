@@ -188,7 +188,7 @@ public class TestSimpleCLIParser extends TestCase
 
     public void testMultipleOptionsWithParameters() throws Exception
     {
-        // variant 1: options and parameters specified separately 
+        // variant 1: options and parameters specified separately
         SimpleCLIParser parser1 = new ParamParser(OPT1_ENABLE, "foo", OPT1_ENABLE, "bar");
 
         assertEquals("getOptions()",        Arrays.asList(OPT1),
@@ -197,7 +197,7 @@ public class TestSimpleCLIParser extends TestCase
                                             parser1.getParameters());
         assertEquals("getOptionParameters()", Arrays.asList("foo", "bar"),
                                             parser1.getOptionParameters(OPT1));
-        
+
         // variant 2: embedded parameters
         SimpleCLIParser parser2 = new ParamParser(OPT1_ENABLE + "=foo", OPT1_ENABLE + "=bar");
 
@@ -239,13 +239,21 @@ public class TestSimpleCLIParser extends TestCase
 
     public void testGetHelp() throws Exception
     {
-        SimpleCLIParser parser = new EnableDisableParser();
-        String helpText = parser.getHelp();
+        SimpleCLIParser parser1 = new EnableDisableParser();
+        String helpText1 = parser1.getHelp();
 
         // not the world's greatest set of assertions, but usage is really the best
         // way to determine what looks good for help text
-        assertTrue("option 1 enable",        helpText.contains(OPT1_ENABLE + " (default)"));
-        assertTrue("option 1 disable",       helpText.contains(OPT1_DISABLE));
-        assertTrue("option 1 description",   helpText.contains(OPT1_DESC));
+        assertTrue("option 1 enable",        helpText1.contains(OPT1_ENABLE + " (default)"));
+        assertTrue("option 1 disable",       helpText1.contains(OPT1_DISABLE));
+        assertTrue("option 1 description",   helpText1.contains(OPT1_DESC));
+
+        SimpleCLIParser parser2 = new ParamParser();
+        String helpText2 = parser2.getHelp();
+
+        assertTrue("option 1 enable",        helpText2.contains(OPT1_ENABLE + "=PARAM1"));
+        assertTrue("option 1 description",   helpText2.contains(OPT1_DESC));
+        assertTrue("option 2 enable",        helpText2.contains(OPT2_ENABLE));
+        assertTrue("option 2 description",   helpText2.contains(OPT2_DESC));
     }
 }
