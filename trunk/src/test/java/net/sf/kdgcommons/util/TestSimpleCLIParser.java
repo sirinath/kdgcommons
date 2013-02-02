@@ -158,7 +158,7 @@ public class TestSimpleCLIParser extends TestCase
         assertEquals("getParameters()",     Arrays.asList("bar"),
                                             parser.getParameters());
         assertEquals("getOptionParameters()", Arrays.asList("foo"),
-                                            parser.getOptionParameters(OPT1));
+                                            parser.getOptionValues(OPT1));
     }
 
 
@@ -171,7 +171,7 @@ public class TestSimpleCLIParser extends TestCase
         assertEquals("getParameters()",     Collections.emptyList(),
                                             parser1.getParameters());
         assertEquals("getOptionParameters()", Arrays.asList("foo"),
-                                            parser1.getOptionParameters(OPT1));
+                                            parser1.getOptionValues(OPT1));
 
         // note that we don't pay attention to the defined parameter count
 
@@ -182,7 +182,7 @@ public class TestSimpleCLIParser extends TestCase
         assertEquals("getParameters()",     Collections.emptyList(),
                                             parser2.getParameters());
         assertEquals("getOptionParameters()", Arrays.asList("foo","bar"),
-                                            parser2.getOptionParameters(OPT1));
+                                            parser2.getOptionValues(OPT1));
     }
 
 
@@ -196,7 +196,7 @@ public class TestSimpleCLIParser extends TestCase
         assertEquals("getParameters()",     Collections.emptyList(),
                                             parser1.getParameters());
         assertEquals("getOptionParameters()", Arrays.asList("foo", "bar"),
-                                            parser1.getOptionParameters(OPT1));
+                                            parser1.getOptionValues(OPT1));
 
         // variant 2: embedded parameters
         SimpleCLIParser parser2 = new ParamParser(OPT1_ENABLE + "=foo", OPT1_ENABLE + "=bar");
@@ -206,7 +206,7 @@ public class TestSimpleCLIParser extends TestCase
         assertEquals("getParameters()",     Collections.emptyList(),
                                             parser2.getParameters());
         assertEquals("getOptionParameters()", Arrays.asList("foo", "bar"),
-                                            parser2.getOptionParameters(OPT1));
+                                            parser2.getOptionValues(OPT1));
     }
 
 
@@ -222,7 +222,17 @@ public class TestSimpleCLIParser extends TestCase
         assertEquals("getParameters()",     Arrays.asList("foo", "bar"),
                                             parser.getParameters());
         assertEquals("getOptionParameters()", Collections.emptyList(),
-                                            parser.getOptionParameters(OPT2));
+                                            parser.getOptionValues(OPT2));
+    }
+
+
+    public void testEnableDisableOptionWithValue() throws Exception
+    {
+        SimpleCLIParser parser = new EnableDisableParser(OPT1_ENABLE + "=foo");
+
+        assertTrue("option is enabled",      parser.isOptionEnabled(OPT1));
+        assertEquals("option values",        Arrays.asList("foo"),
+                                             parser.getOptionValues(OPT1));
     }
 
 

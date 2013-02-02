@@ -112,24 +112,7 @@ public class SimpleCLIParser
         while (itx.hasNext())
         {
             String arg = itx.next();
-            String argSansParam = arg.contains("=")
-                                ? arg.substring(0, arg.indexOf("="))
-                                : arg;
-
-            OptionDefinition def = defsByStr.get(argSansParam);
-            if (def != null)
-            {
-                // for enable/disable options, first one wins
-                Option opt = options.get(def.key);
-                if (opt == null)
-                {
-                    opt = new Option(def, argSansParam);
-                    options.put(def.key, opt);
-                }
-
-                processOptionParams(opt, def, arg, itx);
-            }
-            else
+            if (! tryAsOption(arg, itx))
             {
                 nonOptions.add(arg);
             }
@@ -137,23 +120,42 @@ public class SimpleCLIParser
     }
 
 
-    private void processOptionParams(Option opt, OptionDefinition def, String arg, Iterator<String> argItx)
+    private boolean tryAsOption(String arg, Iterator<String> itx)
     {
+        String argSansParam = arg.contains("=")
+                            ? arg.substring(0, arg.indexOf("="))
+                            : arg;
+
+        OptionDefinition def = defsByStr.get(argSansParam);
+        if (def == null)
+            return false;
+
+        Option opt = options.get(def.key);
+        if (opt == null)
+        {
+            opt = new Option();
+            options.put(def.key, opt);
+        }
+
+        opt.isEnabled = argSansParam.equals(def.enableVal);
+
         if (arg.contains("="))
         {
             String params = arg.substring(arg.indexOf("=") + 1);
             for (String param : params.split(","))
             {
-                opt.addParameter(param);
+                opt.addValue(param);
             }
         }
         else
         {
             for (int ii = 0 ; ii < def.numParams ; ii++)
             {
-                opt.addParameter(argItx.next());
+                opt.addValue(itx.next());
             }
         }
+
+        return true;
     }
 
 
@@ -255,13 +257,13 @@ public class SimpleCLIParser
      *  an empty list if the option is not present (even if the option is an
      *  enable/disable type).
      */
-    public List<String> getOptionParameters(Object key)
+    public List<String> getOptionValues(Object key)
     {
         Option opt = options.get(key);
-        if ((opt == null) || (opt.parameters == null))
+        if ((opt == null) || (opt.values == null))
             return Collections.emptyList();
 
-        return opt.parameters;
+        return opt.values;
     }
 
 
@@ -327,10 +329,9 @@ public class SimpleCLIParser
          *                          disabled unless specifically enabled.
          *  @param  description     A description of the option.
          */
-        public OptionDefinition(Object key, String enableVal, String disableVal, boolean enableByDefault,
-                      String description)
+        public OptionDefinition(Object key, String enableVal, String disableVal, boolean enableByDefault, String description)
         {
-            this.type = type.BINARY;
+            this.type = Type.BINARY;
             this.key = key;
             this.enableVal = enableVal;
             this.disableVal = disableVal;
@@ -372,23 +373,18 @@ public class SimpleCLIParser
 
 
     /**
-     *  This class holds a specified option.
+     *  This class holds an option as specified on the command line.
      */
     private static class Option
     {
-        public List<String> parameters;
+        public List<String> values;
         public boolean isEnabled;
 
-        public Option(OptionDefinition def, String cliValue)
+        public void addValue(String param)
         {
-            this.isEnabled = cliValue.equals(def.enableVal);
-        }
-
-        public void addParameter(String param)
-        {
-            if (parameters == null)
-                parameters = new ArrayList<String>();
-            parameters.add(param);
+            if (values == null)
+                values = new ArrayList<String>();
+            values.add(param);
         }
     }
 }
