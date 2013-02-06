@@ -26,6 +26,17 @@ import java.util.Random;
 public class StringUtil
 {
     /**
+     *  Tests for equality, where null is equivalent to an empty string.
+     */
+    public static boolean equalOrEmpty(String s1, String s2)
+    {
+        s1 = (s1 == null) ? "" : s1;
+        s2 = (s2 == null) ? "" : s2;
+        return s1.equals(s2);
+    }
+
+
+    /**
      *  Returns the last character in the passed string, '\0' if passed
      *  null or an empty string.
      */

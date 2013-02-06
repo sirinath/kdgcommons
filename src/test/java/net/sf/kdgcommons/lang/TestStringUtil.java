@@ -364,4 +364,16 @@ public class TestStringUtil extends TestCase
         assertFalse("null test",        StringUtil.isIn(null,  "foo", "bar", "baz"));
         assertTrue("null teest/target", StringUtil.isIn(null, "foo", null, "bar", "baz"));
     }
+
+
+    public void testEqualOrEmpty() throws Exception
+    {
+        assertTrue("equal strings",      StringUtil.equalOrEmpty("foo", "foo"));
+        assertFalse("unequal strings",   StringUtil.equalOrEmpty("foo", "bar"));
+        assertFalse("unequal to null 1", StringUtil.equalOrEmpty("foo", null));
+        assertFalse("unequal to null 1", StringUtil.equalOrEmpty(null, "bar"));
+
+        assertTrue("empty to null 1",    StringUtil.equalOrEmpty("", null));
+        assertTrue("empty to null 2",    StringUtil.equalOrEmpty(null, ""));
+    }
 }
