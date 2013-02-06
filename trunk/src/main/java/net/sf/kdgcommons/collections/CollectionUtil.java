@@ -74,6 +74,19 @@ public class CollectionUtil
 
 
     /**
+     *  Adds a value to the collection if the boolean expression is true.
+     *  Returns the collection as a convenience for chained invocations.
+     */
+    public static <T> Collection<T> addIf(Collection<T> coll, T value, boolean expr)
+    {
+        if (expr)
+            coll.add(value);
+
+        return coll;
+    }
+
+
+    /**
      *  Verifies that the passed list contains only elements of the given
      *  type, and returns it as a parameterized type. Throws if any element
      *  is a different type.
