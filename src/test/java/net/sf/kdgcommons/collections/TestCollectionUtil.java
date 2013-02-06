@@ -358,4 +358,16 @@ public class TestCollectionUtil extends TestCase
         Collection<String> c3 = CollectionUtil.defaultIfEmpty(null, Arrays.asList("bar"));
         assertEquals("bar", c3.iterator().next());
     }
+
+
+    public void testAddIf() throws Exception
+    {
+        ArrayList<String> list = new ArrayList();
+
+        assertSame("returned collection",       list, CollectionUtil.addIf(list, "foo", true));
+        assertEquals("added element",           Arrays.asList("foo"), list);
+
+        assertSame("returned collection",       list, CollectionUtil.addIf(list, "bar", false));
+        assertEquals("did not add element",     Arrays.asList("foo"), list);
+    }
 }
