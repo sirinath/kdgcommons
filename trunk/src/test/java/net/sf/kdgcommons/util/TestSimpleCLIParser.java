@@ -239,11 +239,11 @@ public class TestSimpleCLIParser extends TestCase
     public void testGetOptionDefs() throws Exception
     {
         SimpleCLIParser parser = new EnableDisableParser();
-        List<OptionDefinition> defs = parser.getOptionDefs();
+        List<OptionDefinition> defs = parser.getAllDefinitions();
 
         assertEquals("number of definitions", 2, defs.size());
-        assertEquals("def 0 key", OPT1, defs.get(0).key);
-        assertEquals("def 1 key", OPT2, defs.get(1).key);
+        assertEquals("def 0 key", OPT1, defs.get(0).getKey());
+        assertEquals("def 1 key", OPT2, defs.get(1).getKey());
     }
 
 
@@ -265,5 +265,14 @@ public class TestSimpleCLIParser extends TestCase
         assertTrue("option 1 description",   helpText2.contains(OPT1_DESC));
         assertTrue("option 2 enable",        helpText2.contains(OPT2_ENABLE));
         assertTrue("option 2 description",   helpText2.contains(OPT2_DESC));
+    }
+
+
+    public void testGetDefinitions() throws Exception
+    {
+        SimpleCLIParser parser = new EnableDisableParser();
+
+        OptionDefinition def1 = parser.getDefinition(OPT1);
+        assertEquals("enableVal", def1.getEnableVal(), OPT1_ENABLE);
     }
 }
