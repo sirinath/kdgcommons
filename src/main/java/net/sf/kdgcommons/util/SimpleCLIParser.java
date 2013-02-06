@@ -164,11 +164,21 @@ public class SimpleCLIParser
 //----------------------------------------------------------------------------
 
     /**
-     *  Returns the list of option definitions. This may be used to display
-     *  information about the options (although {@link #getHelp} is usually
-     *  a better choice.
+     *  Returns a single option definition, by key, <code>null</code> if
+     *  there's no such definition.
      */
-    public List<OptionDefinition> getOptionDefs()
+    public OptionDefinition getDefinition(Object key)
+    {
+        return defsByKey.get(key);
+    }
+
+
+    /**
+     *  Returns the complete list of option definitions. This may be used to
+     *  display information about the options (although {@link #getHelp} is
+     *  usually a better choice.
+     */
+    public List<OptionDefinition> getAllDefinitions()
     {
         return optionDefs;
     }
@@ -303,13 +313,13 @@ public class SimpleCLIParser
     {
         public enum Type { BINARY, PARAMETERIZED }
 
-        public Type type;
-        public Object key;
-        public String enableVal;
-        public String disableVal;
-        public boolean enableByDefault;
-        public int numParams;
-        public String description;
+        private Type type;
+        private Object key;
+        private String enableVal;
+        private String disableVal;
+        private boolean enableByDefault;
+        private int numParams;
+        private String description;
 
         /**
          *  Constructor for an option that has separate "enable" and "disable"
@@ -369,11 +379,47 @@ public class SimpleCLIParser
             this.numParams = numParams;
             this.description = description;
         }
+
+        public Type getType()
+        {
+            return type;
+        }
+
+        public Object getKey()
+        {
+            return key;
+        }
+
+        public String getEnableVal()
+        {
+            return enableVal;
+        }
+
+        public String getDisableVal()
+        {
+            return disableVal;
+        }
+
+        public boolean isEnableByDefault()
+        {
+            return enableByDefault;
+        }
+
+        public int getNumParams()
+        {
+            return numParams;
+        }
+
+        public String getDescription()
+        {
+            return description;
+        }
     }
 
 
     /**
-     *  This class holds an option as specified on the command line.
+     *  This class holds an option as specified on the command line. At present it'
+     *  s only used internally, so no need for accessors.
      */
     private static class Option
     {
