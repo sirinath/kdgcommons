@@ -33,9 +33,11 @@ extends TestCase
         final Integer[] data = new Integer[size];
         final int[] index = new int[size];
 
-        // note: I saw a test failure in the binary search, but was unable to
-        //       reproduce in several dozen runs; if it happens again, the seed
-        //       will be logged and a regression written
+        // note: seed is preserved because the original version of this test would
+        //       occasionally fail; it turned out to be a bad test design, but to
+        //       find it I needed to track the "random" value that caused a failure
+        //       ... and there's no reason to eliminate that tracking now that the
+        //       test is fixed
         long seed = System.currentTimeMillis();
         Random rnd = new Random(seed);
         for (int ii = 0 ; ii < size ; ii++)
@@ -66,22 +68,42 @@ extends TestCase
                        v1.compareTo(v2) <= 0);
         }
 
-
         BinarySearch.IndexedComparator<Integer> searchComparator = new BinarySearch.IndexedComparator<Integer>()
         {
-            // note: again, idx is an index into the data array
+            // note: the acessor will provide the index into the actual array
             public int compare(Integer value, int idx)
             {
                 return value.compareTo(data[idx]);
             }
         };
 
-        // we'll assert that we can find everything ... note that the returned
-        // search value is an index into the *index* array, not the data array
+        // we assert that we can find eveything; because we might randomly get two
+        // copies of the same value, the assertions are a little wonky
         for (int ii = 0 ; ii < size ; ii++)
         {
             int ret = BinarySearch.search(index, data[index[ii]], searchComparator);
-            assertEquals("BinarySearch failed; seed was " + seed, ii, ret);
+            if (ret == ii)
+                continue;   // success for this index
+
+            if (ret > ii)
+            {
+                fail("binary search returned index that was above expected:"
+                     + " was: " + ret + ", expected: " + ii + ", seed = " + seed);
+            }
+
+            if (!data[index[ret]].equals(data[index[ii]]))
+            {
+                fail("binary search returned index for different value:"
+                     + " was: " + ret + " (" + data[index[ret]] + ")"
+                     + ", expected: " + ii + " (" + data[index[ii]] + ")"
+                     + ", seed = " + seed);
+            }
+
+            if ((ret > 0) && (data[index[ret-1]].equals(data[index[ret]])))
+            {
+                fail("binary search returned index that was not lowest for value:"
+                     + " was: " + ret + ", seed = " + seed);
+            }
         }
     }
 }
