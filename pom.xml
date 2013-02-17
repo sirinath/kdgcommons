@@ -10,7 +10,7 @@
 
     <groupId>net.sf.kdgcommons</groupId>
     <artifactId>kdgcommons</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.9-SNAPSHOT</version>
 
     <name>KDG Commons</name>
     <packaging>jar</packaging>
@@ -139,8 +139,8 @@
 
 
     <scm>
-        <connection>scm:svn:https://kdgcommons.svn.sourceforge.net/svnroot/kdgcommons</connection>
-        <developerConnection>scm:svn:https://kdgcommons.svn.sourceforge.net/svnroot/kdgcommons</developerConnection>
+        <connection>scm:svn:svn://svn.code.sf.net/p/kdgcommons/code</connection>
+        <developerConnection>scm:svn:svn+ssh://kdgregory@svn.code.sf.ner/p/kdgcommons/code</developerConnection>
         <url>http://kdgcommons.svn.sourceforge.net/viewvc/kdgcommons/</url>
     </scm>
 
