@@ -1,0 +1,31 @@
+<FindBugsFilter>
+
+    <Match>
+        <Class name='net.sf.kdgcommons.lang.StringCanon' />
+        <Method name='intern' />
+        <Bug pattern='DM_STRING_CTOR' />
+        <!-- the String constructor is used here to trim the source string (which may share a large backing array) -->
+    </Match>
+
+    <Match>
+        <Class name='net.sf.kdgcommons.util.Base64Converter' />
+        <Method name='encodeGroup' />
+        <Bug pattern='SF_SWITCH_FALLTHROUGH' />
+        <!-- switch fallthrough intentional here, as form of loop unrolling -->
+    </Match>
+
+    <Match>
+        <Class name='net.sf.kdgcommons.util.ByteArray' />
+        <Method name='getArray' />
+        <Bug pattern='EI_EXPOSE_REP' />
+        <!-- intentionally returns internal state, documented as such -->
+    </Match>
+
+    <Match>
+        <Class name='net.sf.kdgcommons.lang.ClassUtil' />
+        <Method name='internalNameToExternal' />
+        <Bug pattern='SBSC_USE_STRINGBUFFER_CONCATENATION' />
+        <!-- this is a loop with few iterations (almost always < 3), not worth replacing -->
+    </Match>
+
+</FindBugsFilter>
