@@ -4,10 +4,19 @@
 	</properties>
 
     <body>
-        <release version="1.0.8" date="TBD"
-            description="IO">
+        <release version="1.0.8" date="2013-02-16"
+            description="Collections,IO,Utils">
+            <action dev='kdgregory' type='add'>
+                SimpleCLIParser: processes an argument vector, extracting recognized options
+            </action>
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.addIf(): optionally adds an element to a collection
+            </action>
             <action dev='kdgregory' type='add'>
                 IOUtil.skipFully(): offers a higher level of skipping than InputStream.skip()
+            </action>
+            <action dev='kdgregory' type='add'>
+                StringUtil.equalOrEmpty(): equality test where null is treated as an empty string
             </action>
         </release>
 
