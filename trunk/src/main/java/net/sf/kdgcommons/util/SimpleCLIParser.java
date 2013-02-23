@@ -66,6 +66,8 @@ import net.sf.kdgcommons.lang.StringUtil;
  *  Note also that this class does not attempt to perform validation. The caller
  *  is responsible for ensuring that all required options are present, and that
  *  option parameters are valid.
+ *  
+ *  @since 1.0.8
  */
 public class SimpleCLIParser
 {

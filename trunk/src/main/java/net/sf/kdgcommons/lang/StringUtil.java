@@ -27,6 +27,8 @@ public class StringUtil
 {
     /**
      *  Tests for equality, where null is equivalent to an empty string.
+     *
+     *  @since 1.0.8
      */
     public static boolean equalOrEmpty(String s1, String s2)
     {

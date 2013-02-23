@@ -76,6 +76,8 @@ public class CollectionUtil
     /**
      *  Adds a value to the collection if the boolean expression is true.
      *  Returns the collection as a convenience for chained invocations.
+     *
+     *  @since 1.0.8
      */
     public static <T> Collection<T> addIf(Collection<T> coll, T value, boolean expr)
     {
