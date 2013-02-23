@@ -4,8 +4,18 @@
 	</properties>
 
     <body>
+        <release version="1.0.9" date="TBD"
+            description="Collections">
+            <action dev='kdgregory' type='add'>
+                IteratorIterable: allows arbitrary iterators to be used in a for-each loop
+            </action>
+            <action dev='kdgregory' type='add'>
+                EnumerationIterable: allows old-style enumerations to be used in a for-each loop
+            </action>
+        </release>
+
         <release version="1.0.8" date="2013-02-16"
-            description="Collections,IO,Utils">
+            description="Collections, IO, Utils">
             <action dev='kdgregory' type='add'>
                 SimpleCLIParser: processes an argument vector, extracting recognized options
             </action>
