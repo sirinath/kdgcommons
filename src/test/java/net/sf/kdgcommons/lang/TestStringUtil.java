@@ -247,7 +247,10 @@ public class TestStringUtil extends TestCase
         assertEquals(35, StringUtil.parseDigit('z', 36));
 
         assertEquals(-1, StringUtil.parseDigit('!', 100));
-    }    public void testRandomAlpha() throws Exception
+    }
+
+
+    public void testRandomAlpha() throws Exception
     {
         final int reps = 1000;
         final int minLength = 3;
@@ -259,7 +262,7 @@ public class TestStringUtil extends TestCase
 
         int[] lengthCounts = new int[maxLength + 1];
         int[] charCounts = new int[256];
-        int totChars = 0;
+
         for (int ii = 0 ; ii < strings.length ; ii++)
         {
             int len = strings[ii].length();
@@ -267,7 +270,6 @@ public class TestStringUtil extends TestCase
             for (int jj = 0 ; jj < len ; jj++)
             {
                 charCounts[strings[ii].charAt(jj)]++;
-                totChars++;
             }
         }
 
