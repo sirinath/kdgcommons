@@ -5,12 +5,15 @@
 
     <body>
         <release version="1.0.9" date="TBD"
-            description="Collections">
+            description="Collections, Lang">
+            <action dev='kdgregory' type='add'>
+                EnumerationIterable: allows old-style enumerations to be used in a for-each loop
+            </action>
             <action dev='kdgregory' type='add'>
                 IteratorIterable: allows arbitrary iterators to be used in a for-each loop
             </action>
             <action dev='kdgregory' type='add'>
-                EnumerationIterable: allows old-style enumerations to be used in a for-each loop
+                StringUtil.trimToNull(): trim that produces a flag value on blank string.
             </action>
         </release>
 

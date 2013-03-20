@@ -27,8 +27,6 @@ public class StringUtil
 {
     /**
      *  Tests for equality, where null is equivalent to an empty string.
-     *
-     *  @since 1.0.8
      */
     public static boolean equalOrEmpty(String s1, String s2)
     {
@@ -98,6 +96,17 @@ public class StringUtil
         while ((sb.length() > 0) && Character.isWhitespace(sb.charAt(sb.length()-1)))
             sb.deleteCharAt(sb.length()-1);
         return sb.toString();
+    }
+
+
+    /**
+     *  Invokes {@link #trim}, and returns null if the result is an empty string.
+     *  Otherwise returns the trimmed string. This is useful to create flag values.
+     */
+    public static String trimToNull(String str)
+    {
+        str = trim(str);
+        return (str.length() == 0) ? null : str;
     }
 
 
