@@ -53,31 +53,21 @@ public class TestStringUtil extends TestCase
 
     public void testTrim() throws Exception
     {
-        assertEquals("foo", StringUtil.trim("  foo \t\n\r "));
+        assertEquals("no trimming",         "foo", StringUtil.trim("foo"));
+        assertEquals("trimmed non-empty",   "foo", StringUtil.trim("  foo\t  "));
+        assertEquals("trimmed empty",       "",    StringUtil.trim("  \r\t  "));
+        assertEquals("initially empty",     "",    StringUtil.trim(""));
+        assertEquals("initially null",      "",    StringUtil.trim(null));
     }
 
 
-    public void testTrimNull() throws Exception
+    public void testTrimToNull() throws Exception
     {
-        assertEquals("", StringUtil.trim(null));
-    }
-
-
-    public void testTrimEmpty() throws Exception
-    {
-        assertEquals("", StringUtil.trim(""));
-    }
-
-
-    public void testTrimToEmpty() throws Exception
-    {
-        assertEquals("", StringUtil.trim("  \t\r\n  "));
-    }
-
-
-    public void testTrimUntrimmable() throws Exception
-    {
-        assertSame("foo", StringUtil.trim("foo"));
+        assertEquals("no trimming",         "foo", StringUtil.trimToNull("foo"));
+        assertEquals("trimmed non-empty",   "foo", StringUtil.trimToNull("  foo  "));
+        assertEquals("trimmed empty",       null,  StringUtil.trimToNull("    "));
+        assertEquals("initially empty",     null,  StringUtil.trimToNull(""));
+        assertEquals("initially null",      null,  StringUtil.trimToNull(null));
     }
 
 
@@ -262,7 +252,7 @@ public class TestStringUtil extends TestCase
 
         int[] lengthCounts = new int[maxLength + 1];
         int[] charCounts = new int[256];
-
+        int totChars = 0;
         for (int ii = 0 ; ii < strings.length ; ii++)
         {
             int len = strings[ii].length();
@@ -270,6 +260,7 @@ public class TestStringUtil extends TestCase
             for (int jj = 0 ; jj < len ; jj++)
             {
                 charCounts[strings[ii].charAt(jj)]++;
+                totChars++;
             }
         }
 
