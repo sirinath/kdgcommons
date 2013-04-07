@@ -13,7 +13,26 @@
                 IteratorIterable: allows arbitrary iterators to be used in a for-each loop
             </action>
             <action dev='kdgregory' type='add'>
-                StringUtil.trimToNull(): trim that produces a flag value on blank string.
+                ClassUtil.getPrimitiveType(): returns the TYPE value for primitive wrapper instances
+            </action>
+            <action dev='kdgregory' type='add'>
+                ClassUtil.getDeclaredMethodsByAccess(): slices and dices the result of Class.getDeclaredMethods()
+            </action>
+            <action dev='kdgregory' type='add'>
+                ClassUtil.getVisibleMethods(), ClassUtil.getVisibleMethodMap(): returns all methods that a given
+                class either declares or inherits from ancestors
+            </action>
+            <action dev='kdgregory' type='add'>
+                ClassUtil.getBestMethod(): returns compiler's method selection rules to runtime arguments
+            </action>
+            <action dev='kdgregory' type='add'>
+                StringUtil.trimToNull(): trim that produces a flag value on blank string
+            </action>
+            <action dev='kdgregory' type='update'>
+                ClassUtil.getAnnotatedMethods(): now uses getVisibleMethods()
+            </action>
+            <action dev='kdgregory' type='update'>
+                ClassUtil.getAllMethods(): deprecated in favor of getVisibleMethods()
             </action>
         </release>
 
