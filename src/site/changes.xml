@@ -4,7 +4,7 @@
 	</properties>
 
     <body>
-        <release version="1.0.9" date="TBD"
+        <release version="1.0.9" date="2013-04-07"
             description="Collections, Lang">
             <action dev='kdgregory' type='add'>
                 EnumerationIterable: allows old-style enumerations to be used in a for-each loop
