@@ -25,6 +25,7 @@ import java.util.RandomAccess;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+
 /**
  *  Static utility methods for working with collections -- particularly
  *  parameterized collections.
@@ -329,5 +330,195 @@ public class CollectionUtil
     public static <T> Collection<T> defaultIfEmpty(Collection<T> reg, Collection<T> def)
     {
         return ((reg == null) || (reg.size() == 0)) ? def : reg;
+    }
+
+
+    /**
+     *  Applies the specified functor to every element of the given collection, in
+     *  its natural iteration order, and returns a list of the results.
+     *  <p>
+     *  If the functor throws, it will be rethrown in a {@link #MapException}, which
+     *  provides detailed information and partial work.
+     */
+    public static <V,R> List<R> map(Collection<V> coll, MapFunctor<V,R> functor)
+    {
+        List<R> result = new ArrayList<R>(coll.size());
+        int index = 0;
+        for (V value : coll)
+        {
+            try
+            {
+                result.add(functor.invoke(index, value));
+                index++;
+            }
+            catch (Throwable ex)
+            {
+                throw new MapException(ex, index, value, result);
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     *  Applies the specified functor to every element in the given collection, with
+     *  the expectation that it will return a single value based on the item and any
+     *  previous value.
+     */
+    public static <V,R> R reduce(Collection<V> coll, ReduceFunctor<V,R> functor)
+    {
+        R pendingResult = null;
+        int index = 0;
+        for (V value : coll)
+        {
+            try
+            {
+                pendingResult = functor.invoke(index, value, pendingResult);
+                index++;
+            }
+            catch (Throwable ex)
+            {
+                throw new ReduceException(ex, index, value, pendingResult);
+            }
+        }
+        return pendingResult;
+    }
+
+
+//----------------------------------------------------------------------------
+//  Supporting Objects
+//----------------------------------------------------------------------------
+
+    /**
+     *  A functor interface for {@link #map}. The {@link #invoke} function is
+     *  called for every element in the collection, and is passed the element
+     *  value and its position (0-based) in the iteration order.
+     *  <p>
+     *  The implementation is permitted to throw anything, checked or not.
+     */
+    public interface MapFunctor<V,R>
+    {
+        public R invoke(int index, V value)
+        throws Throwable;
+    }
+
+
+    /**
+     *  An exception wrapper for {@link #map}. Contains the wrapped exception,
+     *  the value and index that caused the exception, and the results-to-date.
+     *  <p>
+     *  Note: because Java does not allow parameterization of <code>Throwable</code>
+     *  subclasses (JLS XX), the value and results are held as <code>Object</code>s.
+     */
+    public static class MapException
+    extends RuntimeException
+    {
+        private static final long serialVersionUID = 1;
+
+        private int _index;
+        private Object _value;
+        private List<?> _partialResults;
+
+        public MapException(Throwable cause, int index, Object value, List<?> partialResults)
+        {
+            super(cause);
+            _index = index;
+            _value = value;
+            _partialResults = partialResults;
+        }
+
+        /**
+         *  Returns the position (0-based) in the original collection's iteration where the
+         *  wrapped exception was thrown.
+         */
+        public int getIndex()
+        {
+            return _index;
+        }
+
+        /**
+         *  Returns the value that caused the exception.
+         */
+        public Object getValue()
+        {
+            return _value;
+        }
+
+        /**
+         *  Returns any partial results from the map operation.
+         *  <p>
+         *  Warning: the contents of this list are undefined in the case of a parallel map
+         *  operation.
+         */
+        public List<?> getPartialResults()
+        {
+            return _partialResults;
+        }
+    }
+
+
+    /**
+     *  A functor used for the {@link #reduce} operation. The {@link #invoke}
+     *  function is called for every element of a collection, and is responsible
+     *  for aggregating the results. On the first invocation, the "pending"
+     *  result is <code>null</code>; on subsequent invocations, it is the value
+     *  returned from the previous invocation.
+     */
+    public interface ReduceFunctor<V, R>
+    {
+        public R invoke(int index, V value, R pendingResult)
+        throws Throwable;
+    }
+
+
+    /**
+     *  An exception wrapper for {@link #reduce}. Contains the wrapped exception,
+     *  the value and index that caused the exception, and the results-to-date.
+     *  <p>
+     *  Note: because Java does not allow parameterization of <code>Throwable</code>
+     *  subclasses (JLS XX), the value and results are held as <code>Object</code>s.
+     */
+    public static class ReduceException
+    extends RuntimeException
+    {
+        private static final long serialVersionUID = 1;
+
+        private int _index;
+        private Object _value;
+        private Object _partialResults;
+
+        public ReduceException(Throwable cause, int index, Object value, Object partialResults)
+        {
+            super(cause);
+            _index = index;
+            _value = value;
+            _partialResults = partialResults;
+        }
+
+        /**
+         *  Returns the position (0-based) in the original collection's iteration where the
+         *  wrapped exception was thrown.
+         */
+        public int getIndex()
+        {
+            return _index;
+        }
+
+        /**
+         *  Returns the value that caused the exception.
+         */
+        public Object getValue()
+        {
+            return _value;
+        }
+
+        /**
+         *  Returns any partial results. This is the <code>pendingResult</code>
+         *  value passed to the functor at the time the exception was thrown.
+         */
+        public Object getPartialResults()
+        {
+            return _partialResults;
+        }
     }
 }

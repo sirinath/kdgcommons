@@ -5,7 +5,10 @@
 
     <body>
         <release version="1.0.10" date="TBD"
-            description="TBD">
+            description="Collections">
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.map() / reduce(): because every utilities library needs these
+            </action>
         </release>
 
         <release version="1.0.9" date="2013-04-07"
