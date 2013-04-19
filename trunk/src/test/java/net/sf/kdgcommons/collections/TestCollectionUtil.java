@@ -362,7 +362,7 @@ public class TestCollectionUtil extends TestCase
 
     public void testAddIf() throws Exception
     {
-        ArrayList<String> list = new ArrayList();
+        ArrayList<String> list = new ArrayList<String>();
 
         assertSame("returned collection",       list, CollectionUtil.addIf(list, "foo", true));
         assertEquals("added element",           Arrays.asList("foo"), list);
@@ -370,4 +370,87 @@ public class TestCollectionUtil extends TestCase
         assertSame("returned collection",       list, CollectionUtil.addIf(list, "bar", false));
         assertEquals("did not add element",     Arrays.asList("foo"), list);
     }
+
+
+    public void testMap() throws Exception
+    {
+        List<Integer> src = Arrays.asList(1, 2, 3, 4);
+        List<Integer> dst = CollectionUtil.map(src, new CollectionUtil.MapFunctor<Integer,Integer>()
+        {
+            public Integer invoke(int index, Integer value)
+            {
+                return Integer.valueOf(value.intValue() * index);
+            }
+        });
+
+        assertEquals(Arrays.asList(0, 2, 6, 12), dst);
+    }
+
+
+    public void testMapWithException() throws Exception
+    {
+        try
+        {
+            List<Integer> src = Arrays.asList(1, 2, null, 4);
+            CollectionUtil.map(src, new CollectionUtil.MapFunctor<Integer,Integer>()
+            {
+                public Integer invoke(int index, Integer value)
+                {
+                    return Integer.valueOf(value.intValue() * index);
+                }
+            });
+        }
+        catch (CollectionUtil.MapException ex)
+        {
+            assertEquals("wrapped exception",   NullPointerException.class, ex.getCause().getClass());
+            assertEquals("failure index",       2,                          ex.getIndex());
+            assertEquals("failure value",       null,                       ex.getValue());
+            assertEquals("partial results",     Arrays.asList(0, 2),        ex.getPartialResults());
+        }
+    }
+
+
+    public void testReduce() throws Exception
+    {
+        List<Integer> src = Arrays.asList(1, 2, 3, 4);
+        Integer rslt = CollectionUtil.reduce(src, new CollectionUtil.ReduceFunctor<Integer,Integer>()
+        {
+            public Integer invoke(int index, Integer value, Integer pendingResult)
+            {
+                if (pendingResult == null)
+                    return value;
+                else
+                    return Integer.valueOf(value.intValue() + pendingResult.intValue());
+            }
+        });
+
+        assertEquals(rslt, Integer.valueOf(10));
+    }
+
+
+    public void testReduceWithException() throws Exception
+    {
+        try
+        {
+            List<Integer> src = Arrays.asList(1, 2, null, 4);
+            CollectionUtil.reduce(src, new CollectionUtil.ReduceFunctor<Integer,Integer>()
+            {
+                public Integer invoke(int index, Integer value, Integer pendingResult)
+                {
+                    if (pendingResult == null)
+                        return value;
+                    else
+                        return Integer.valueOf(value.intValue() + pendingResult.intValue());
+                }
+            });
+        }
+        catch (CollectionUtil.ReduceException ex)
+        {
+            assertEquals("wrapped exception",   NullPointerException.class, ex.getCause().getClass());
+            assertEquals("failure index",       2,                          ex.getIndex());
+            assertEquals("failure value",       null,                       ex.getValue());
+            assertEquals("partial results",     Integer.valueOf(3),         ex.getPartialResults());
+        }
+    }
+
 }
