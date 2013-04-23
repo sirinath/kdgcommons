@@ -24,6 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import junit.framework.TestCase;
 
@@ -399,6 +401,7 @@ public class TestCollectionUtil extends TestCase
                     return Integer.valueOf(value.intValue() * index);
                 }
             });
+            fail("map returned normally");
         }
         catch (CollectionUtil.MapException ex)
         {
@@ -406,6 +409,64 @@ public class TestCollectionUtil extends TestCase
             assertEquals("failure index",       2,                          ex.getIndex());
             assertEquals("failure value",       null,                       ex.getValue());
             assertEquals("partial results",     Arrays.asList(0, 2),        ex.getPartialResults());
+        }
+    }
+
+
+    public void testParallelMap() throws Exception
+    {
+        int poolSize = 4;
+        ExecutorService pool = Executors.newFixedThreadPool(poolSize);
+        List<Integer> src = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
+        List<String> result = CollectionUtil.map(pool, src, new CollectionUtil.MapFunctor<Integer,String>()
+        {
+            public String invoke(int index, Integer value)
+            {
+                return Thread.currentThread().getName();
+            }
+        });
+        pool.shutdown();
+
+        assertEquals("number of items returned", src.size(), result.size());
+
+        Set<String> threadNames = new HashSet<String>(result);
+        // this is a brittle assertions: there's no guarantee that each thread in the pool
+        // will be used, although with a large-enough input, it should be valid
+        assertEquals("number of threads", poolSize, threadNames.size());
+    }
+
+
+    public void testParallelMapWithException() throws Exception
+    {
+        int poolSize = 4;
+        ExecutorService pool = Executors.newFixedThreadPool(poolSize);
+        List<Integer> src = Arrays.asList(1, 2, 3, 4, 5);
+        try
+        {
+            CollectionUtil.map(pool, src, new CollectionUtil.MapFunctor<Integer,Integer>()
+            {
+                public Integer invoke(int index, Integer value)
+                {
+                    if (index != 2)
+                        return value;
+                    else
+                        throw new IllegalArgumentException("foo");
+                }
+            });
+            fail("map returned normally");
+        }
+        catch (CollectionUtil.MapException ex)
+        {
+            assertEquals("wrapped exception",   IllegalArgumentException.class, ex.getCause().getClass());
+            assertEquals("wrapped exception",   "foo",                          ex.getCause().getMessage());
+            assertEquals("failure index",       2,                              ex.getIndex());
+            assertEquals("failure value",       Integer.valueOf(3),             ex.getValue());
+            assertEquals("partial results",     Arrays.asList(1, 2, null, 4, 5), ex.getPartialResults());
+
+        }
+        finally
+        {
+            pool.shutdown();
         }
     }
 
@@ -452,5 +513,4 @@ public class TestCollectionUtil extends TestCase
             assertEquals("partial results",     Integer.valueOf(3),         ex.getPartialResults());
         }
     }
-
 }

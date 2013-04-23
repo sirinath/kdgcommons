@@ -23,6 +23,11 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.RandomAccess;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 
@@ -361,6 +366,76 @@ public class CollectionUtil
 
 
     /**
+     *  Performs a parallel map operation. For each element in the source collection,
+     *  a callable is dispatched to the passed <code>ExecutorService</code> to invoke
+     *  the specified functor. The results are accumulated and returned as a list, in
+     *  the order of the original collection's iterator.
+     *  <p>
+     *  If any element causes an exception, this method throws {@link #MapException}.
+     *  While that exception returns partial results, there is no guarantee that the
+     *  results represent a particular range of the source collection.
+     *  <p>
+     *  This method will wait until all of the elements of the collection have been
+     *  processed, unless it is interrupted. If multiple invocations threw, one will
+     *  be chosen arbitrarily; there is no guarantee that it represents the first
+     *  collection element to cause an exception.
+     */
+    public static <V,R> List<R> map(ExecutorService threadpool, Collection<V> values, final MapFunctor<V,R> functor)
+    throws InterruptedException
+    {
+        int count = values.size();
+        ArrayList<V> values2 = new ArrayList<V>(values);
+        ArrayList<Future<R>> futures = new ArrayList<Future<R>>(count);
+
+        ArrayList<R> results = new ArrayList<R>();
+        resize(results, count);
+
+        for (int ii = 0 ; ii < count ; ii++)
+        {
+            final int index = ii;
+            final V value = values2.get(ii);
+            futures.add(threadpool.submit(new Callable<R>()
+            {
+                public R call() throws Exception
+                {
+                    return functor.invoke(index, value);
+                }
+            }));
+        }
+
+        int failureIndex = 0;
+        Throwable failureException = null;
+        for (int ii = 0 ; ii < count ; ii++)
+        {
+            Future<R> future = futures.get(ii);
+            try
+            {
+                results.set(ii, future.get());
+            }
+            catch (CancellationException ex)
+            {
+                // I don't think we can ever get this exception, since we
+                // don't let the Future escape (and immediate shutdown of
+                // the pool should create an ExecutionException); but, we
+                // should treat it differently if we ever do get it
+                failureIndex = ii;
+                failureException = ex;
+            }
+            catch (ExecutionException ex)
+            {
+                failureIndex = ii;
+                failureException = ex.getCause();
+            }
+        }
+
+        if (failureException != null)
+            throw new MapException(failureException, failureIndex, values2.get(failureIndex), results);
+        else
+            return results;
+    }
+
+
+    /**
      *  Applies the specified functor to every element in the given collection, with
      *  the expectation that it will return a single value based on the item and any
      *  previous value.
@@ -399,7 +474,7 @@ public class CollectionUtil
     public interface MapFunctor<V,R>
     {
         public R invoke(int index, V value)
-        throws Throwable;
+        throws Exception;
     }
 
 
@@ -467,7 +542,7 @@ public class CollectionUtil
     public interface ReduceFunctor<V, R>
     {
         public R invoke(int index, V value, R pendingResult)
-        throws Throwable;
+        throws Exception;
     }
 
 
