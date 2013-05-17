@@ -9,6 +9,9 @@
             <action dev='kdgregory' type='add'>
                 CollectionUtil.map() / reduce(): because every utilities library needs these
             </action>
+            <action dev='kdgregory' type='add'>
+                Counters: a threadsafe map of longs, used to summarize a stream of data
+            </action>
         </release>
 
         <release version="1.0.9" date="2013-04-07"
