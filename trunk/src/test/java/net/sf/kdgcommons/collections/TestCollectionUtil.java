@@ -377,7 +377,7 @@ public class TestCollectionUtil extends TestCase
     public void testMap() throws Exception
     {
         List<Integer> src = Arrays.asList(1, 2, 3, 4);
-        List<Integer> dst = CollectionUtil.map(src, new CollectionUtil.MapFunctor<Integer,Integer>()
+        List<Integer> dst = CollectionUtil.map(src, new CollectionUtil.IndexValueMapFunctor<Integer,Integer>()
         {
             public Integer invoke(int index, Integer value)
             {
@@ -394,7 +394,7 @@ public class TestCollectionUtil extends TestCase
         try
         {
             List<Integer> src = Arrays.asList(1, 2, null, 4);
-            CollectionUtil.map(src, new CollectionUtil.MapFunctor<Integer,Integer>()
+            CollectionUtil.map(src, new CollectionUtil.IndexValueMapFunctor<Integer,Integer>()
             {
                 public Integer invoke(int index, Integer value)
                 {
@@ -418,7 +418,7 @@ public class TestCollectionUtil extends TestCase
         int poolSize = 4;
         ExecutorService pool = Executors.newFixedThreadPool(poolSize);
         List<Integer> src = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
-        List<String> result = CollectionUtil.map(pool, src, new CollectionUtil.MapFunctor<Integer,String>()
+        List<String> result = CollectionUtil.map(pool, src, new CollectionUtil.IndexValueMapFunctor<Integer,String>()
         {
             public String invoke(int index, Integer value)
             {
@@ -443,7 +443,7 @@ public class TestCollectionUtil extends TestCase
         List<Integer> src = Arrays.asList(1, 2, 3, 4, 5);
         try
         {
-            CollectionUtil.map(pool, src, new CollectionUtil.MapFunctor<Integer,Integer>()
+            CollectionUtil.map(pool, src, new CollectionUtil.IndexValueMapFunctor<Integer,Integer>()
             {
                 public Integer invoke(int index, Integer value)
                 {
@@ -474,7 +474,7 @@ public class TestCollectionUtil extends TestCase
     public void testReduce() throws Exception
     {
         List<Integer> src = Arrays.asList(1, 2, 3, 4);
-        Integer rslt = CollectionUtil.reduce(src, new CollectionUtil.ReduceFunctor<Integer,Integer>()
+        Integer rslt = CollectionUtil.reduce(src, new CollectionUtil.IndexValueReduceFunctor<Integer,Integer>()
         {
             public Integer invoke(int index, Integer value, Integer pendingResult)
             {
@@ -494,7 +494,7 @@ public class TestCollectionUtil extends TestCase
         try
         {
             List<Integer> src = Arrays.asList(1, 2, null, 4);
-            CollectionUtil.reduce(src, new CollectionUtil.ReduceFunctor<Integer,Integer>()
+            CollectionUtil.reduce(src, new CollectionUtil.IndexValueReduceFunctor<Integer,Integer>()
             {
                 public Integer invoke(int index, Integer value, Integer pendingResult)
                 {

@@ -345,7 +345,7 @@ public class CollectionUtil
      *  If the functor throws, it will be rethrown in a {@link #MapException}, which
      *  provides detailed information and partial work.
      */
-    public static <V,R> List<R> map(Collection<V> coll, MapFunctor<V,R> functor)
+    public static <V,R> List<R> map(Collection<V> coll, IndexValueMapFunctor<V,R> functor)
     {
         List<R> result = new ArrayList<R>(coll.size());
         int index = 0;
@@ -380,7 +380,7 @@ public class CollectionUtil
      *  be chosen arbitrarily; there is no guarantee that it represents the first
      *  collection element to cause an exception.
      */
-    public static <V,R> List<R> map(ExecutorService threadpool, Collection<V> values, final MapFunctor<V,R> functor)
+    public static <V,R> List<R> map(ExecutorService threadpool, Collection<V> values, final IndexValueMapFunctor<V,R> functor)
     throws InterruptedException
     {
         int count = values.size();
@@ -440,7 +440,7 @@ public class CollectionUtil
      *  the expectation that it will return a single value based on the item and any
      *  previous value.
      */
-    public static <V,R> R reduce(Collection<V> coll, ReduceFunctor<V,R> functor)
+    public static <V,R> R reduce(Collection<V> coll, IndexValueReduceFunctor<V,R> functor)
     {
         R pendingResult = null;
         int index = 0;
@@ -471,7 +471,7 @@ public class CollectionUtil
      *  <p>
      *  The implementation is permitted to throw anything, checked or not.
      */
-    public interface MapFunctor<V,R>
+    public interface IndexValueMapFunctor<V,R>
     {
         public R invoke(int index, V value)
         throws Exception;
@@ -539,7 +539,7 @@ public class CollectionUtil
      *  result is <code>null</code>; on subsequent invocations, it is the value
      *  returned from the previous invocation.
      */
-    public interface ReduceFunctor<V, R>
+    public interface IndexValueReduceFunctor<V, R>
     {
         public R invoke(int index, V value, R pendingResult)
         throws Exception;
