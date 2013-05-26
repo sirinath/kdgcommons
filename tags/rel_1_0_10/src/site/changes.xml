@@ -1,0 +1,184 @@
+<document xmlns="http://maven.apache.org/changes/1.0.0">
+	<properties>
+		<title>KDGCommons Change Log</title>
+	</properties>
+
+    <body>
+        <release version="1.0.10" date="2013-05-26"
+            description="Collections">
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.map() / reduce(): because every utilities library needs these
+            </action>
+            <action dev='kdgregory' type='add'>
+                Counters: a threadsafe map of longs, used to summarize a stream of data
+            </action>
+        </release>
+
+        <release version="1.0.9" date="2013-04-07"
+            description="Collections, Lang">
+            <action dev='kdgregory' type='add'>
+                EnumerationIterable: allows old-style enumerations to be used in a for-each loop
+            </action>
+            <action dev='kdgregory' type='add'>
+                IteratorIterable: allows arbitrary iterators to be used in a for-each loop
+            </action>
+            <action dev='kdgregory' type='add'>
+                ClassUtil.getPrimitiveType(): returns the TYPE value for primitive wrapper instances
+            </action>
+            <action dev='kdgregory' type='add'>
+                ClassUtil.getDeclaredMethodsByAccess(): slices and dices the result of Class.getDeclaredMethods()
+            </action>
+            <action dev='kdgregory' type='add'>
+                ClassUtil.getVisibleMethods(), ClassUtil.getVisibleMethodMap(): returns all methods that a given
+                class either declares or inherits from ancestors
+            </action>
+            <action dev='kdgregory' type='add'>
+                ClassUtil.getBestMethod(): returns compiler's method selection rules to runtime arguments
+            </action>
+            <action dev='kdgregory' type='add'>
+                StringUtil.trimToNull(): trim that produces a flag value on blank string
+            </action>
+            <action dev='kdgregory' type='update'>
+                ClassUtil.getAnnotatedMethods(): now uses getVisibleMethods()
+            </action>
+            <action dev='kdgregory' type='update'>
+                ClassUtil.getAllMethods(): deprecated in favor of getVisibleMethods()
+            </action>
+        </release>
+
+        <release version="1.0.8" date="2013-02-16"
+            description="Collections, IO, Utils">
+            <action dev='kdgregory' type='add'>
+                SimpleCLIParser: processes an argument vector, extracting recognized options
+            </action>
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.addIf(): optionally adds an element to a collection
+            </action>
+            <action dev='kdgregory' type='add'>
+                IOUtil.skipFully(): offers a higher level of skipping than InputStream.skip()
+            </action>
+            <action dev='kdgregory' type='add'>
+                StringUtil.equalOrEmpty(): equality test where null is treated as an empty string
+            </action>
+        </release>
+
+        <release version="1.0.7" date="2012-08-26"
+            description="Collections, IO">
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.combine(): combines collections, returning result
+            </action>
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.isEmpty(), isNotEmpty(): null-safe tests for collection contents
+            </action>
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.defaultIfNull(): enables a null-safe for loop without explicit
+                test/replace (applies to any iterable)
+            </action>
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.defaultIfEmpty(): used to eliminate "if for action else action"
+                constructs
+            </action>
+            <action dev='kdgregory' type='update'>
+                IOUtil.createTempFile(InputStream): now closes stream after copy
+            </action>
+            <action dev='kdgregory' type='update'>
+                This library no longer establishes a transitive dependency on JUnit 3.8.x. If you
+                use the assertion classes, you will need to provide your own JUnit dependency.
+            </action>
+        </release>
+
+        <release version="1.0.6" date="2012-06-30"
+            description="Lang">
+            <action dev='kdgregory' type='add'>
+                ClassUtil.internalNameToExternal(): turns the type names from reflective
+                signatures into actual classes
+            </action>
+            <action dev='kdgregory' type='add'>
+                ObjectUtil.defaultValue(): replaces nulls with a default value, either literal or
+                created from a factory
+            </action>
+            <action dev='kdgregory' type='add'>
+                StringUtil.extractLeft(), extractRight(), extractLeftOfLast(), extractRightOfLast():
+                methods to partition a string around a delimiter
+            </action>
+            <action dev='kdgregory' type='add'>
+                StringUtil.isIn(): tests a string against multiple candidates
+            </action>
+            <action dev='kdgregory' type='add'>
+                StringBuilderUtil.appendUnless(): used to build up argument lists, where a comma
+                goes before every element but the first
+            </action>
+        </release>
+
+        <release version="1.0.5" date="2012-05-17"
+            description="Beans, Collections, Threads">
+            <action dev='kdgregory' type='add'>
+                Introspection, IntrospectionCache: a replacement for the JDK's introspector;
+                originally written for PracticalXml
+            </action>
+            <action dev='kdgregory' type='add'>
+                MapBuilder: create and populate a Map in one expression
+            </action>
+            <action dev='kdgregory' type='add'>
+                NamedThreadFactory: allows thread pools to name their threads
+            </action>
+            <action dev='kdgregory' type='add'>
+                ThreadUtil.sleepQuietly(): catches and ignores InterruptedException
+            </action>
+        </release>
+
+        <release version="1.0.4" date="2012-04-28"
+            description="Buffer, Lang, IO">
+            <action dev='kdgregory' type='add'>
+                ClassUtil: utilities to muck with Class objects
+            </action>
+            <action dev='kdgregory' type='add'>
+                IOUtil.readFully(): actually does what everyone things InputStream.read() does
+            </action>
+            <action dev='kdgregory' type='add'>
+                UnreachableCodeException: a trap for branches that should never execute
+            </action>
+            <action dev='kdgregory' type='update'>
+                ByteArray: String conversions now enforce 8-bit character limitation
+            </action>
+            <action dev='kdgregory' type='update'>
+                ByteArray: fixed bug in remove()
+            </action>
+        </release>
+
+        <release version="1.0.3" date="2012-04-22"
+            description="Collections">
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.filter(): produces one list from another by applying a regex
+            </action>
+        </release>
+
+        <release version="1.0.2" date="2012-04-16"
+            description="Collections, Html, IO">
+            <action dev='kdgregory' type='update'>
+                HtmlUtil.escape(): bugfix for escaped single quotes; add escaping of all non-ASCII characters
+            </action>
+            <action dev='kdgregory' type='update'>
+                CollectionUtil.join(): turns a collection into a string, with separator
+            </action>
+            <action dev='kdgregory' type='add'>
+                IOUtil.copy(): copies input stream to output stream; exists to eliminate dependencies
+            </action>
+            <action dev='kdgregory' type='add'>
+                IOUtil.createTempFile(): variant that will fill file from InputStream
+            </action>
+        </release>
+
+        <release version="1.0.1" date="2011-12-29"
+            description="Collections, Html">
+            <action dev='kdgregory' type='add'>
+                CombiningIterable: use a single loop to iterate multiple collections
+            </action>
+            <action dev='kdgregory' type='update'>
+                HtmlUtil.escape(): bugfix for escaped single quotes; add escaping of all non-ASCII characters
+            </action>
+        </release>
+
+        <release version="1.0.0" date="2011-08-27" description="Initial public release"/>
+	</body>
+</document>
