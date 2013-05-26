@@ -4,7 +4,7 @@
 	</properties>
 
     <body>
-        <release version="1.0.10" date="TBD"
+        <release version="1.0.10" date="2013-05-26"
             description="Collections">
             <action dev='kdgregory' type='add'>
                 CollectionUtil.map() / reduce(): because every utilities library needs these
