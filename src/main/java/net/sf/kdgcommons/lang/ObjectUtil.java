@@ -24,9 +24,9 @@ import java.lang.reflect.Array;
 public class ObjectUtil
 {
     /**
-     *  Tests two objects for equality. Properly handles <code>null</code>,
-     *  and also handles arrays (something that Jakarta <code>ObjectUtils.
-     *  equals()</code> does not do).
+     *  Tests two objects for equality. Properly handles <code>null</code>, and also
+     *  handles arrays (something that Jakarta <code>ObjectUtils.equals()</code> does
+     *  not do).
      */
     public static boolean equals(Object o1, Object o2)
     {
@@ -56,6 +56,82 @@ public class ObjectUtil
                 return false;
         }
         return true;
+    }
+
+
+    /**
+     *  Tests for equality between an <code>int</code> and an <code>Integer</code>.
+     *  <p>
+     *  This method and its sibling exists to avoid the accidental derefencing of a
+     *  null for primitive comparison, or the needless creation of an auto-boxed
+     *  wrapper for object comparison.
+     */
+    public static boolean equals(int v1, Integer v2)
+    {
+        return (v2 == null) ? false : v1 == v2.intValue();
+    }
+
+
+    /**
+     *  Tests for equality between an <code>Integer</code> and an <code>int</code>.
+     *  <p>
+     *  This method and its sibling exists to avoid the accidental derefencing of a
+     *  null for primitive comparison, or the needless creation of an auto-boxed
+     *  wrapper for object comparison.
+     */
+    public static boolean equals(Integer v1, int v2)
+    {
+        return (v1 == null) ? false : v1.intValue() == v2;
+    }
+
+
+    /**
+     *  Tests for equality between two <code>int</code> values.
+     *  <p>
+     *  This method exists as a complement to the object/primitive tests, so that the
+     *  same method name can be used regardless of the arguments.
+     */
+    public static boolean equals(int v1, int v2)
+    {
+        return v1 == v2;
+    }
+
+
+    /**
+     *  Tests for equality between a <code>long</code> and a <code>Long</code>.
+     *  <p>
+     *  This method and its sibling exists to avoid the accidental derefencing of a
+     *  null for primitive comparison, or the needless creation of an auto-boxed
+     *  wrapper for object comparison.
+     */
+    public static boolean equals(long v1, Long v2)
+    {
+        return (v2 == null) ? false : v1 == v2.longValue();
+    }
+
+
+    /**
+     *  Tests for equality between a <code>Long</code> and a <code>long</code>.
+     *  <p>
+     *  This method and its sibling exists to avoid the accidental derefencing of a
+     *  null for primitive comparison, or the needless creation of an auto-boxed
+     *  wrapper for object comparison.
+     */
+    public static boolean equals(Long v1, long v2)
+    {
+        return (v1 == null) ? false : v1.longValue() == v2;
+    }
+
+
+    /**
+     *  Tests for equality between two <code>long</code> values.
+     *  <p>
+     *  This method exists as a complement to the object/primitive tests, so that the
+     *  same method name can be used regardless of the arguments.
+     */
+    public static boolean equals(long v1, long v2)
+    {
+        return v1 == v2;
     }
 
 

@@ -4,6 +4,14 @@
 	</properties>
 
     <body>
+        <release version="1.0.11" date="TBD"
+            description="Lang">
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.equals() variants that compare int and long with their object
+                wrappers, to avoid null pointer exceptions from auto-unboxing.
+            </action>
+        </release>
+        
         <release version="1.0.10" date="2013-05-26"
             description="Collections">
             <action dev='kdgregory' type='add'>

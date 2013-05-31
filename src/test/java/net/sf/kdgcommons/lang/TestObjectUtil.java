@@ -42,6 +42,33 @@ public class TestObjectUtil extends TestCase
         assertTrue(ObjectUtil.equals(new Object[0], new Object[0]));
     }
 
+
+    public void testPrimitiveWrapperEquals() throws Exception
+    {
+        assertTrue("int == Integer",    ObjectUtil.equals(12, Integer.valueOf(12)));
+        assertFalse("int != Integer",   ObjectUtil.equals(13, Integer.valueOf(12)));
+        assertFalse("int != null",      ObjectUtil.equals(13, (Integer)null));
+
+        assertTrue("Integer == int",    ObjectUtil.equals(Integer.valueOf(12), 12));
+        assertFalse("Integer != int",   ObjectUtil.equals(Integer.valueOf(12), 13));
+        assertFalse("null != int",      ObjectUtil.equals((Integer)null, 13));
+
+        assertTrue("int == int",        ObjectUtil.equals(12, 12));
+        assertFalse("int != int",       ObjectUtil.equals(12, 13));
+
+        assertTrue("long == Long",      ObjectUtil.equals(12L, Long.valueOf(12L)));
+        assertFalse("long != Long",     ObjectUtil.equals(13L, Long.valueOf(12L)));
+        assertFalse("long != null",     ObjectUtil.equals(13L, null));
+
+        assertTrue("Long == long",      ObjectUtil.equals(Long.valueOf(12L), 12L));
+        assertFalse("Long != long",     ObjectUtil.equals(Long.valueOf(12L), 13L));
+        assertFalse("null != long",     ObjectUtil.equals(null, 13L));
+
+        assertTrue("long == long",      ObjectUtil.equals(12L, 12L));
+        assertFalse("long != long",     ObjectUtil.equals(12L, 13L));
+    }
+
+
     public void testHashCode() throws Exception
     {
         assertEquals(0, ObjectUtil.hashCode(null));
