@@ -102,6 +102,8 @@ public class StringUtil
     /**
      *  Invokes {@link #trim}, and returns null if the result is an empty string.
      *  Otherwise returns the trimmed string. This is useful to create flag values.
+     *
+     *  @since 1.0.9
      */
     public static String trimToNull(String str)
     {

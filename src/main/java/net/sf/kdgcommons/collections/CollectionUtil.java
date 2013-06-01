@@ -344,6 +344,8 @@ public class CollectionUtil
      *  <p>
      *  If the functor throws, it will be rethrown in a {@link #MapException}, which
      *  provides detailed information and partial work.
+     *
+     *  @since 1.0.10
      */
     public static <V,R> List<R> map(Collection<V> coll, IndexValueMapFunctor<V,R> functor)
     {
@@ -379,6 +381,8 @@ public class CollectionUtil
      *  processed, unless it is interrupted. If multiple invocations threw, one will
      *  be chosen arbitrarily; there is no guarantee that it represents the first
      *  collection element to cause an exception.
+     *
+     *  @since 1.0.10
      */
     public static <V,R> List<R> map(ExecutorService threadpool, Collection<V> values, final IndexValueMapFunctor<V,R> functor)
     throws InterruptedException
@@ -439,6 +443,8 @@ public class CollectionUtil
      *  Applies the specified functor to every element in the given collection, with
      *  the expectation that it will return a single value based on the item and any
      *  previous value.
+     *
+     *  @since 1.0.10
      */
     public static <V,R> R reduce(Collection<V> coll, IndexValueReduceFunctor<V,R> functor)
     {
@@ -470,6 +476,8 @@ public class CollectionUtil
      *  value and its position (0-based) in the iteration order.
      *  <p>
      *  The implementation is permitted to throw anything, checked or not.
+     *
+     *  @since 1.0.10
      */
     public interface IndexValueMapFunctor<V,R>
     {
@@ -483,7 +491,9 @@ public class CollectionUtil
      *  the value and index that caused the exception, and the results-to-date.
      *  <p>
      *  Note: because Java does not allow parameterization of <code>Throwable</code>
-     *  subclasses (JLS XX), the value and results are held as <code>Object</code>s.
+     *  subclasses (JLS 8.1.2), the value and results are held as <code>Object</code>s.
+     *
+     *  @since 1.0.10
      */
     public static class MapException
     extends RuntimeException
@@ -538,6 +548,8 @@ public class CollectionUtil
      *  for aggregating the results. On the first invocation, the "pending"
      *  result is <code>null</code>; on subsequent invocations, it is the value
      *  returned from the previous invocation.
+     *
+     *  @since 1.0.10
      */
     public interface IndexValueReduceFunctor<V, R>
     {
@@ -551,7 +563,9 @@ public class CollectionUtil
      *  the value and index that caused the exception, and the results-to-date.
      *  <p>
      *  Note: because Java does not allow parameterization of <code>Throwable</code>
-     *  subclasses (JLS XX), the value and results are held as <code>Object</code>s.
+     *  subclasses (JLS 8.1.2), the value and results are held as <code>Object</code>s.
+     *
+     *  @since 1.0.10
      */
     public static class ReduceException
     extends RuntimeException

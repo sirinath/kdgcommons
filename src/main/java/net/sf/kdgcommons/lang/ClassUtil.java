@@ -92,6 +92,8 @@ public class ClassUtil
      *  Returns <code>null</code> if the passed value is not a wrapper type.
      *  <p>
      *  This method is useful for reflective parameter matching.
+     *
+     *  @since 1.0.9
      */
     public static Class<?> getPrimitiveType(Object val)
     {
@@ -133,7 +135,8 @@ public class ClassUtil
     /**
      *  Returns the declared methods of the specified class that have the desired
      *  access modifiers. Note that this method does not look at superclass methods.
-     * @param isDefault TODO
+     *
+     *  @since 1.0.9
      */
     public static Method[] getDeclaredMethodsByAccess(
             Class<?> klass,
@@ -165,6 +168,8 @@ public class ClassUtil
      *  protected methods declared by the class' superclass.
      *  <p>
      *  The order of the returned methods is undefined.
+     *
+     *  @since 1.0.9
      */
     public static Method[] getVisibleMethods(Class<?> klass)
     {
@@ -188,6 +193,8 @@ public class ClassUtil
      *  This method examines all declared methods of the specified class, and the
      *  public, protected, and default-access methods declared by the class' ancestors.
      *  For overridden methods, the lowest (most subclassed) method is returned.
+     *
+     *  @since 1.0.9
      */
     public static HashMultimap<String,Method> getVisibleMethodMap(Class<?> klass)
     {
@@ -251,6 +258,8 @@ public class ClassUtil
      *  @param  methodName  The name of the method.
      *  @param  args        Actual argument values for the method. See note above
      *                      regarding the problems that <code>null</code> causes.
+     *
+     *  @since 1.0.9
      */
     public static Method getBestMethod(Class<?> klass, String methodName, Object... args)
     {

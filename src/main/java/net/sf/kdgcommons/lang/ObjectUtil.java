@@ -65,6 +65,8 @@ public class ObjectUtil
      *  This method and its sibling exists to avoid the accidental derefencing of a
      *  null for primitive comparison, or the needless creation of an auto-boxed
      *  wrapper for object comparison.
+     *
+     *  @since 1.0.11
      */
     public static boolean equals(int v1, Integer v2)
     {
@@ -78,6 +80,8 @@ public class ObjectUtil
      *  This method and its sibling exists to avoid the accidental derefencing of a
      *  null for primitive comparison, or the needless creation of an auto-boxed
      *  wrapper for object comparison.
+     *
+     *  @since 1.0.11
      */
     public static boolean equals(Integer v1, int v2)
     {
@@ -90,6 +94,8 @@ public class ObjectUtil
      *  <p>
      *  This method exists as a complement to the object/primitive tests, so that the
      *  same method name can be used regardless of the arguments.
+     *
+     *  @since 1.0.11
      */
     public static boolean equals(int v1, int v2)
     {
@@ -103,6 +109,8 @@ public class ObjectUtil
      *  This method and its sibling exists to avoid the accidental derefencing of a
      *  null for primitive comparison, or the needless creation of an auto-boxed
      *  wrapper for object comparison.
+     *
+     *  @since 1.0.11
      */
     public static boolean equals(long v1, Long v2)
     {
@@ -116,6 +124,8 @@ public class ObjectUtil
      *  This method and its sibling exists to avoid the accidental derefencing of a
      *  null for primitive comparison, or the needless creation of an auto-boxed
      *  wrapper for object comparison.
+     *
+     *  @since 1.0.11
      */
     public static boolean equals(Long v1, long v2)
     {
@@ -128,6 +138,8 @@ public class ObjectUtil
      *  <p>
      *  This method exists as a complement to the object/primitive tests, so that the
      *  same method name can be used regardless of the arguments.
+     *
+     *  @since 1.0.11
      */
     public static boolean equals(long v1, long v2)
     {
