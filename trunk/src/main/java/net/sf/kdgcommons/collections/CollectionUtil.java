@@ -95,6 +95,18 @@ public class CollectionUtil
 
 
     /**
+     *  Adds a value to the collection if it's not null. Returns the collection
+     *  as a convenience for chained invocations.
+     *
+     *  @since 1.0.11
+     */
+    public static <T> Collection<T> addIfNotNull(Collection<T> coll, T value)
+    {
+        return addIf(coll, value, value != null);
+    }
+
+
+    /**
      *  Verifies that the passed list contains only elements of the given
      *  type, and returns it as a parameterized type. Throws if any element
      *  is a different type.

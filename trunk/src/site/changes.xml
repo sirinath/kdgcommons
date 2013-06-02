@@ -5,10 +5,14 @@
 
     <body>
         <release version="1.0.11" date="TBD"
-            description="Lang">
+            description="Lang, Collections">
             <action dev='kdgregory' type='add'>
-                CollectionUtil.equals() variants that compare int and long with their object
+                ObjectUtil.equals() variants that compare int and long with their object
                 wrappers, to avoid null pointer exceptions from auto-unboxing.
+            </action>
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.addIfNotNull() used to progressively build a collection where
+                the source data may use null as a flag value.
             </action>
         </release>
         

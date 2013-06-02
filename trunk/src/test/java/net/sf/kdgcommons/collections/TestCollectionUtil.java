@@ -374,6 +374,19 @@ public class TestCollectionUtil extends TestCase
     }
 
 
+    public void testAddIfNotNull() throws Exception
+    {
+        ArrayList<String> list = new ArrayList<String>();
+        CollectionUtil.addIfNotNull(list, null);
+        CollectionUtil.addIfNotNull(list, "foo");
+        CollectionUtil.addIfNotNull(list, "foo");
+        CollectionUtil.addIfNotNull(list, null);
+        CollectionUtil.addIfNotNull(list, "bar");
+
+        assertEquals(Arrays.asList("foo", "foo", "bar"), list);
+    }
+
+
     public void testMap() throws Exception
     {
         List<Integer> src = Arrays.asList(1, 2, 3, 4);
