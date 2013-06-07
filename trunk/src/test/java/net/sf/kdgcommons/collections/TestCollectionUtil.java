@@ -526,4 +526,42 @@ public class TestCollectionUtil extends TestCase
             assertEquals("partial results",     Integer.valueOf(3),         ex.getPartialResults());
         }
     }
+
+
+    public void testFilter() throws Exception
+    {
+        List<Integer> src = Arrays.asList(1, 2, 3, 4);
+        List<Integer> dst = CollectionUtil.filter(src, new CollectionUtil.Predicate<Integer>()
+        {
+            public boolean invoke(int index, Integer value)
+            {
+                return (value.intValue() & 1) == 0;
+            }
+        });
+
+        assertEquals(Arrays.asList(2, 4), dst);
+    }
+
+
+    public void testFilterWithException() throws Exception
+    {
+        List<Integer> src = Arrays.asList(1, 2, null, 4);
+        try
+        {
+            CollectionUtil.filter(src, new CollectionUtil.Predicate<Integer>()
+            {
+                public boolean invoke(int index, Integer value)
+                {
+                    return (value.intValue() & 1) == 0;
+                }
+            });
+        }
+        catch (CollectionUtil.FilterException ex)
+        {
+            assertEquals("wrapped exception",   NullPointerException.class, ex.getCause().getClass());
+            assertEquals("failure index",       2,                          ex.getIndex());
+            assertEquals("failure value",       null,                       ex.getValue());
+            assertEquals("partial results",     Arrays.asList(2),           ex.getPartialResults());
+        }
+    }
 }
