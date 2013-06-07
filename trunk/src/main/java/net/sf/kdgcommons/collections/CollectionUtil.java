@@ -282,34 +282,6 @@ public class CollectionUtil
 
 
     /**
-     *  Applies the given regex to the string value of every item in the passed
-     *  list, building a new list from those value that either match or do not
-     *  match. Null entries are treated as an empty string for matching, but
-     *  will be returned as null.
-     *
-     *  @since 1.0.3
-     *
-     *  @param  list    The source list; this is unmodified.
-     *  @param  regex   Regex applied to every string in the list.
-     *  @param  include If <code>true</code>, strings that match are copied
-     *                  to the output list; if <code>false</code>, strings
-     *                  that don't match are copied.
-     */
-    public static <T> List<T> filter(List<T> list, String regex, boolean include)
-    {
-        Pattern pattern = Pattern.compile(regex);
-        List<T> result = new ArrayList<T>(list.size());
-        for (T obj : list)
-        {
-            String str = (obj == null) ? "" : obj.toString();
-            if (pattern.matcher(str).matches() == include)
-                result.add(obj);
-        }
-        return result;
-    }
-
-
-    /**
      *  Returns <code>true</code> if the passed collection is either <code>null</code>
      *  or has size 0.
      */
@@ -508,6 +480,34 @@ public class CollectionUtil
             }
         }
         return result;
+    }
+
+
+    /**
+     *  Applies the given regex to the string value of every item in the passed
+     *  list, building a new list from those value that either match or do not
+     *  match. Null entries are treated as an empty string for matching, but
+     *  will be returned as null.
+     *
+     *  @since 1.0.3
+     *
+     *  @param  list    The source list; this is unmodified.
+     *  @param  regex   Regex applied to every string in the list.
+     *  @param  include If <code>true</code>, strings that match are copied
+     *                  to the output list; if <code>false</code>, strings
+     *                  that don't match are copied.
+     */
+    public static <T> List<T> filter(List<T> list, String regex, final boolean include)
+    {
+        final Pattern pattern = Pattern.compile(regex);
+        return filter(list, new Predicate<T>()
+        {
+            public boolean invoke(int index, T value) throws Exception
+            {
+                String str = (value == null) ? "" : value.toString();
+                return pattern.matcher(str).matches() == include;
+            }
+        });
     }
 
 
