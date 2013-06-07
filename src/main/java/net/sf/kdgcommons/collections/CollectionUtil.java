@@ -478,6 +478,39 @@ public class CollectionUtil
     }
 
 
+    /**
+     *  Applies the specified predicate functor to every element of a collection,
+     *  in its natural iteration order, and returns a list containing only those
+     *  elements for which the predicate returned <code>true</code>.
+     *  <p>
+     *  If the functor throws, it will be rethrown in a {@link #FilterException},
+     *  which provides detailed information and partial work.
+     *
+     *  @since 1.0.11
+     */
+    public static <V> List<V> filter(Collection<V> coll, Predicate<V> predicate)
+    {
+        List<V> result = new ArrayList<V>(coll.size());
+        int index = 0;
+        for (V value : coll)
+        {
+            try
+            {
+                if (predicate.invoke(index, value))
+                {
+                    result.add(value);
+                }
+                index++;
+            }
+            catch (Throwable ex)
+            {
+                throw new FilterException(ex, index, value, result);
+            }
+        }
+        return result;
+    }
+
+
 //----------------------------------------------------------------------------
 //  Supporting Objects
 //----------------------------------------------------------------------------
@@ -618,6 +651,79 @@ public class CollectionUtil
          *  value passed to the functor at the time the exception was thrown.
          */
         public Object getPartialResults()
+        {
+            return _partialResults;
+        }
+    }
+
+
+    /**
+     *  Implement this for the {@link #filter} operation: return <code>true</code> to
+     *  include an element in the result, <code>false</code> to skip it. Implementations
+     *  may throw exceptions; these will cause the filter to stop processing.
+     *  <p>
+     *  Purists may object, but each invocation is given the element index, in iteration
+     *  order.
+     *
+     *  @since 1.0.11
+     */
+    public interface Predicate<V>
+    {
+        public boolean invoke(int index, V value)
+        throws Exception;
+    }
+
+
+    /**
+     *  An exception wrapper for {@link #filter}. Contains the wrapped exception,
+     *  the value and index that caused the exception, and the results-to-date.
+     *  <p>
+     *  Note: because Java does not allow parameterization of <code>Throwable</code>
+     *  subclasses (JLS 8.1.2), the value and results are held as <code>Object</code>s.
+     *
+     *  @since 1.0.11
+     */
+    public static class FilterException
+    extends RuntimeException
+    {
+        private static final long serialVersionUID = 1;
+
+        private int _index;
+        private Object _value;
+        private List<?> _partialResults;
+
+        public FilterException(Throwable cause, int index, Object value, List<?> partialResults)
+        {
+            super(cause);
+            _index = index;
+            _value = value;
+            _partialResults = partialResults;
+        }
+
+        /**
+         *  Returns the position (0-based) in the original collection's iteration where the
+         *  wrapped exception was thrown.
+         */
+        public int getIndex()
+        {
+            return _index;
+        }
+
+        /**
+         *  Returns the value that caused the exception.
+         */
+        public Object getValue()
+        {
+            return _value;
+        }
+
+        /**
+         *  Returns any partial results from the map operation.
+         *  <p>
+         *  Warning: the contents of this list are undefined in the case of a parallel map
+         *  operation.
+         */
+        public List<?> getPartialResults()
         {
             return _partialResults;
         }
