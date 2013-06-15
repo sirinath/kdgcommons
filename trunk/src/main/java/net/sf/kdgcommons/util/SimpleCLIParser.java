@@ -85,8 +85,8 @@ public class SimpleCLIParser
      *  and non-options. Subclasses will normally expose a constructor that
      *  just accepts an argument vector, and hide the option definitions.
      *
-     *  @param argv     The argument vector passed to <code>main()</code>.
-     *  @param options  Definitions for all expected options.
+     *  @param argv         The argument vector passed to <code>main()</code>.
+     *  @param optionDefs   Definitions for all expected options.
      */
     public SimpleCLIParser(String[] argv, OptionDefinition... optionDefs)
     {
