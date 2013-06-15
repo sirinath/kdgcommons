@@ -194,6 +194,17 @@ public class TestClassUtil extends TestCase
         assertEquals("java.lang.Object",     ClassUtil.internalNameToExternal("Ljava/lang/Object;"));
         assertEquals("int[]",                ClassUtil.internalNameToExternal("[I"));
         assertEquals("java.lang.Object[][]", ClassUtil.internalNameToExternal("[[Ljava/lang/Object;"));
+        
+        try
+        {
+            ClassUtil.internalNameToExternal("Q");
+            fail("accepted one of many invalid characters");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertTrue("exception message: \"" + ex.getMessage() + "\"", ex.getMessage().contains("invalid"));
+            assertTrue("exception message: \"" + ex.getMessage() + "\"", ex.getMessage().endsWith("Q"));
+        }
     }
 
 

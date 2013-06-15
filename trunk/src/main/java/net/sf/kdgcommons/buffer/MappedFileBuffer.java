@@ -24,6 +24,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
 import net.sf.kdgcommons.io.IOUtil;
+import net.sf.kdgcommons.lang.UnreachableCodeException;
 
 
 /**
@@ -430,7 +431,9 @@ implements BufferFacade, Cloneable
 
 
     /**
-     *  Creates a new buffer referencing the same file, but with
+     *  Creates a new buffer referencing the same file, but with a copy of the
+     *  original underlying mappings. The new and old buffers may be accessed
+     *  by different threads.
      */
     @Override
     public MappedFileBuffer clone()
@@ -450,7 +453,7 @@ implements BufferFacade, Cloneable
         }
         catch (CloneNotSupportedException ex)
         {
-            throw new RuntimeException("unreachable code", ex);
+            throw new UnreachableCodeException("I used to implement Cloneable, why don't I now?");
         }
     }
 

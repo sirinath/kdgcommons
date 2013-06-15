@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 
 public class TestNumberUtil extends TestCase
 {
+
     public void testParse() throws Exception
     {
         String str = "123";
@@ -45,10 +46,23 @@ public class TestNumberUtil extends TestCase
             (Double)NumberUtil.parse(str, Double.TYPE)
         };
 
-        // check the results for giggles
         for (Number value : values)
         {
             assertEquals(value.getClass().getName(), 123, value.intValue());
+        }
+    }
+
+
+    public void testParseUnhandledType() throws Exception
+    {
+        try
+        {
+            // Number will stand in for some user-defined subclass
+            NumberUtil.parse("123", Number.class);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertTrue("exception message: \"" + ex.getMessage() + "\"", ex.getMessage().contains("java.lang.Number"));
         }
     }
 
@@ -69,6 +83,7 @@ public class TestNumberUtil extends TestCase
     }
 
 
+    // FIXME - this should test all combinations, and needs to test wrapper types (which currently fail)
     public void testDynamicCast() throws Exception
     {
         Object src = new Integer(123);
