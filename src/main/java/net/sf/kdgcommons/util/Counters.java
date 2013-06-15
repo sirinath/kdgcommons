@@ -119,7 +119,7 @@ implements Map<K,Long>, Iterable<Map.Entry<K,Long>>
      *  <p>
      *  This method does not attempt to prevent multiple threads from updating the
      *  map at the same time; concurrent calls could return the same old value. If
-     *  this is a problem for you, call {@link #putIf} or {@link #putIfAbsent}.
+     *  this is a problem for you, call {@link #putIfAbsent}.
      */
     public Long put(K key, Long newValue)
     {
