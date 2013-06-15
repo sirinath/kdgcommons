@@ -4,6 +4,10 @@
 	</properties>
 
     <body>
+        <release version="1.0.12" date="TBD"
+            description="">
+        </release>
+
         <release version="1.0.11" date="2013-06-15"
             description="Lang, Collections">
             <action dev='kdgregory' type='add'>
@@ -18,7 +22,7 @@
                 wrappers, to avoid null pointer exceptions from auto-unboxing
             </action>
         </release>
-        
+
         <release version="1.0.10" date="2013-05-26"
             description="Collections">
             <action dev='kdgregory' type='add'>
