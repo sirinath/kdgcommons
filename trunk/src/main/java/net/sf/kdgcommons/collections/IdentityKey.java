@@ -12,18 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package net.sf.kdgcommons.util;
+package net.sf.kdgcommons.collections;
 
 
 /**
- *  @deprecated Moved to <code>net.sf.kdgcommons.collections</code>.
+ *  A wrapper for a hashed key that uses identity semantics, because sometimes
+ *  you want to use a <code>Set</code>.
  */
-@Deprecated
-public final class IdentityKey
-extends net.sf.kdgcommons.collections.IdentityKey
+public class IdentityKey
 {
+    Object _realKey;
+
     public IdentityKey(Object key)
     {
-        super(key);
+        _realKey = key;
+    }
+
+    @Override
+    public final boolean equals(Object obj)
+    {
+        if (obj instanceof IdentityKey)
+        {
+            return _realKey == ((IdentityKey)obj)._realKey;
+        }
+        return false;
+
+    }
+
+    @Override
+    public final int hashCode()
+    {
+        return System.identityHashCode(_realKey);
     }
 }
