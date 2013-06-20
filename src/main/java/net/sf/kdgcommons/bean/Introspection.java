@@ -25,7 +25,8 @@ import java.util.Set;
 
 /**
  *  A replacement for <code>java.beans.Introspector</code> that is tailored to
- *  the operation of <code>BeanConverter</code>:
+ *  conversion of bean data into other forms. Uses the following rules to find
+ *  the getters and setters of an introspected class:
  *  <dl>
  *  <dt>Identifies multiple accessor methods
  *  <dd><code>javax.beans.Introspector</code> looks at parameter type, and
@@ -56,20 +57,28 @@ import java.util.Set;
  *      parts of the class hierarchy to be introspected; by default, it will
  *      include methods defined by <code>Object</code>. We don't care about
  *      those, but assume any other class in the hierarchy to be important.
- *  </dl>
  *  <dt>Does not cache introspections.
  *  <dd><code>javax.beans.Introspector</code> maintains its own cache of methods.
  *      Since it is loaded by the bootstrap classloader, and thus never released,
  *      this can wreak havoc when used by a library in an application server. We
  *      separate introspection and caching; see {@link IntrospectionCache} for
  *      the latter.
- *  <p>
- *  Instances of this class are read-only (and threadsafe) once constructed.
+ *  <dt>Does not rely on <code>setAccessible()</code>
+ *  <dd>Introspects only the public getter and setter methods. In a perfect world,
+ *      these will be sufficient to marshall and unmarshall an object, and we can
+ *      use the introspected methods in a sandbox (applet or security-managed
+ *      container). In the real world, you can have a public method on a private
+ *      class, and get an access exception if you attempt to invoke that method.
+ *      If you live in that world, you can instruct <code>Introspector</code> to
+ *      mark each method as accessible (but then you can't run in sandboxes).
+ *  </dl>
+ *  Instances of this class are read-only (and thus threadsafe) once constructed.
  *
  *  @since 1.0.5
  */
 public class Introspection
 {
+    private boolean _setAccessible;
     private Set<String> _propNames;
     private Set<String> _propNamesPublic;
     private Map<String,Method> _getters;
@@ -85,6 +94,19 @@ public class Introspection
      */
     public Introspection(Class<?> klass)
     {
+        this(klass, false);
+    }
+
+
+    /**
+     *  Introspects the specified class, per the rules above. Optionally sets
+     *  each introspected method as accessible. This avoids exceptions caused
+     *  by public methods in private classes, but will throw a security
+     *  exception if running in a sandbox.
+     */
+    public Introspection(Class<?> klass, boolean setAccessible)
+    {
+        _setAccessible = setAccessible;
         _propNames = new HashSet<String>();
         _propNamesPublic = Collections.unmodifiableSet(_propNames);
         _getters = new HashMap<String,Method>();
@@ -197,6 +219,9 @@ public class Introspection
 
     private void saveGetter(String propName, Method method)
     {
+        if (_setAccessible)
+            method.setAccessible(true);
+
         Method existing = _getters.get(propName);
         if (existing == null)
         {
@@ -216,6 +241,9 @@ public class Introspection
 
     private void saveSetter(String propName, Method method)
     {
+        if (_setAccessible)
+            method.setAccessible(true);
+
         Method existing = _setters.get(propName);
         if (existing == null)
         {
