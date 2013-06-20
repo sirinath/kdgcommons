@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package net.sf.kdgcommons.util;
+package net.sf.kdgcommons.collections;
 
 import java.util.HashSet;
 
