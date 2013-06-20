@@ -19,6 +19,8 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import net.sf.kdgcommons.testinternals.InaccessibleClass;
+
 
 public class TestIntrospection
 extends TestCase
@@ -375,4 +377,35 @@ extends TestCase
         Method setBVal = ispec.setter("bval");
         assertNull(setBVal);
     }
+
+
+    public void testPublicMethodInPrivateClass() throws Exception
+    {
+        InaccessibleClass instance = InaccessibleClass.newInstance();
+
+        // the default introspector does not make the method accessible, so
+        // attempting to invoke it will throw
+        Introspection ispec1 = new Introspection(instance.getClass());
+        Method setter1 = ispec1.setter("value");
+        assertNotNull("able to retrieve setter", setter1);
+
+        try
+        {
+            setter1.invoke(instance, "foo");
+            fail("apparently able to invoke inaccessible setter (maybe JVM changed?)");
+        }
+        catch (Exception ex)
+        {
+            assertEquals("expected exception type", IllegalAccessException.class, ex.getClass());
+        }
+
+        // the alternate constructor allows us to force accessibility
+
+        Introspection ispec2 = new Introspection(instance.getClass(), true);
+        Method setter2 = ispec2.setter("value");
+        assertNotNull("able to retrieve setter", setter2);
+        setter2.invoke(instance, "foo");
+        assertEquals("able to invoke setter", "foo", instance.getValue());
+    }
+
 }
