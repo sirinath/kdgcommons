@@ -1,4 +1,4 @@
-// Copyright 2008-2011 severally by the contributors
+// Copyright Keith D Gregory
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,11 @@
 
 package net.sf.kdgcommons.bean;
 
+import java.lang.reflect.Method;
+
 import junit.framework.TestCase;
+
+import net.sf.kdgcommons.testinternals.InaccessibleClass;
 
 public class TestIntrospectionCache
 extends TestCase
@@ -86,5 +90,37 @@ extends TestCase
         Introspection ispec4 = cache4.lookup(Bean1.class);
         assertNotSame(ispec1, ispec4);
         assertNotSame(ispec2, ispec4);
+    }
+
+
+    public void testPublicMethodInPrivateClass() throws Exception
+    {
+        InaccessibleClass instance = InaccessibleClass.newInstance();
+
+        // the default introspector does not make the method accessible, so
+        // attempting to invoke it will throw
+        IntrospectionCache cache1 = new IntrospectionCache();
+        Introspection ispec1 = cache1.lookup(instance.getClass());
+        Method setter1 = ispec1.setter("value");
+        assertNotNull("able to retrieve setter", setter1);
+
+        try
+        {
+            setter1.invoke(instance, "foo");
+            fail("apparently able to invoke inaccessible setter (maybe JVM changed?)");
+        }
+        catch (Exception ex)
+        {
+            assertEquals("expected exception type", IllegalAccessException.class, ex.getClass());
+        }
+
+        // the alternate constructor allows us to force accessibility
+
+        IntrospectionCache cache2 = new IntrospectionCache();
+        Introspection ispec2 = cache2.lookup(instance.getClass(), true);
+        Method setter2 = ispec2.setter("value");
+        assertNotNull("able to retrieve setter", setter2);
+        setter2.invoke(instance, "foo");
+        assertEquals("able to invoke setter", "foo", instance.getValue());
     }
 }

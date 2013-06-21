@@ -49,17 +49,35 @@ public class IntrospectionCache
     }
 
 
+
     /**
      *  Returns an {@link Introspection} of the passed class.
      *
-     *  @throws IntrospectionException if unable to introspect the class.
+     *  @throws ConversionError if unable to introspect the class.
      */
     public synchronized Introspection lookup(Class<?> klass)
+    {
+        return lookup(klass,false);
+    }
+
+
+    /**
+     *  Returns an {@link Introspection} of the passed class, optionally calling
+     *  <code>setAccessible(true)</code> on all accessor methods.
+     *  <p>
+     *  Note: because introspections are cached, the <code>setAccessible</code>
+     *  argument is ignored for the second and subsequent calls for the same class.
+     *
+     *  @since 1.0.12
+     *
+     *  @throws ConversionError if unable to introspect the class.
+     */
+    public synchronized Introspection lookup(Class<?> klass, boolean setAccessible)
     {
         Introspection result = _cache.get(klass);
         if (result == null)
         {
-            result = new Introspection(klass);
+            result = new Introspection(klass, setAccessible);
             _cache.put(klass, result);
         }
         return result;

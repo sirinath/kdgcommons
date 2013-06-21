@@ -1,4 +1,4 @@
-// Copyright 2008-2011 severally by the contributors
+// Copyright Keith D Gregory
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -407,5 +407,4 @@ extends TestCase
         setter2.invoke(instance, "foo");
         assertEquals("able to invoke setter", "foo", instance.getValue());
     }
-
 }
