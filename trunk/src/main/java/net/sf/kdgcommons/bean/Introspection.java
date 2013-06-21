@@ -103,6 +103,8 @@ public class Introspection
      *  each introspected method as accessible. This avoids exceptions caused
      *  by public methods in private classes, but will throw a security
      *  exception if running in a sandbox.
+     *
+     *  @since 1.0.12
      */
     public Introspection(Class<?> klass, boolean setAccessible)
     {

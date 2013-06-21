@@ -5,7 +5,15 @@
 
     <body>
         <release version="1.0.12" date="TBD"
-            description="">
+            description="Introspection">
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.addIfNotNull(): used to progressively build a collection where
+                the source data may use null as a flag value
+            </action>
+            <action dev='kdgregory' type='update'>
+                Introspection and IntrospectionCache now allow an optional setAccessible(true)
+                on introspected methods.
+            </action>
         </release>
 
         <release version="1.0.11" date="2013-06-15"
