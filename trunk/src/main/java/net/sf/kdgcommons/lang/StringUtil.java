@@ -26,6 +26,17 @@ import java.util.Random;
 public class StringUtil
 {
     /**
+     *  Returns the length of the passed string, 0 if the string is null.
+     *
+     *  @since 1.0.12
+     */
+    public static int length(String str)
+    {
+        return (str == null) ? 0 : str.length();
+    }
+
+
+    /**
      *  Tests for equality, where null is equivalent to an empty string.
      */
     public static boolean equalOrEmpty(String s1, String s2)
@@ -53,7 +64,7 @@ public class StringUtil
      */
     public static boolean isEmpty(String str)
     {
-        return (str == null) || (str.length() == 0);
+        return length(str) == 0;
     }
 
 
