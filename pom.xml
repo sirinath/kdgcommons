@@ -10,11 +10,12 @@
 
     <groupId>net.sf.kdgcommons</groupId>
     <artifactId>kdgcommons</artifactId>
-    <version>1.0.12-SNAPSHOT</version>
+    <version>1.0.12</version>
 
     <name>KDG Commons</name>
     <packaging>jar</packaging>
     <url>http://sourceforge.net/projects/kdgcommons/</url>
+
 
     <description>
         A collection of utility classes for Java, supplementing and in some cases
