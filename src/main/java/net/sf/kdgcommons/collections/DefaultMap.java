@@ -108,9 +108,9 @@ implements Map<K,V>
 
 
     /**
-     *  An implementation of the {@link #ValueFactory} interface for static
-     *  values. Exposed in case you want an updating map with a static value
-     *  (although why you'd want that, I don't know).
+     *  An implementation of the {@link DefaultMap.ValueFactory} interface for
+     *  static values. Used for testing, exposed in case you want an updating map
+     *  with a static value (although why you'd want that, I don't know).
      */
     public static class StaticValueFactory<T>
     implements ValueFactory<T>

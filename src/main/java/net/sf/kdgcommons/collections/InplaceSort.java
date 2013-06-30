@@ -257,8 +257,8 @@ public class InplaceSort
 
 
     /**
-     *  Sorts a collection encapsulated by the provided {@link #Accessor}. This
-     *  is used to physically sort a collection that is not backed by an array
+     *  Sorts a collection encapsulated by the provided {@link InplaceSort.Accessor}.
+     *  This is used to physically sort a collection that is not backed by an array
      *  (eg, a memory-mapped file).
      *  <p>
      *  Since the <code>Accessor</code> includes both range and comparator, this
