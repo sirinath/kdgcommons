@@ -21,12 +21,11 @@ import net.sf.kdgcommons.test.NumericAsserts;
 
 public class TestStringUtil extends TestCase
 {
-    public void testLastChar() throws Exception
+    public void testLength() throws Exception
     {
-        assertEquals('c', StringUtil.lastChar("abc"));
-        assertEquals('a', StringUtil.lastChar("a"));
-        assertEquals('\0', StringUtil.lastChar(""));
-        assertEquals('\0', StringUtil.lastChar(null));
+        assertEquals("non-empty", 3, StringUtil.length("foo"));
+        assertEquals("empty",     0, StringUtil.length(""));
+        assertEquals("null",      0, StringUtil.length(null));
     }
 
 
@@ -90,6 +89,14 @@ public class TestStringUtil extends TestCase
         assertEquals("qqqqq", StringUtil.padRight(null, 5, 'q'));
     }
 
+
+    public void testLastChar() throws Exception
+    {
+        assertEquals('c', StringUtil.lastChar("abc"));
+        assertEquals('a', StringUtil.lastChar("a"));
+        assertEquals('\0', StringUtil.lastChar(""));
+        assertEquals('\0', StringUtil.lastChar(null));
+    }
 
 
     public void testContains() throws Exception
