@@ -107,6 +107,33 @@ public class CollectionUtil
 
 
     /**
+     *  Adds the specified item to a map if it does not already exist. Returns
+     *  either the added item or the existing mapping.
+     *  <p>
+     *  <em>Note:</em>    The return behavior differs from <code>Map.put()</code>,
+     *                    in that it returns the new value if there was no prior
+     *                    mapping. I find this more useful, as I typically want
+     *                    to do something with the mapping.
+     *  <p>
+     *  <em>Warning:</em> This operation is not synchronized. In most cases, a
+     *                    better approach is to use {@link DefaultMap}, with a
+     *                    functor to generate new entries.
+     *
+     *  @since 1.0.12
+     */
+    public static <K,V> V putIfAbsent(Map<K,V> map, K key, V value)
+    {
+        if (! map.containsKey(key))
+        {
+            map.put(key,value);
+            return value;
+        }
+
+        return map.get(key);
+    }
+
+
+    /**
      *  Verifies that the passed list contains only elements of the given
      *  type, and returns it as a parameterized type. Throws if any element
      *  is a different type.
