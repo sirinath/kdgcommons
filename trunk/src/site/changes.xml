@@ -4,11 +4,18 @@
 	</properties>
 
     <body>
-        <release version="1.0.12" date="TBD"
+        <release version="1.0.12" date="2013-06-30"
             description="Introspection">
             <action dev='kdgregory' type='add'>
                 CollectionUtil.addIfNotNull(): used to progressively build a collection where
                 the source data may use null as a flag value
+            </action>
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.putIfAbsent(): a simple way to add default values to maps
+            </action>
+            <action dev='kdgregory' type='add'>
+                StringUtil.length(): a null-safe length check (although StringUtil.isBlang()) is a
+                better choice in most situations)
             </action>
             <action dev='kdgregory' type='update'>
                 Introspection and IntrospectionCache now allow an optional setAccessible(true)
