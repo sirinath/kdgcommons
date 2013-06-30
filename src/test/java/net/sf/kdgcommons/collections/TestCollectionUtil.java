@@ -387,6 +387,20 @@ public class TestCollectionUtil extends TestCase
     }
 
 
+    public void testPutIfAbsent() throws Exception
+    {
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("argle", "bargle");
+
+        assertEquals("put of existing entry; return",   "bargle", CollectionUtil.putIfAbsent(map, "argle", "wargle"));
+        assertEquals("put of existing entry; post get", "bargle", map.get("argle"));
+
+        assertEquals("put of absent entry; pre get",    null, map.get("foo"));
+        assertEquals("put of abseent entry; return",    "bar", CollectionUtil.putIfAbsent(map, "foo", "bar"));
+        assertEquals("put of absent entry; post get",   "bar", map.get("foo"));
+    }
+
+
     public void testMap() throws Exception
     {
         List<Integer> src = Arrays.asList(1, 2, 3, 4);
