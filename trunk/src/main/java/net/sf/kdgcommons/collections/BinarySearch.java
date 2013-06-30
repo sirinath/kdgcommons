@@ -22,11 +22,11 @@ package net.sf.kdgcommons.collections;
  *  records.
  *  <p>
  *  There are two ways to search these structures. For structures that are sorted,
- *  you can implement {@link #Accessor}: the search will provide that interface
- *  with indexes to compare. Or, you can create an <code>int[]</code> that holds
- *  sorted indexes into the original data structure, and implement {@link
- *  #IndexedComparator}: the search will provide the comparator with indexes
- *  retrieved from that array.
+ *  you can implement {@link BinarySearch.Accessor}: the search will provide that
+ *  interface with indexes to compare. Or, you can create an <code>int[]</code>
+ *  that holds sorted indexes into the original data structure, and implement
+ *  {@link BinarySearch.IndexedComparator}: the search will provide the comparator
+ *  with indexes retrieved from that array.
  *  <p>
  *  In either case, you must implement a <code>compare()</code> method that
  *  compares an actual object instance against the instance stored at a particular

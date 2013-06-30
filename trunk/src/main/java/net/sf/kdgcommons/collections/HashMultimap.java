@@ -31,9 +31,9 @@ import java.util.Set;
  *  Unlike other implementations (eg, Google's), this is not based around a JDK
  *  <code>HashMap</code> that uses a JDK <code>Collection</code> object as its
  *  value. Instead, it maintains the values as part of the hash bucket chain. While
- *  this will increase the time to retrieve or add a value, it is significantly more
- *  memory efficient (particularly when there are a small number of values per key
- *  and you enable set semantics).
+ *  this will increase the time to retrieve or add a value, it is significantly
+ *  more memory efficient (particularly when there are a small number of values per
+ *  key and you enable set semantics).
  *  <p>
  *  Partly as a result, this class does <em>not</em> implement <code>Map</code>. I
  *  didn't want to put in the extra effort to create a "live" <code>keySet()</code>.
@@ -41,10 +41,11 @@ import java.util.Set;
  *  which I thought led to methods that weren't particularly useful.
  *  <p>
  *  You can configure this multimap to provide eitherSet or List behavior for its
- *  values, by passing one of the {@link #Behavior} options to the constructor.
- *  With Set semantics, each key-value pair is stored only once; subsequent puts
- *  of the same pair will be ignored. With List semantics, each key-value pair
- *  may be stored multiple times, and the order of reflects the sequence of puts.
+ *  values, by passing one of the {@link HashMultimap.Behavior} options to the
+ *  constructor. With Set semantics, each key-value pair is stored only once;
+ *  subsequent puts of the same pair will be ignored. With List semantics, each
+ *  key-value pair may be stored multiple times, and the order of reflects the
+ *  sequence of puts.
  *  <p>
  *  Null keys are not allowed. Null values are.
  *  <p>

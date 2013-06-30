@@ -231,7 +231,7 @@ public class CollectionUtil
      *  concatenates those strings with the specified delimiter between them.
      *  Nulls are converted to empty strings.
      *
-     *  @ince 1.0.2
+     *  @since 1.0.2
      */
     public static <T> String join(Iterable<T> coll, String delim)
     {
@@ -353,8 +353,8 @@ public class CollectionUtil
      *  Applies the specified functor to every element of the given collection, in
      *  its natural iteration order, and returns a list of the results.
      *  <p>
-     *  If the functor throws, it will be rethrown in a {@link #MapException}, which
-     *  provides detailed information and partial work.
+     *  If the functor throws, it will be rethrown in a {@link CollectionUtil.MapException},
+     *  which provides detailed information and partial work.
      *
      *  @since 1.0.10
      */
@@ -384,7 +384,7 @@ public class CollectionUtil
      *  the specified functor. The results are accumulated and returned as a list, in
      *  the order of the original collection's iterator.
      *  <p>
-     *  If any element causes an exception, this method throws {@link #MapException}.
+     *  If any element causes an exception, this method throws {@link CollectionUtil.MapException}.
      *  While that exception returns partial results, there is no guarantee that the
      *  results represent a particular range of the source collection.
      *  <p>
@@ -482,7 +482,7 @@ public class CollectionUtil
      *  in its natural iteration order, and returns a list containing only those
      *  elements for which the predicate returned <code>true</code>.
      *  <p>
-     *  If the functor throws, it will be rethrown in a {@link #FilterException},
+     *  If the functor throws, it will be rethrown in a {@link CollectionUtil.FilterException},
      *  which provides detailed information and partial work.
      *
      *  @since 1.0.11
