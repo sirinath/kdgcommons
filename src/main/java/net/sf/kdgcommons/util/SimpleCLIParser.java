@@ -38,8 +38,8 @@ import net.sf.kdgcommons.lang.StringUtil;
  *  an <code>enum</code> that corresponds to the available options, as a shorthand
  *  for accessing the option values.
  *  <p>
- *  The {@link #OptionDefinition} nested class is how the caller defines legal options.
- *  Options have two forms:
+ *  The {@link SimpleCLIParser.OptionDefinition} nested class is how the caller
+ *  defines legal options. Options have two forms:
  *  <dl>
  *  <dt> Enable/disable
  *  <dd> The option always has a value, either enabled or disabled. The user can
@@ -55,8 +55,8 @@ import net.sf.kdgcommons.lang.StringUtil;
  *       list, with or without parmaeters.
  *  </dl>
  *  The non-option command-line arguments are available in a number of ways. They can
- *  be retrieved all at once using the {@link #getArgs} method, or one at a time using
- *  the {@link #shift} method.
+ *  be retrieved all at once using the {@link #getParameters} method, or one at a time
+ *  using the {@link #shift} method.
  *  <p>
  *  Design note: this class is intended for internal use in a narrow phase of
  *  program operation. As a result, it makes no attempt to protect its internal
