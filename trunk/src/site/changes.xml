@@ -14,7 +14,7 @@
                 HashMultimap: add equals() and hashCode()
             </action>
             <action dev='kdgregory' type='update'>
-                HashMultimap is now Serializable
+                The following classes are now Serializable: CompountKey, HashMultimap
             </action>
         </release>
 

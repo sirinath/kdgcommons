@@ -18,6 +18,10 @@ package net.sf.kdgcommons.collections;
 /**
  *  A wrapper for a hashed key that uses identity semantics, because sometimes
  *  you want to use a <code>Set</code>.
+ *  <p>
+ *  This class is not serializable. Serialization creates new object instances,
+ *  meaning that a serialized <code>IdentityKey</code> will not compare equal to
+ *  the original key.
  */
 public class IdentityKey
 {
