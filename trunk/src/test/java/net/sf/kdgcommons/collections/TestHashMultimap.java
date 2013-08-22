@@ -14,6 +14,10 @@
 
 package net.sf.kdgcommons.collections;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -440,4 +444,27 @@ extends TestCase
         assertEquals("D", map.get(4));
         assertEquals("E", map.get(5));
     }
+
+
+    public void testSerialization() throws Exception
+    {
+        HashMultimap<String,String> map = new HashMultimap<String,String>();
+        map.put("foo", "bar");
+        map.put("foo", "baz");
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(map);
+        oos.close();
+
+        ByteArrayInputStream bis= new ByteArrayInputStream(bos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bis);
+
+        HashMultimap<String,String> ret = (HashMultimap<String,String>)ois.readObject();
+
+        assertEquals("retrieved map size", 2, ret.size());
+        assertTrue("retrieved map contains mapping 1", ret.containsMapping("foo", "bar"));
+        assertTrue("retrieved map contains mapping 2", ret.containsMapping("foo", "baz"));
+    }
+
 }
