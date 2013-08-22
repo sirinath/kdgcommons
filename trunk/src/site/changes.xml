@@ -5,7 +5,11 @@
 
     <body>
         <release version="1.0.13" date="TBD"
-            description="">
+            description="Collections">
+            <action dev='kdgregory' type='add'>
+                CollectionUtil.first(), .last(): null-safe, empty-safe retrieval of first or last
+                element of a list
+            </action>
         </release>
 
         <release version="1.0.12" date="2013-06-30"
