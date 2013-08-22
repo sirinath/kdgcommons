@@ -467,4 +467,35 @@ extends TestCase
         assertTrue("retrieved map contains mapping 2", ret.containsMapping("foo", "baz"));
     }
 
+
+    public void testEqualsAndHashcode() throws Exception
+    {
+        HashMultimap<String,String> map1 = new HashMultimap<String,String>();
+        map1.put("foo", "bar");
+        map1.put("foo", "baz");
+
+        HashMultimap<String,String> map2 = new HashMultimap<String,String>();
+        map2.put("foo", "bar");
+        map2.put("foo", "baz");
+
+        HashMultimap<String,String> map3 = new HashMultimap<String,String>();
+        map3.put("foo", "bar");
+        map3.put("baz", "baz");
+
+        HashMultimap<String,String> map4 = new HashMultimap<String,String>();
+        map4.put("foo", "bar");
+        map4.put("foo", "bif");
+
+        HashMultimap<String,String> map5 = new HashMultimap<String,String>();
+        map4.put("foo", "bar");
+
+        assertTrue("identical maps are equal", map1.equals(map1));
+        assertTrue("maps with same mappings are equal", map1.equals(map2));
+        assertFalse("maps with different keys are not equal", map1.equals(map3));
+        assertFalse("maps with different values are not equal", map1.equals(map4));
+        assertFalse("maps with different sizes are not equal", map1.equals(map5));
+
+        assertEquals("equal maps have equal hashcodes",         map1.hashCode(), map2.hashCode());
+        assertFalse("different hashcodes (known value test)",   map1.hashCode() == map3.hashCode());
+    }
 }

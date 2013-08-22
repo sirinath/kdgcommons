@@ -55,7 +55,7 @@ import java.util.Set;
 public class HashMultimap<K,V>
 implements Serializable
 {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     /**
      *  Controls the handling of equal key-value pairs.
@@ -384,6 +384,52 @@ implements Serializable
         return new PublicEntryIterator();
     }
 
+
+//----------------------------------------------------------------------------
+//  Object overrides
+//----------------------------------------------------------------------------
+
+    @Override
+    /**
+     *  Two instances are equal if they are the same size and have the same
+     *  mappings.
+     */
+    public final boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        else if (obj instanceof HashMultimap)
+        {
+            HashMultimap<Object,Object> that = (HashMultimap<Object,Object>)obj;
+            if (this.size() != that.size())
+                return false;
+
+            for (Map.Entry<?,?> entry : this.entries())
+            {
+                if (! that.containsMapping(entry.getKey(), entry.getValue()))
+                    return false;
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
+    /**
+     *  Returns a hashcode for the map. This value is dependent on the current
+     *  mappings, and is expected to change as mappings change.
+     */
+    public final int hashCode()
+    {
+        int hashCode = 0;
+        for (InternalEntryIterator itx = new InternalEntryIterator() ; itx.hasNext() ; )
+        {
+            hashCode = hashCode * 37 + itx.next().getKey().hashCode();
+        }
+        return hashCode;
+    }
 
 //----------------------------------------------------------------------------
 //  Hashtable internals
