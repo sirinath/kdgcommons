@@ -14,6 +14,10 @@
 
 package net.sf.kdgcommons.collections;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
@@ -89,5 +93,22 @@ public class TestCompoundKey extends TestCase
         assertEquals("bar", itx.next());
         assertEquals("baz", itx.next());
         assertFalse(itx.hasNext());
+    }
+
+
+    public void testSerialization() throws Exception
+    {
+        CompoundKey key = new CompoundKey("foo", "bar", "baz");
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(key);
+        oos.close();
+
+        ByteArrayInputStream bis= new ByteArrayInputStream(bos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bis);
+
+        CompoundKey ret = (CompoundKey)ois.readObject();
+        assertEquals(key, ret);
     }
 }

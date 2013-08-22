@@ -461,10 +461,7 @@ extends TestCase
         ObjectInputStream ois = new ObjectInputStream(bis);
 
         HashMultimap<String,String> ret = (HashMultimap<String,String>)ois.readObject();
-
-        assertEquals("retrieved map size", 2, ret.size());
-        assertTrue("retrieved map contains mapping 1", ret.containsMapping("foo", "bar"));
-        assertTrue("retrieved map contains mapping 2", ret.containsMapping("foo", "baz"));
+        assertEquals(map, ret);
     }
 
 

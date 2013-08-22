@@ -14,6 +14,7 @@
 
 package net.sf.kdgcommons.collections;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -23,8 +24,10 @@ import java.util.Iterator;
  *  used to hold a multi-element key for <code>HashMap</code>s.
  */
 public final class CompoundKey
-implements Iterable<Object>
+implements Iterable<Object>, Serializable
 {
+        private static final long serialVersionUID = 1L;
+
         private Object[] _components;
         private int _hashCode;
         private String _stringValue;
