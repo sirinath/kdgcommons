@@ -70,6 +70,100 @@ public class TestCollectionUtil extends TestCase
     }
 
 
+    public void testAddIf() throws Exception
+    {
+        ArrayList<String> list = new ArrayList<String>();
+
+        assertSame("returned collection",       list, CollectionUtil.addIf(list, "foo", true));
+        assertEquals("added element",           Arrays.asList("foo"), list);
+
+        assertSame("returned collection",       list, CollectionUtil.addIf(list, "bar", false));
+        assertEquals("did not add element",     Arrays.asList("foo"), list);
+    }
+
+
+    public void testAddIfNotNull() throws Exception
+    {
+        ArrayList<String> list = new ArrayList<String>();
+        CollectionUtil.addIfNotNull(list, null);
+        CollectionUtil.addIfNotNull(list, "foo");
+        CollectionUtil.addIfNotNull(list, "foo");
+        CollectionUtil.addIfNotNull(list, null);
+        CollectionUtil.addIfNotNull(list, "bar");
+
+        assertEquals(Arrays.asList("foo", "foo", "bar"), list);
+    }
+
+
+    public void testPutIfAbsent() throws Exception
+    {
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("argle", "bargle");
+
+        assertEquals("put of existing entry; return",   "bargle", CollectionUtil.putIfAbsent(map, "argle", "wargle"));
+        assertEquals("put of existing entry; post get", "bargle", map.get("argle"));
+
+        assertEquals("put of absent entry; pre get",    null, map.get("foo"));
+        assertEquals("put of abseent entry; return",    "bar", CollectionUtil.putIfAbsent(map, "foo", "bar"));
+        assertEquals("put of absent entry; post get",   "bar", map.get("foo"));
+    }
+
+
+    public void testFirstAndLast() throws Exception
+    {
+        List<String> l1 = Arrays.asList("foo", "bar", "baz");
+        assertEquals("first(), list size == 3", "foo", CollectionUtil.first(l1));
+        assertEquals("last(),  list size == 3", "baz", CollectionUtil.last(l1));
+
+        List<String> l2 = Arrays.asList("foo");
+        assertEquals("first(), list size == 1", "foo", CollectionUtil.first(l2));
+        assertEquals("last(),  list size == 1", "foo", CollectionUtil.last(l2));
+
+        List<String> l3 = Arrays.asList();
+        assertEquals("first(), list size == 0", null, CollectionUtil.first(l3));
+        assertEquals("last(),  list size == 0", null, CollectionUtil.last(l3));
+
+        List<String> l4 = null;
+        assertEquals("first(), list is null",   null, CollectionUtil.first(l4));
+        assertEquals("last(),  list is null",   null, CollectionUtil.last(l4));
+    }
+
+
+    public void testIsEmpty() throws Exception
+    {
+        assertTrue(CollectionUtil.isEmpty(null));
+        assertTrue(CollectionUtil.isEmpty(Arrays.asList()));
+        assertFalse(CollectionUtil.isEmpty(Arrays.asList("foo")));
+
+        assertFalse(CollectionUtil.isNotEmpty(null));
+        assertFalse(CollectionUtil.isNotEmpty(Arrays.asList()));
+        assertTrue(CollectionUtil.isNotEmpty(Arrays.asList("foo")));
+    }
+
+
+    public void testDefaultIfNull() throws Exception
+    {
+        Iterable<String> it1 = CollectionUtil.defaultIfNull(Arrays.asList("foo"), Arrays.asList("bar"));
+        assertEquals("foo", it1.iterator().next());
+
+        Iterable<String> it2 = CollectionUtil.defaultIfNull(null, Arrays.asList("bar"));
+        assertEquals("bar", it2.iterator().next());
+    }
+
+
+    public void testDefaultIfEmpty() throws Exception
+    {
+        Collection<String> c1 = CollectionUtil.defaultIfEmpty(Arrays.asList("foo"), Arrays.asList("bar"));
+        assertEquals("foo", c1.iterator().next());
+
+        Collection<String> c2 = CollectionUtil.defaultIfEmpty(Arrays.<String>asList(), Arrays.asList("bar"));
+        assertEquals("bar", c2.iterator().next());
+
+        Collection<String> c3 = CollectionUtil.defaultIfEmpty(null, Arrays.asList("bar"));
+        assertEquals("bar", c3.iterator().next());
+    }
+
+
     public void testCastList() throws Exception
     {
         ArrayList<Object> x = new ArrayList<Object>();
@@ -324,80 +418,6 @@ public class TestCollectionUtil extends TestCase
                      CollectionUtil.filter(src, ".+", true));
         assertEquals(Arrays.asList((String)null),
                      CollectionUtil.filter(src, ".+", false));
-    }
-
-
-    public void testIsEmpty() throws Exception
-    {
-        assertTrue(CollectionUtil.isEmpty(null));
-        assertTrue(CollectionUtil.isEmpty(Arrays.asList()));
-        assertFalse(CollectionUtil.isEmpty(Arrays.asList("foo")));
-
-        assertFalse(CollectionUtil.isNotEmpty(null));
-        assertFalse(CollectionUtil.isNotEmpty(Arrays.asList()));
-        assertTrue(CollectionUtil.isNotEmpty(Arrays.asList("foo")));
-    }
-
-
-    public void testDefaultIfNull() throws Exception
-    {
-        Iterable<String> it1 = CollectionUtil.defaultIfNull(Arrays.asList("foo"), Arrays.asList("bar"));
-        assertEquals("foo", it1.iterator().next());
-
-        Iterable<String> it2 = CollectionUtil.defaultIfNull(null, Arrays.asList("bar"));
-        assertEquals("bar", it2.iterator().next());
-    }
-
-
-    public void testDefaultIfEmpty() throws Exception
-    {
-        Collection<String> c1 = CollectionUtil.defaultIfEmpty(Arrays.asList("foo"), Arrays.asList("bar"));
-        assertEquals("foo", c1.iterator().next());
-
-        Collection<String> c2 = CollectionUtil.defaultIfEmpty(Arrays.<String>asList(), Arrays.asList("bar"));
-        assertEquals("bar", c2.iterator().next());
-
-        Collection<String> c3 = CollectionUtil.defaultIfEmpty(null, Arrays.asList("bar"));
-        assertEquals("bar", c3.iterator().next());
-    }
-
-
-    public void testAddIf() throws Exception
-    {
-        ArrayList<String> list = new ArrayList<String>();
-
-        assertSame("returned collection",       list, CollectionUtil.addIf(list, "foo", true));
-        assertEquals("added element",           Arrays.asList("foo"), list);
-
-        assertSame("returned collection",       list, CollectionUtil.addIf(list, "bar", false));
-        assertEquals("did not add element",     Arrays.asList("foo"), list);
-    }
-
-
-    public void testAddIfNotNull() throws Exception
-    {
-        ArrayList<String> list = new ArrayList<String>();
-        CollectionUtil.addIfNotNull(list, null);
-        CollectionUtil.addIfNotNull(list, "foo");
-        CollectionUtil.addIfNotNull(list, "foo");
-        CollectionUtil.addIfNotNull(list, null);
-        CollectionUtil.addIfNotNull(list, "bar");
-
-        assertEquals(Arrays.asList("foo", "foo", "bar"), list);
-    }
-
-
-    public void testPutIfAbsent() throws Exception
-    {
-        Map<String,String> map = new HashMap<String,String>();
-        map.put("argle", "bargle");
-
-        assertEquals("put of existing entry; return",   "bargle", CollectionUtil.putIfAbsent(map, "argle", "wargle"));
-        assertEquals("put of existing entry; post get", "bargle", map.get("argle"));
-
-        assertEquals("put of absent entry; pre get",    null, map.get("foo"));
-        assertEquals("put of abseent entry; return",    "bar", CollectionUtil.putIfAbsent(map, "foo", "bar"));
-        assertEquals("put of absent entry; post get",   "bar", map.get("foo"));
     }
 
 

@@ -134,6 +134,24 @@ public class CollectionUtil
 
 
     /**
+     *  Returns the first element of the passed list, <code>null</code> if
+     *  the list is empty or null.
+     */
+    public static <T> T first(List<T> list) {
+        return isNotEmpty(list) ? list.get(0) : null;
+    }
+
+
+    /**
+     *  Returns the last element of the passed list, <code>null</code> if
+     *  the list is empty or null.
+     */
+    public static <T> T last(List<T> list) {
+        return isNotEmpty(list) ? list.get(list.size() - 1) : null;
+    }
+
+
+    /**
      *  Verifies that the passed list contains only elements of the given
      *  type, and returns it as a parameterized type. Throws if any element
      *  is a different type.
@@ -331,8 +349,8 @@ public class CollectionUtil
 
 
     /**
-     *  Returns the default <code>Iterable</code> if the regular object is null.
-     *  This is used for a null-safe for loop.
+     *  Returns the second iterable if the first is null. This is used for a null-safe
+     *  for loop.
      */
     public static <T> Iterable<T> defaultIfNull(Iterable<T> reg, Iterable<T> def)
     {
