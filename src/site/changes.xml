@@ -10,6 +10,9 @@
                 CollectionUtil.first(), .last(): null-safe, empty-safe retrieval of first or last
                 element of a list
             </action>
+            <action dev='kdgregory' type='update'>
+                HashMultimap is now Serializable
+            </action>
         </release>
 
         <release version="1.0.12" date="2013-06-30"

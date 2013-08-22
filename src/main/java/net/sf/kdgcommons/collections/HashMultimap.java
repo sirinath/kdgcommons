@@ -14,6 +14,7 @@
 
 package net.sf.kdgcommons.collections;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -52,7 +53,10 @@ import java.util.Set;
  *  This class is not threadsafe.
  */
 public class HashMultimap<K,V>
+implements Serializable
 {
+    private static final long serialVersionUID = 1L;
+
     /**
      *  Controls the handling of equal key-value pairs.
      */
@@ -386,8 +390,10 @@ public class HashMultimap<K,V>
 //----------------------------------------------------------------------------
 
     private static class HashEntry<KK,VV>
-    implements Map.Entry<KK,VV>
+    implements Map.Entry<KK,VV>, Serializable
     {
+        private static final long serialVersionUID = 1L;
+
         public KK key;
         public VV value;
         public HashEntry<KK,VV> next;
