@@ -4,17 +4,17 @@
 	</properties>
 
     <body>
-        <release version="1.0.13" date="TBD"
-            description="Collections">
+        <release version="1.0.13" date="2013-08-29"
+            description="Collections, Serialization">
             <action dev='kdgregory' type='add'>
                 CollectionUtil: add first() and .last(): null-safe, empty-safe retrieval of first or last
                 element of a list
             </action>
             <action dev='kdgregory' type='add'>
-                HashMultimap: add equals() and hashCode()
+                Added equals() and hashCode() to DefaultMap, Hashmultimap
             </action>
             <action dev='kdgregory' type='update'>
-                The following classes are now Serializable: CompountKey, HashMultimap
+                The following classes are now Serializable: CompoundKey, DefaultMap, HashMultimap, NameValue
             </action>
         </release>
 
