@@ -14,6 +14,8 @@
 
 package net.sf.kdgcommons.util;
 
+import java.io.Serializable;
+
 import net.sf.kdgcommons.lang.ObjectUtil;
 
 
@@ -23,8 +25,10 @@ import net.sf.kdgcommons.lang.ObjectUtil;
  *  as a way of managing the data coming back from JDBC.
  */
 public class NameValue<T>
-    implements Comparable<NameValue<T>>
+implements Comparable<NameValue<T>>, Serializable
 {
+    private static final long serialVersionUID = 1L;
+
     private String  _name;
     private T  _value;
 
