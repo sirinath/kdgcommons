@@ -1,6 +1,13 @@
 <FindBugsFilter>
 
     <Match>
+        <Class name='net.sf.kdgcommons.lang.ClassUtil' />
+        <Method name='internalNameToExternal' />
+        <Bug pattern='SBSC_USE_STRINGBUFFER_CONCATENATION' />
+        <!-- this is a loop with few iterations (almost always < 3), not worth replacing -->
+    </Match>
+
+    <Match>
         <Class name='net.sf.kdgcommons.lang.StringCanon' />
         <Method name='intern' />
         <Bug pattern='DM_STRING_CTOR' />
@@ -22,10 +29,16 @@
     </Match>
 
     <Match>
-        <Class name='net.sf.kdgcommons.lang.ClassUtil' />
-        <Method name='internalNameToExternal' />
-        <Bug pattern='SBSC_USE_STRINGBUFFER_CONCATENATION' />
-        <!-- this is a loop with few iterations (almost always < 3), not worth replacing -->
+        <Class name='net.sf.kdgcommons.util.Counters' />
+        <Method name='put' />
+        <Bug pattern='AT_OPERATION_SEQUENCE_ON_CONCURRENT_ABSTRACTION' />
+        <!-- failure mode and workaround are documented -->
+    </Match>
+
+    <Match>
+        <Class name='net.sf.kdgcommons.util.IdentityKey' />
+        <Bug pattern='NM_SAME_SIMPLE_NAME_AS_SUPERCLASS' />
+        <!-- intentional: the version in util has been deprecated, has same functionality as version in collections -->
     </Match>
 
 </FindBugsFilter>
