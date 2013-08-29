@@ -14,6 +14,11 @@
 
 package net.sf.kdgcommons.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import junit.framework.TestCase;
 
 
@@ -93,5 +98,22 @@ public class TestNameValue extends TestCase
         assertTrue(i1.compareTo(i2) > 0);
         assertTrue(i2.compareTo(i1) < 0);
         assertTrue(i1.compareTo(i1) == 0);
+    }
+
+
+    public void testSerialization() throws Exception
+    {
+        NameValue<String> value = new NameValue<String>("foo", "bar");
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(value);
+        oos.close();
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bis);
+
+         NameValue<String> result = ( NameValue<String>)ois.readObject();
+        assertEquals(value, result);
     }
 }
