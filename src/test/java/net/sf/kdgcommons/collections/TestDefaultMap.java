@@ -14,6 +14,10 @@
 
 package net.sf.kdgcommons.collections;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -190,5 +194,55 @@ extends TestCase
         map.clear();
         assertEquals(0, map.size());
         assertEquals(0, delegate.size());
+    }
+
+
+    public void testSerialization() throws Exception
+    {
+        // serialization of the DefaultMap depends on the serializability of its value factory
+        // the built-in StaticValueFactory is serializable, so it's what we'll use for testing
+
+        DefaultMap<String,String> map = new DefaultMap<String,String>(new HashMap<String,String>(), "bargle");
+        map.put("bar", "baz");
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(map);
+        oos.close();
+
+        ByteArrayInputStream bis= new ByteArrayInputStream(bos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bis);
+
+        DefaultMap<String,String> ret = (DefaultMap<String,String>)ois.readObject();
+        assertEquals("retrieve actual value",  "baz", ret.get("bar"));
+        assertEquals("retrieve default value", "bargle", ret.get("argle"));
+    }
+
+
+    public void testEqualsAndHashCode() throws Exception
+    {
+        Map<String,String> delegate1 = new HashMap<String,String>();
+        delegate1.put("foo", "bar");
+
+        Map<String,String> delegate2 = new HashMap<String,String>();
+        delegate2.put("foo", "bar");
+
+        Map<String,String> delegate3 = new HashMap<String,String>();
+        delegate3.put("argle", "bargle");
+
+        DefaultMap<String,String> map1a = new DefaultMap<String,String>(delegate1, "baz");
+        DefaultMap<String,String> map1b = new DefaultMap<String,String>(delegate1, "baz");
+        DefaultMap<String,String> map2  = new DefaultMap<String,String>(delegate2, "baz");
+        DefaultMap<String,String> map3  = new DefaultMap<String,String>(delegate3, "baz");
+        DefaultMap<String,String> map4  = new DefaultMap<String,String>(delegate1, "bif");
+
+        assertEquals("hashCode", delegate1.hashCode(), map1a.hashCode());
+
+        assertTrue("identity equality",                                   map1a.equals(map1a));
+        assertTrue("different maps, same delegate and default",           map1a.equals(map1b));
+        assertTrue("different maps, equal delegate and default",          map1a.equals(map2));
+
+        assertFalse("different maps, unequal delegate, same default",      map1a.equals(map3));
+        assertFalse("different maps, equal delegate, different default",   map1a.equals(map4));
     }
 }

@@ -14,6 +14,7 @@
 
 package net.sf.kdgcommons.collections;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -44,8 +45,10 @@ import net.sf.kdgcommons.lang.ObjectFactory;
  *  the behavior of iterators would be difficult to define.
  */
 public class DefaultMap<K,V>
-implements Map<K,V>
+implements Map<K,V>, Serializable
 {
+    private static final long serialVersionUID = 1L;
+
     private Map<K,V> _delegate;
     private ObjectFactory<V> _valueFactory;
     private boolean _updateMap;
@@ -113,8 +116,10 @@ implements Map<K,V>
      *  with a static value (although why you'd want that, I don't know).
      */
     public static class StaticValueFactory<T>
-    implements ValueFactory<T>
+    implements ValueFactory<T>, Serializable
     {
+        private static final long serialVersionUID = 1L;
+
         private T _value;
 
         public StaticValueFactory(T value)
@@ -125,6 +130,26 @@ implements Map<K,V>
         public T newInstance()
         {
             return _value;
+        }
+
+        @Override
+        public final boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            else if (obj instanceof StaticValueFactory)
+            {
+                StaticValueFactory<T> that = (StaticValueFactory<T>)obj;
+                return this._value.equals(that._value);
+            }
+            return false;
+        }
+
+
+        @Override
+        public final int hashCode()
+        {
+            return _value.hashCode();
         }
     }
 
@@ -147,6 +172,33 @@ implements Map<K,V>
             _delegate.put((K)key, value);
 
         return value;
+    }
+
+
+    /**
+     *  Two instances are equal if their delegate maps and value factories are equal.
+     */
+    @Override
+    public final boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        else if (obj instanceof DefaultMap)
+        {
+            DefaultMap<?,?> that = (DefaultMap<?,?>)obj;
+            return this._delegate.equals(that._delegate) && this._valueFactory.equals(that._valueFactory);
+        }
+        return false;
+    }
+
+
+    /**
+     *  Returns the hashcode of the delegate map.
+     */
+    @Override
+    public final int hashCode()
+    {
+        return _delegate.hashCode();
     }
 
 
