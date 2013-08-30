@@ -6,6 +6,10 @@
     <body>
         <release version="1.0.14" date="TBD"
             description="">
+            <action dev='kdgregory' type='add'>
+                StringUtil.valueOf(): a replacement for String.valueOf() that returns an empty string
+                when passed null.
+            </action>
         </release>
 
         <release version="1.0.13" date="2013-08-29"

@@ -376,4 +376,13 @@ public class TestStringUtil extends TestCase
         assertTrue("empty to null 1",    StringUtil.equalOrEmpty("", null));
         assertTrue("empty to null 2",    StringUtil.equalOrEmpty(null, ""));
     }
+
+
+    public void testValueOf() throws Exception
+    {
+        assertEquals("foo", StringUtil.valueOf("foo"));
+        assertEquals("1",   StringUtil.valueOf(1));
+        assertEquals("",    StringUtil.valueOf(null));
+    }
+
 }

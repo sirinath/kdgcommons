@@ -544,6 +544,16 @@ public class StringUtil
     }
 
 
+    /**
+     *  A replacement for <code>String.valueOf()</code> that returns an empty
+     *  string for null.
+     */
+    public static String valueOf(Object obj)
+    {
+        return (obj == null) ? "" : obj.toString();
+    }
+
+
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
