@@ -7,8 +7,11 @@
         <release version="1.0.14" date="TBD"
             description="">
             <action dev='kdgregory' type='add'>
+                ArrayAsserts: JUnit assertions for primitive arrays
+            </action>
+            <action dev='kdgregory' type='add'>
                 StringUtil.valueOf(): a replacement for String.valueOf() that returns an empty string
-                when passed null.
+                when passed null
             </action>
         </release>
 
