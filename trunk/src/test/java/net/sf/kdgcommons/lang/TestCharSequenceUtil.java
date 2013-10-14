@@ -22,18 +22,45 @@ extends TestCase
 {
     public void testContainsAt() throws Exception
     {
-        StringBuilder sb = new StringBuilder("foobarbaz");
+        String src = "foobarbaz";
 
-        assertTrue("search at start",  CharSequenceUtil.containsAt(sb, "foo", 0));
-        assertTrue("search in middle", CharSequenceUtil.containsAt(sb, "bar", 3));
-        assertTrue("search at end",    CharSequenceUtil.containsAt(sb, "baz", 6));
+        assertTrue("search at start",  CharSequenceUtil.containsAt(src, "foo", 0));
+        assertTrue("search in middle", CharSequenceUtil.containsAt(src, "bar", 3));
+        assertTrue("search at end",    CharSequenceUtil.containsAt(src, "baz", 6));
 
-        assertFalse("failed search",   CharSequenceUtil.containsAt(sb, "foo", 1));
+        assertFalse("failed search",   CharSequenceUtil.containsAt(src, "foo", 1));
 
-        assertFalse("bad location doesn't throw",       CharSequenceUtil.containsAt(sb, "foo", 1000));
-        assertFalse("overrunning search doesn't throw", CharSequenceUtil.containsAt(sb, "bazzle", 6));
+        assertFalse("overrunning search doesn't throw", CharSequenceUtil.containsAt(src, "bazzle", 6));
+        assertFalse("below-bounds loc doesn't throw",   CharSequenceUtil.containsAt(src, "foo", -5));
+        assertFalse("above-bounds loc doesn't throw",   CharSequenceUtil.containsAt(src, "foo", 1000));
 
-        assertFalse("null stringbuilder doesn't throw", CharSequenceUtil.containsAt(null, "foo", 0));
-        assertFalse("null search string doesn't throw", CharSequenceUtil.containsAt(sb, null, 0));
+        assertFalse("null source string doesn't throw", CharSequenceUtil.containsAt(null, "foo", 0));
+        assertFalse("null search string doesn't throw", CharSequenceUtil.containsAt(src, null, 0));
     }
+
+
+    public void testStartsWith() throws Exception
+    {
+        String src = "foobarbaz";
+
+        assertTrue("happy path", CharSequenceUtil.startsWith(src, "foo"));
+        assertFalse("sad path",  CharSequenceUtil.startsWith(src, "bar"));
+
+        assertFalse("null source string doesn't throw", CharSequenceUtil.startsWith(null, "foo"));
+        assertFalse("null search string doesn't throw", CharSequenceUtil.startsWith(src, null));
+   }
+
+
+    public void testEndsWith() throws Exception
+    {
+        String src = "foobarbaz";
+
+        assertTrue("happy path", CharSequenceUtil.endsWith(src, "baz"));
+        assertFalse("sad path",  CharSequenceUtil.endsWith(src, "bar"));
+
+        assertFalse("null source string doesn't throw", CharSequenceUtil.endsWith(null, "foo"));
+        assertFalse("null search string doesn't throw", CharSequenceUtil.endsWith(src, null));
+
+        assertFalse("too-large search string doesn't throw", CharSequenceUtil.endsWith(src, "foofibblebaz"));
+   }
 }
