@@ -21,21 +21,48 @@ package net.sf.kdgcommons.lang;
 public class CharSequenceUtil
 {
     /**
-     *  Returns true of the passed sequence contains the specified sequence,
-     *  starting at the given location.
+     *  Returns true of the passed source sequence contains the specified search
+     *  sequence starting at the given location. Will return false if either the
+     *  source or search sequences are null, or the specified location is outside
+     *  of the source sequence (either high or low).
      */
-    public static boolean containsAt(CharSequence sb, CharSequence str, int loc)
+    public static boolean containsAt(CharSequence source, CharSequence search, int loc)
     {
-        if (sb == null) return false;
-        if (str == null) return false;
+        if (source == null) return false;
+        if (search == null) return false;
 
-        if (loc + str.length() > sb.length()) return false;
+        if (loc < 0) return false;
+        if (loc + search.length() > source.length()) return false;
 
-        for (int ii = 0 ; ii < str.length() ; ii++)
+        for (int ii = 0 ; ii < search.length() ; ii++)
         {
-            if (sb.charAt(loc + ii) != str.charAt(ii)) return false;
+            if (source.charAt(loc + ii) != search.charAt(ii)) return false;
         }
 
         return true;
+    }
+
+
+    /**
+     *  Returns true if the source sequence starts with the search sequence. This is
+     *  simply a call to {@link #containsAt} with location 0.
+     */
+    public static boolean startsWith(CharSequence source, CharSequence search)
+    {
+        return containsAt(source, search, 0);
+    }
+
+
+    /**
+     *  Returns true if the source sequence ends with the search sequence. This is a
+     *  call to {@link #containsAt} with calculated location.
+     */
+    public static boolean endsWith(CharSequence source, CharSequence search)
+    {
+        if (source == null) return false;
+        if (search == null) return false;
+
+        int loc = source.length() - search.length();
+        return containsAt(source, search, loc);
     }
 }
