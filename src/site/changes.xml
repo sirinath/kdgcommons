@@ -10,6 +10,10 @@
                 ArrayAsserts: JUnit assertions for primitive arrays
             </action>
             <action dev='kdgregory' type='add'>
+                CharSequenceUtil: utility methods common to all character sequences; first method is
+                containsAt()
+            </action>
+            <action dev='kdgregory' type='add'>
                 StringUtil.valueOf(): a replacement for String.valueOf() that returns an empty string
                 when passed null
             </action>
