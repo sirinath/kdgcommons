@@ -16,7 +16,7 @@ package net.sf.kdgcommons.codec;
 
 
 /**
- *  Encodes/decodes data in string formats.
+ *  Translates between string and binary formats.
  */
 public interface StringCodec
 {
@@ -28,6 +28,9 @@ public interface StringCodec
     
     /**
      *  Converts the passed string into a byte array.
+     *  
+     *  @throws IllegalArgumentException if the string contains any characters that
+     *          are not permitted by the implementation.
      */
     public byte[] toBytes(String str);
 }
