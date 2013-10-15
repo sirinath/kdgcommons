@@ -10,6 +10,9 @@
                 ArrayAsserts: JUnit assertions for primitive arrays
             </action>
             <action dev='kdgregory' type='add'>
+                HexCodec: translates between byte[] and String using a hex representation of the bytes
+            </action>
+            <action dev='kdgregory' type='add'>
                 CharSequenceUtil: utility methods common to all character sequences; initial methods
                 are startsWith(), endsWith(), and containsAt()
             </action>
