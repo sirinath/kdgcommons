@@ -19,22 +19,23 @@ import net.sf.kdgcommons.lang.StringUtil;
 
 
 /**
- *  Converts binary data to/from a string consisting of hexadecimal digits.
+ *  Converts binary data to/from a string of hexadecimal digits (eg, an array
+ *  containing the bytes <code>[0x01, 0x23, 0xEF]</code> is encoded as the
+ *  string <code>"0123EF"</code>).
  *  <p>
- *  Conversions to string may specify optional starting, ending, and separation
- *  strings. These are normally used to introduce line breaks and "cut marks,"
- *  but may be anything: for example, you can create a comma-delimited array of
- *  hexified values with the following:
- *  <pre>
- *  </pre>
- *  Conversion to byte arrays always ignores whitespace, and will also ignore
- *  any specified start/end/separation strings (the separation string may appear
- *  any where in the source string, the start/end strings must appear in their
- *  respective locations).
+ *  When converting to a string, you may add an optional separator every N
+ *  characters (which must be even). This is normally used to create line
+ *  breaks, but may be anything: you can create a comma-delimited list with
+ *  the separator <code>"\",\""</code> (although you'll have to prepend and
+ *  append the opening and closing quotes).
+ *  <p>
+ *  Conversion to byte arrays always ignores whitespace, and also ignores the
+ *  specified separator (if one exists). Any other characters throw an
+ *  <code>IllegalArgumentException</code>.
  *  <p>
  *  Conversion to byte arrays also ignores any trailing nibble: only an even
  *  number of characters will be processed.
- *  
+ *
  *  @since 1.0.14
  */
 public class HexCodec implements StringCodec
@@ -42,9 +43,7 @@ public class HexCodec implements StringCodec
     private final static byte[] EMPTY_ARRAY = new byte[0];
 
     private int _lineLength;
-    private String _start;
     private String _separator;
-    private String _end;
 
     /**
      *  Creates an instance that produces unbroken strings of hex digits.
@@ -66,19 +65,6 @@ public class HexCodec implements StringCodec
         _separator = separator;
     }
 
-
-    /**
-     *  Creates an instance that produces strings with an initial and terminal sequence,
-     *  and separators inserted every <code>lineLength</code> characters, and which
-     *  ignores these values when reading strings.
-     */
-    public HexCodec(int lineLength, String start, String separator, String end)
-    {
-        this(lineLength, separator);
-        _start = start;
-        _end = end;
-    }
-
 //----------------------------------------------------------------------------
 //  Implementation of StringCodec
 //----------------------------------------------------------------------------
@@ -89,9 +75,6 @@ public class HexCodec implements StringCodec
 
         StringBuilder sb = bytesToChars(data);
         sb = insertSeparators(sb);
-
-        if (_start != null) sb.insert(0, _start);
-        if (_end != null) sb.append(_end);
 
         return sb.toString();
     }
@@ -155,22 +138,6 @@ public class HexCodec implements StringCodec
 
     private StringBuilder cleanString(StringBuilder str)
     {
-        if (_start != null)
-        {
-            if (! CharSequenceUtil.startsWith(str, _start))
-                throw new IllegalArgumentException("expected string beginning with \"" + _start + "\"");
-            else
-                str.delete(0, _start.length());
-        }
-
-        if (_end != null)
-        {
-            if (! CharSequenceUtil.endsWith(str, _end))
-                throw new IllegalArgumentException("expected string beginning with \"" + _start + "\"");
-            else
-                str.delete(str.length() - _end.length(), str.length());
-        }
-
         StringBuilder res = new StringBuilder(str.length());
         for (int off = 0 ; off < str.length() ; )
         {
