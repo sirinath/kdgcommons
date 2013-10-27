@@ -39,17 +39,36 @@ import net.sf.kdgcommons.lang.StringUtil;
 public class Base64Codec
 extends Codec
 {
+    /**
+     *  Different standard construction options: each value specifies a combination of
+     *  maximum line length and separator characters.
+     */
     public enum Option
     {
         /** Produces an unbroken string of base-64 characters. */
-        UNBROKEN
+        UNBROKEN(Integer.MAX_VALUE, null),
+        
+        /** RFC-1421: 64 characters, CR+LF separator */
+        RFC1421(64, new byte[] { 13, 10 });
+
+        private final int _lineLength;
+        private final byte[] _separator;
+
+        private Option(int lineLength, byte[] separator)
+        {
+            _lineLength = lineLength;
+            _separator = separator;
+        }
     }
 
+//----------------------------------------------------------------------------
+//  Instance variables and constructor
+//----------------------------------------------------------------------------
 
     private final static byte[] EMPTY_ARRAY = new byte[0];
 
     private int _lineLength;
-    private String _separator;
+    private byte[] _separator;
 
 
     /**
@@ -62,20 +81,28 @@ extends Codec
 
 
     /**
-     *  Constructs an instance that generates strings according to a standard option.
+     *  Constructs an instance using standard parameters.
      */
     public Base64Codec(Option option)
     {
-        _lineLength = Integer.MAX_VALUE;
+        this(option._lineLength, option._separator);
     }
 
 
     /**
-     *  Creates an instance that produces strings with separators inserted every
-     *  <code>lineLength</code> characters, and ignores the specified separator
-     *  when reading strings.
+     *  Creates an instance with custom line length and separator, where
+     *  the separator is specified as a string (and converted via UTF-8).
      */
     public Base64Codec(int lineLength, String separator)
+    {
+        this(lineLength, StringUtil.toUTF8(separator));
+    }
+
+
+    /**
+     *  Creates an instance with custom line length and separator.
+     */
+    public Base64Codec(int lineLength, byte[] separator)
     {
         _lineLength = lineLength;
         _separator = separator;
@@ -163,11 +190,16 @@ extends Codec
         {
             try
             {
-                do
+                while (true)
                 {
-//                    insertBreakIfNeeded();
+                    int b1 = _in.read();
+                    int b2 = _in.read();
+                    int b3 = _in.read();
+                    if (b1 < 0) return;
+
+                    insertBreakIfNeeded();
+                    encodeGroup(b1, b2, b3);
                 }
-                while (encodeGroup());
             }
             catch (CodecException ex)
             {
@@ -179,25 +211,19 @@ extends Codec
             }
         }
 
-//        private void insertBreakIfNeeded()
-//        throws IOException
-//        {
-//            if (_breakCount >= _lineLength)
-//            {
-//                _out.write(_separator);
-//                _breakCount = 0;
-//            }
-//        }
-
-        private boolean encodeGroup()
+        private void insertBreakIfNeeded()
         throws IOException
         {
-            int b1 = _in.read();
-            int b2 = _in.read();
-            int b3 = _in.read();
+            if ((_separator != null) && (_breakCount >= _lineLength))
+            {
+                _out.write(_separator);
+                _breakCount = 0;
+            }
+        }
 
-            if (b1 < 0) return false;
-
+        private boolean encodeGroup(int b1, int b2, int b3)
+        throws IOException
+        {
             int e1 = b1 >>> 2;
 
             int e2 = (b1 & 0x03) << 4;
@@ -239,7 +265,7 @@ extends Codec
             {
                 do
                 {
-//                    skipIfSeparator();
+                    skipIfSeparator(_in, _separator);
                 }
                 while (decodeGroup());
             }

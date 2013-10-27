@@ -60,7 +60,7 @@ extends TestCase
     }
 
 
-    public void testBrokenString() throws Exception
+    public void testSeparator() throws Exception
     {
         HexCodec codec = new HexCodec(4, "X");
 
@@ -68,6 +68,20 @@ extends TestCase
 
         String str = codec.toString(src);
         assertEquals("conversion to string", "1234X5678X9ABCXDEF0", str);
+
+        byte[] dst = codec.toBytes(str);
+        ArrayAsserts.assertEquals("conversion to byte[]", src, dst);
+    }
+
+
+    public void testMultibyteSeparator() throws Exception
+    {
+        HexCodec codec = new HexCodec(4, "XYZ");
+
+        byte[] src = new byte[] { 0x12, 0x34, 0x56, 0x78, (byte)0x9A, (byte)0xBC, (byte)0xDE, (byte)0xF0 };
+
+        String str = codec.toString(src);
+        assertEquals("conversion to string", "1234XYZ5678XYZ9ABCXYZDEF0", str);
 
         byte[] dst = codec.toBytes(str);
         ArrayAsserts.assertEquals("conversion to byte[]", src, dst);
