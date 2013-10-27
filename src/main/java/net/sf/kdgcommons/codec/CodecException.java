@@ -16,21 +16,25 @@ package net.sf.kdgcommons.codec;
 
 
 /**
- *  Translates between string and binary formats.
+ *  General runtime exception thrown during codec operation.
+ *
+ *  @since 1.0.14
  */
-public interface StringCodec
+public class CodecException
+extends RuntimeException
 {
-    /** 
-     *  Converts the passed byte array into a string.
-     */
-    public String toString(byte[] data);
-    
-    
-    /**
-     *  Converts the passed string into a byte array.
-     *  
-     *  @throws IllegalArgumentException if the string contains any characters that
-     *          are not permitted by the implementation.
-     */
-    public byte[] toBytes(String str);
+    private static final long serialVersionUID = 1L;
+
+
+    public CodecException(String msg)
+    {
+        super(msg);
+    }
+
+
+    public CodecException(String msg, Throwable cause)
+    {
+        super(msg, cause);
+    }
+
 }

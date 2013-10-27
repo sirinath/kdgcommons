@@ -19,7 +19,8 @@ import junit.framework.TestCase;
 import net.sf.kdgcommons.test.ArrayAsserts;
 
 
-public class TestBase64Codec extends TestCase
+public class TestBase64Codec
+extends TestCase
 {
     public void testNull() throws Exception
     {

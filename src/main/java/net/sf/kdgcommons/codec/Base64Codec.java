@@ -14,9 +14,11 @@
 
 package net.sf.kdgcommons.codec;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 
-import net.sf.kdgcommons.lang.CharSequenceUtil;
 import net.sf.kdgcommons.lang.StringUtil;
 
 
@@ -25,31 +27,29 @@ import net.sf.kdgcommons.lang.StringUtil;
  *  <p>
  *  There are several standard options for string conversion line breaks, defined
  *  by the {@link #Option} enum. You can also specify your own breaks and maximum
- *  line length.  
+ *  line length.
  *  <p>
  *  Conversion to byte arrays always ignores whitespace, and will also ignore
  *  any specified start/end/separation strings (the separation string may appear
  *  any where in the source string, the start/end strings must appear in their
  *  respective locations).
- *  
+ *
  *  @since 1.0.14
  */
-public class Base64Codec implements StringCodec
+public class Base64Codec
+extends Codec
 {
     public enum Option
     {
         /** Produces an unbroken string of base-64 characters. */
         UNBROKEN
     }
-    
-    
+
+
     private final static byte[] EMPTY_ARRAY = new byte[0];
 
-    private Option _option;
     private int _lineLength;
-    private String _start;
     private String _separator;
-    private String _end;
 
 
     /**
@@ -59,14 +59,13 @@ public class Base64Codec implements StringCodec
     {
         this(Option.UNBROKEN);
     }
-      
-    
+
+
     /**
      *  Constructs an instance that generates strings according to a standard option.
      */
     public Base64Codec(Option option)
     {
-        _option = option;
         _lineLength = Integer.MAX_VALUE;
     }
 
@@ -82,42 +81,48 @@ public class Base64Codec implements StringCodec
         _separator = separator;
     }
 
+//----------------------------------------------------------------------------
+//  Implementation of Codec
+//----------------------------------------------------------------------------
+
+    @Override
+    public void encode(InputStream in, OutputStream out)
+    {
+        new Encoder(in, out).encode();
+    }
+
+
+    @Override
+    public void decode(InputStream in, OutputStream out)
+    {
+        new Decoder(in, out).decode();
+    }
+
+
+//----------------------------------------------------------------------------
+//  Convenience methods
+//----------------------------------------------------------------------------
 
     /**
-     *  Creates an instance that produces strings with an initial and terminal sequence,
-     *  and separators inserted every <code>lineLength</code> characters, and which
-     *  ignores these values when reading strings.
+     *  Encodes the passed array and returns it as a string.
      */
-    public Base64Codec(int lineLength, String start, String separator, String end)
-    {
-        this(lineLength, separator);
-        _start = start;
-        _end = end;
-    }
-
-//----------------------------------------------------------------------------
-//  Implementation of StringCodec
-//----------------------------------------------------------------------------
-
     public String toString(byte[] data)
     {
-        if (data == null) return "";
-
-        StringBuilder sb = bytesToChars(data);
-        sb = insertSeparators(sb);
-
-        if (_start != null) sb.insert(0, _start);
-        if (_end != null) sb.append(_end);
-
-        return sb.toString();
+        if ((data == null) || (data.length == 0)) return "";
+        byte[] encoded = encode(data);
+        return StringUtil.fromUTF8(encoded);
     }
 
 
+    /**
+     *  Decodes the passed string and returns it as a byte array.
+     */
     public byte[] toBytes(String str)
     {
         if (StringUtil.isEmpty(str)) return EMPTY_ARRAY;
 
-        return charsToBytes(cleanString(new StringBuilder(str)));
+        byte[] bytes = StringUtil.toUTF8(str);
+        return decode(bytes);
     }
 
 
@@ -128,12 +133,12 @@ public class Base64Codec implements StringCodec
     private static char[] charLookup =
     {
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 
+        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-        'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 
+        'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'
     };
-    
+
     private static HashMap<Character,Integer> valueLookup = new HashMap<Character,Integer>(64);
     static
     {
@@ -142,134 +147,146 @@ public class Base64Codec implements StringCodec
             valueLookup.put(Character.valueOf(charLookup[ii]), Integer.valueOf(ii));
     }
 
-
-    private StringBuilder bytesToChars(byte[] data)
+    private class Encoder
     {
-        StringBuilder sb = new StringBuilder(data.length * 4 / 3 + 4);
-        for (int ii = 0 ; ii < data.length ; ii += 3)
+        private InputStream _in;
+        private OutputStream _out;
+        private int _breakCount;
+
+        public Encoder(InputStream in, OutputStream out)
         {
-            encodeGroup(data, ii, sb);
-        }
-        return sb;
-    }
-    
-    
-    private void encodeGroup(byte[] data, int off, StringBuilder out)
-    {
-        int b1 = data[off++] & 0xFF;
-        int b2 = (off < data.length) ? data[off++] & 0xFF : -1;
-        int b3 = (off < data.length) ? data[off++] & 0xFF : -1;
-        
-        int e1 = b1 >>> 2;
-        
-        int e2 = (b1 & 0x03) << 4;
-        if (b2 >= 0)
-            e2 |= b2 >> 4;
-        
-        int e3 = (b2 & 0xF) << 2;
-        if (b3 >= 0)
-            e3 |= b3 >> 6;
-        
-        int e4 = b3 & 0x3F;
-        
-        out.append(charLookup[e1]);
-        out.append(charLookup[e2]);
-        out.append(b2 < 0 ? '=' : charLookup[e3]);
-        out.append(b3 < 0 ? '=' : charLookup[e4]);
-    }
-
-
-    private StringBuilder insertSeparators(StringBuilder sb)
-    {
-        if (_separator == null) return sb;
-
-        int remain = sb.length();
-        if (remain < _lineLength) return sb;
-
-        int cap = remain + (remain / _lineLength + 1) * _separator.length();
-        StringBuilder sb2 = new StringBuilder(cap);
-
-        int off = 0;
-        do
-        {
-            int len = Math.min(remain, _lineLength);
-            sb2.append(sb.subSequence(off, off + len));
-            off += len;
-            remain -= len;
-            if (remain > 0) sb2.append(_separator);
-        }
-        while (remain > 0);
-
-        return sb2;
-    }
-
-
-    private StringBuilder cleanString(StringBuilder str)
-    {
-        if (_start != null)
-        {
-            if (! CharSequenceUtil.startsWith(str, _start))
-                throw new IllegalArgumentException("expected string beginning with \"" + _start + "\"");
-            else
-                str.delete(0, _start.length());
+            _in = in;
+            _out = out;
         }
 
-        if (_end != null)
+        public void encode()
         {
-            if (! CharSequenceUtil.endsWith(str, _end))
-                throw new IllegalArgumentException("expected string beginning with \"" + _start + "\"");
-            else
-                str.delete(str.length() - _end.length(), str.length());
+            try
+            {
+                do
+                {
+//                    insertBreakIfNeeded();
+                }
+                while (encodeGroup());
+            }
+            catch (CodecException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw new CodecException("unable to encode", ex);
+            }
         }
 
-        StringBuilder res = new StringBuilder(str.length());
-        for (int off = 0 ; off < str.length() ; )
+//        private void insertBreakIfNeeded()
+//        throws IOException
+//        {
+//            if (_breakCount >= _lineLength)
+//            {
+//                _out.write(_separator);
+//                _breakCount = 0;
+//            }
+//        }
+
+        private boolean encodeGroup()
+        throws IOException
         {
-            if (Character.isWhitespace(str.charAt(off)))
-                off++;
-            else if (CharSequenceUtil.containsAt(str, _separator, off))
-                off += _separator.length();
-            else
-                res.append(str.charAt(off++));
+            int b1 = _in.read();
+            int b2 = _in.read();
+            int b3 = _in.read();
+
+            if (b1 < 0) return false;
+
+            int e1 = b1 >>> 2;
+
+            int e2 = (b1 & 0x03) << 4;
+            if (b2 >= 0)
+                e2 |= b2 >> 4;
+
+            int e3 = (b2 & 0xF) << 2;
+            if (b3 >= 0)
+                e3 |= b3 >> 6;
+
+            int e4 = b3 & 0x3F;
+
+            _out.write(charLookup[e1]);
+            _out.write(charLookup[e2]);
+            _out.write(b2 < 0 ? '=' : charLookup[e3]);
+            _out.write(b3 < 0 ? '=' : charLookup[e4]);
+
+            _breakCount += 4;
+            return true;
         }
-        return res;
+
     }
 
 
-    private static byte[] charsToBytes(CharSequence str)
+    private class Decoder
     {
-        int resultLength = str.length() / 4 * 3;
-        if (str.charAt(str.length() - 1) == '=')
-            resultLength--;
-        if (str.charAt(str.length() - 2) == '=')
-            resultLength--;
-        
-        byte[] bytes = new byte[resultLength];
-        int pos = 0;
-        for (int off = 0 ; off < str.length() ; off += 4)
+        private InputStream _in;
+        private OutputStream _out;
+
+        public Decoder(InputStream in, OutputStream out)
         {
-            pos += decodeGroup(str, off, bytes, pos);
+            _in = in;
+            _out = out;
         }
-        return bytes;
+
+        public void decode()
+        {
+            try
+            {
+                do
+                {
+//                    skipIfSeparator();
+                }
+                while (decodeGroup());
+            }
+            catch (CodecException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw new CodecException("unable to decode", ex);
+            }
+        }
+
+
+        private boolean decodeGroup()
+        throws IOException
+        {
+            int e1 = next();
+            int e2 = next();
+            int e3 = next();
+            int e4 = next();
+
+            if ((e1 < 0) || (e2 < 0)) return false;
+
+            _out.write((e1 << 2) | ((e2 & 0x30) >> 4));
+            if (e3 < 0) return false;
+
+            _out.write(((e2 & 0x0F) << 4) | ((e3 & 0x3C) >> 2));
+            if (e4 < 0) return false;
+
+            _out.write(((e3 & 0x03) << 6) | e4);
+            return true;
+        }
+
+        private int next()
+        throws IOException
+        {
+            int b = nextNonWhitespace(_in);
+            if (b < 0) return b;
+
+            if (b == '=') return -1;
+
+            Integer val = valueLookup.get(Character.valueOf((char)b));
+            if (val == null) throw new InvalidSourceByteException(b);
+
+            return val.intValue();
+        }
     }
-    
-    
-    private static int decodeGroup(CharSequence in, int off, byte[] out, int pos)
-    {
-        int e1 = valueLookup.get(in.charAt(off));
-        int e2 = valueLookup.get(in.charAt(off + 1));
-        out[pos] = (byte)((e1 << 2) | ((e2 & 0x30) >> 4));
-        
-        if (in.charAt(off + 2) == '=') return 1;
-        
-        int e3 = valueLookup.get(in.charAt(off + 2));
-        out[pos + 1] = (byte)(((e2 & 0x0F) << 4) | ((e3 & 0x3C) >> 2));
-        
-        if (in.charAt(off + 3) == '=') return 2;                
-                
-        int e4 = valueLookup.get(in.charAt(off + 3));
-        out[pos + 2] = (byte)(((e3 & 0x03) << 6) | e4);
-        
-        return 3;
-    }
+
 }
