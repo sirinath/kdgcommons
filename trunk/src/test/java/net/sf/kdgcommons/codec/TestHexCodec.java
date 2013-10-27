@@ -73,20 +73,6 @@ public class TestHexCodec extends TestCase
     }
 
 
-    public void testFullyDelimitedString() throws Exception
-    {
-        HexCodec codec = new HexCodec(4, "START", "X", "END");
-
-        byte[] src = new byte[] { 0x12, 0x34, 0x56, 0x78, (byte)0x9A, (byte)0xBC, (byte)0xDE, (byte)0xF0 };
-
-        String str = codec.toString(src);
-        assertEquals("conversion to string", "START1234X5678X9ABCXDEF0END", str);
-
-        byte[] dst = codec.toBytes(str);
-        ArrayAsserts.assertEquals("conversion to byte[]", src, dst);
-    }
-
-
     public void testConversionToBytesIgnoresWhitespace() throws Exception
     {
         String str = "123456 78  9ABC\nDEF\t0";
