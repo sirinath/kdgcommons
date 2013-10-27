@@ -86,4 +86,60 @@ extends TestCase
         byte[] dst = codec.toBytes(str);
         ArrayAsserts.assertEquals("conversion to byte[]", src, dst);
     }
+
+
+    public void testUnbrokenStringMultipleGroups() throws Exception
+    {
+        Base64Codec codec = new Base64Codec();
+
+        byte[] src = new byte[] { 0x12, 0x34, 0x56, 0x78, (byte)0x9A, (byte)0xBC, (byte)0xDE, (byte)0xF0 };
+
+        String str = codec.toString(src);
+        assertEquals("conversion to string", "EjRWeJq83vA=", str);
+
+        byte[] dst = codec.toBytes(str);
+        ArrayAsserts.assertEquals("conversion to byte[]", src, dst);
+    }
+
+
+    public void testSeparator() throws Exception
+    {
+        Base64Codec codec = new Base64Codec(4, "X");
+
+        byte[] src = new byte[] { 0x12, 0x34, 0x56, 0x78, (byte)0x9A, (byte)0xBC, (byte)0xDE, (byte)0xF0 };
+
+        String str = codec.toString(src);
+        assertEquals("conversion to string", "EjRWXeJq8X3vA=", str);
+
+        byte[] dst = codec.toBytes(str);
+        ArrayAsserts.assertEquals("conversion to byte[]", src, dst);
+    }
+
+
+    public void testMultibyteSeparator() throws Exception
+    {
+        Base64Codec codec = new Base64Codec(4, "XYZ");
+
+        byte[] src = new byte[] { 0x12, 0x34, 0x56, 0x78, (byte)0x9A, (byte)0xBC, (byte)0xDE, (byte)0xF0 };
+
+        String str = codec.toString(src);
+        assertEquals("conversion to string", "EjRWXYZeJq8XYZ3vA=", str);
+
+        byte[] dst = codec.toBytes(str);
+        ArrayAsserts.assertEquals("conversion to byte[]", src, dst);
+    }
+
+
+    public void testConversionToBytesThrowsOnInvalid() throws Exception
+    {
+        try
+        {
+            new HexCodec().toBytes("f^oo");
+            fail("converted string with non-Base64 character");
+        }
+        catch (InvalidSourceByteException ex)
+        {
+            assertEquals("exception identifies incorrect byte", '^', ex.getInvalidByte());
+        }
+    }
 }

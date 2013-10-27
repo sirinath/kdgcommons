@@ -177,7 +177,7 @@ extends Codec
         private void insertBreakIfNeeded()
         throws IOException
         {
-            if (_breakCount >= _lineLength)
+            if ((_separator != null) && (_breakCount >= _lineLength))
             {
                 _out.write(_separator);
                 _breakCount = 0;
