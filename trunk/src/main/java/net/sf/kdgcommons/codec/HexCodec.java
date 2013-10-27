@@ -14,7 +14,10 @@
 
 package net.sf.kdgcommons.codec;
 
-import net.sf.kdgcommons.lang.CharSequenceUtil;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import net.sf.kdgcommons.lang.StringUtil;
 
 
@@ -38,12 +41,13 @@ import net.sf.kdgcommons.lang.StringUtil;
  *
  *  @since 1.0.14
  */
-public class HexCodec implements StringCodec
+public class HexCodec
+extends Codec
 {
     private final static byte[] EMPTY_ARRAY = new byte[0];
 
     private int _lineLength;
-    private String _separator;
+    private byte[] _separator;
 
     /**
      *  Creates an instance that produces unbroken strings of hex digits.
@@ -58,33 +62,57 @@ public class HexCodec implements StringCodec
      *  Creates an instance that produces strings with separators inserted every
      *  <code>lineLength</code> characters, and ignores the specified separator
      *  when reading strings.
+     *  <p>
+     *  Note: the separator will be encoded using UTF-8.
      */
     public HexCodec(int lineLength, String separator)
     {
         _lineLength = lineLength;
-        _separator = separator;
+        _separator = StringUtil.toUTF8(separator);
     }
 
 //----------------------------------------------------------------------------
-//  Implementation of StringCodec
+//  Implementation of Codec
 //----------------------------------------------------------------------------
 
+    @Override
+    public void encode(InputStream in, OutputStream out)
+    {
+        new Encoder(in, out).encode();
+    }
+
+
+    @Override
+    public void decode(InputStream in, OutputStream out)
+    {
+        new Decoder(in, out).decode();
+    }
+
+
+//----------------------------------------------------------------------------
+//  Convenience methods
+//----------------------------------------------------------------------------
+
+    /**
+     *  Encodes the passed array and returns it as a string.
+     */
     public String toString(byte[] data)
     {
-        if (data == null) return "";
-
-        StringBuilder sb = bytesToChars(data);
-        sb = insertSeparators(sb);
-
-        return sb.toString();
+        if ((data == null) || (data.length == 0)) return "";
+        byte[] encoded = encode(data);
+        return StringUtil.fromUTF8(encoded);
     }
 
 
+    /**
+     *  Decodes the passed string and returns it as a byte array.
+     */
     public byte[] toBytes(String str)
     {
         if (StringUtil.isEmpty(str)) return EMPTY_ARRAY;
 
-        return charsToBytes(cleanString(new StringBuilder(str)));
+        byte[] bytes = StringUtil.toUTF8(str);
+        return decode(bytes);
     }
 
 
@@ -92,80 +120,13 @@ public class HexCodec implements StringCodec
 //  Internals
 //----------------------------------------------------------------------------
 
-    private static char[] byteLookup =
+    private static char[] nibbleToChar =
     {
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
 
 
-    private StringBuilder bytesToChars(byte[] data)
-    {
-        StringBuilder sb = new StringBuilder(data.length * 2);
-        for (int ii = 0 ; ii < data.length ; ii++)
-        {
-            int val = data[ii] & 0xFF;
-            sb.append(byteLookup[val >> 4]);
-            sb.append(byteLookup[val & 0xF]);
-        }
-        return sb;
-    }
-
-
-    private StringBuilder insertSeparators(StringBuilder sb)
-    {
-        if (_separator == null) return sb;
-
-        int remain = sb.length();
-        if (remain < _lineLength) return sb;
-
-        int cap = remain + (remain / _lineLength + 1) * _separator.length();
-        StringBuilder sb2 = new StringBuilder(cap);
-
-        int off = 0;
-        do
-        {
-            int len = Math.min(remain, _lineLength);
-            sb2.append(sb.subSequence(off, off + len));
-            off += len;
-            remain -= len;
-            if (remain > 0) sb2.append(_separator);
-        }
-        while (remain > 0);
-
-        return sb2;
-    }
-
-
-    private StringBuilder cleanString(StringBuilder str)
-    {
-        StringBuilder res = new StringBuilder(str.length());
-        for (int off = 0 ; off < str.length() ; )
-        {
-            if (Character.isWhitespace(str.charAt(off)))
-                off++;
-            else if (CharSequenceUtil.containsAt(str, _separator, off))
-                off += _separator.length();
-            else
-                res.append(str.charAt(off++));
-        }
-        return res;
-    }
-
-
-    private static byte[] charsToBytes(CharSequence str)
-    {
-        byte[] bytes = new byte[str.length() / 2];
-        for (int ii = 0 ; ii < bytes.length ; ii++)
-        {
-            int n1 = toNibble(str.charAt(ii * 2)) << 4;
-            int n2 = toNibble(str.charAt(ii * 2 + 1));
-            bytes[ii] = (byte)(n1 | n2);
-        }
-        return bytes;
-    }
-
-
-    private static int toNibble(char c)
+    private static int charToNibble(int c)
     {
         if ((c >= '0') && (c <= '9'))
             return c - '0';
@@ -174,6 +135,94 @@ public class HexCodec implements StringCodec
         else if ((c >= 'a') && (c <= 'f'))
             return c - 'a' + 10;
         else
-            throw new IllegalArgumentException("invalid hex character: '" + c + "' (" + (int)c + ")");
+            throw new InvalidSourceByteException(c);
+    }
+
+
+    private class Encoder
+    {
+        private InputStream _in;
+        private OutputStream _out;
+        private int _breakCount;
+
+        public Encoder(InputStream in, OutputStream out)
+        {
+            _in = in;
+            _out = out;
+        }
+
+        public void encode()
+        {
+            try
+            {
+                int val = 0;
+                while ((val = _in.read()) >= 0)
+                {
+                    insertBreakIfNeeded();
+                    _out.write(nibbleToChar[val >> 4]);
+                    _out.write(nibbleToChar[val & 0xF]);
+                    _breakCount += 2;
+                }
+            }
+            catch (CodecException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw new CodecException("unable to encode", ex);
+            }
+        }
+
+        private void insertBreakIfNeeded()
+        throws IOException
+        {
+            if (_breakCount >= _lineLength)
+            {
+                _out.write(_separator);
+                _breakCount = 0;
+            }
+        }
+    }
+
+
+    private class Decoder
+    {
+        private InputStream _in;
+        private OutputStream _out;
+
+        public Decoder(InputStream in, OutputStream out)
+        {
+            _in = wrapIfNeeded(in, _separator);
+            _out = out;
+        }
+
+        public void decode()
+        {
+            try
+            {
+                while (true)
+                {
+                    skipIfSeparator(_in, _separator);
+
+                    int v1 = nextNonWhitespace(_in);
+                    int v2 = nextNonWhitespace(_in);
+                    if ((v1 < 0) || (v2 < 0))
+                        return;
+
+                    int n1 = charToNibble(v1);
+                    int n2 = charToNibble(v2);
+                    _out.write(n1 << 4 | n2);
+                }
+            }
+            catch (CodecException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw new CodecException("unable to decode", ex);
+            }
+        }
     }
 }

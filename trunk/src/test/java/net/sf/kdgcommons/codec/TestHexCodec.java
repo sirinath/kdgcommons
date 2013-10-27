@@ -19,7 +19,8 @@ import junit.framework.TestCase;
 import net.sf.kdgcommons.test.ArrayAsserts;
 
 
-public class TestHexCodec extends TestCase
+public class TestHexCodec
+extends TestCase
 {
     public void testNull() throws Exception
     {
@@ -100,10 +101,9 @@ public class TestHexCodec extends TestCase
             new HexCodec().toBytes("foo");
             fail("converted string with non-hex character");
         }
-        catch (IllegalArgumentException ex)
+        catch (InvalidSourceByteException ex)
         {
-            String msg = ex.getMessage();
-            assertTrue("exception reported incorrect character: " + msg, msg.contains("'o'"));
+            assertEquals("exception identifies incorrect byte", 'o', ex.getInvalidByte());
         }
     }
 }
