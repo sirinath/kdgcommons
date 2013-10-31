@@ -38,6 +38,9 @@ import java.io.OutputStream;
  */
 public abstract class Codec
 {
+    protected final static byte[] EMPTY_ARRAY = new byte[0];
+
+
     /**
      *  Encodes a stream according to the rules of the codec.
      */
@@ -57,7 +60,17 @@ public abstract class Codec
      */
     public byte[] encode(byte[] src)
     {
-        ByteArrayInputStream in = new ByteArrayInputStream(src);
+        if ((src == null) || (src.length == 0)) return EMPTY_ARRAY;
+        return encode(src, 0, src.length);
+    }
+
+
+    /**
+     *  Convenience method that encodes a section of the passed array.
+     */
+    public byte[] encode(byte[] src, int off, int len)
+    {
+        ByteArrayInputStream in = new ByteArrayInputStream(src, off, len);
         ByteArrayOutputStream out = new ByteArrayOutputStream(src.length);
         encode(in, out);
         return out.toByteArray();
@@ -69,7 +82,19 @@ public abstract class Codec
      */
     public byte[] decode(byte[] src)
     {
-        ByteArrayInputStream in = new ByteArrayInputStream(src);
+        if ((src == null) || (src.length == 0)) return EMPTY_ARRAY;
+        return decode(src, 0, src.length);
+    }
+
+
+    /**
+     *  Convenience method that decodes a section of the passed array. The caller
+     *  is responsible for ensuring that the specified section is actually valid
+     *  encoded data.
+     */
+    public byte[] decode(byte[] src, int off, int len)
+    {
+        ByteArrayInputStream in = new ByteArrayInputStream(src, off, len);
         ByteArrayOutputStream out = new ByteArrayOutputStream(src.length);
         decode(in, out);
         return out.toByteArray();

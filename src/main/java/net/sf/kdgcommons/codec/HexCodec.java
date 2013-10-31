@@ -44,8 +44,6 @@ import net.sf.kdgcommons.lang.StringUtil;
 public class HexCodec
 extends Codec
 {
-    private final static byte[] EMPTY_ARRAY = new byte[0];
-
     private int _lineLength;
     private byte[] _separator;
 
