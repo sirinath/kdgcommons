@@ -47,7 +47,7 @@ extends Codec
     {
         /** Produces an unbroken string of base-64 characters. */
         UNBROKEN(Integer.MAX_VALUE, null),
-        
+
         /** RFC-1421: 64 characters, CR+LF separator */
         RFC1421(64, new byte[] { 13, 10 });
 
@@ -64,8 +64,6 @@ extends Codec
 //----------------------------------------------------------------------------
 //  Instance variables and constructor
 //----------------------------------------------------------------------------
-
-    private final static byte[] EMPTY_ARRAY = new byte[0];
 
     private int _lineLength;
     private byte[] _separator;

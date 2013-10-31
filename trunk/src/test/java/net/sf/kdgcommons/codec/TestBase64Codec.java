@@ -22,7 +22,31 @@ import net.sf.kdgcommons.test.ArrayAsserts;
 public class TestBase64Codec
 extends TestCase
 {
-    public void testNull() throws Exception
+    public void testNullArray() throws Exception
+    {
+        Base64Codec codec = new Base64Codec();
+
+        byte[] enc = codec.encode(null);
+        assertTrue("encode(null) returned empty array", enc.length == 0);
+
+        byte[] dec = codec.decode(null);
+        assertTrue("decode(null) returned empty array", dec.length == 0);
+    }
+
+
+    public void testEmptyArray() throws Exception
+    {
+        Base64Codec codec = new Base64Codec();
+
+        byte[] enc = codec.encode(new byte[0]);
+        assertTrue("encode(byte[0]) returned empty array", enc.length == 0);
+
+        byte[] dec = codec.decode(new byte[0]);
+        assertTrue("decode(byte[0]) returned empty array", dec.length == 0);
+    }
+
+
+    public void testNullString() throws Exception
     {
         Base64Codec codec = new Base64Codec();
 
@@ -34,7 +58,7 @@ extends TestCase
     }
 
 
-    public void testEmpty() throws Exception
+    public void testEmptyString() throws Exception
     {
         Base64Codec codec = new Base64Codec();
 
