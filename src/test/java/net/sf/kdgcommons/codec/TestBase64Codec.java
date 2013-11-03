@@ -16,6 +16,7 @@ package net.sf.kdgcommons.codec;
 
 import junit.framework.TestCase;
 
+import net.sf.kdgcommons.codec.Base64Codec.Option;
 import net.sf.kdgcommons.test.ArrayAsserts;
 
 
@@ -154,6 +155,46 @@ extends TestCase
     }
 
 
+    public void testEndOfTableStandardEncoding() throws Exception
+    {
+        Base64Codec codec = new Base64Codec();
+
+        byte[] src = new byte[] { (byte)0xEF, (byte)0xCF, (byte)0x7E, (byte)0xFC };
+
+        String str = codec.toString(src);
+        assertEquals("conversion to string", "789+/A==", str);
+
+        byte[] dst = codec.toBytes(str);
+        ArrayAsserts.assertEquals("conversion to byte[]", src, dst);
+    }
+
+
+    public void testFilenameEncoding() throws Exception
+    {
+        Base64Codec codec = new Base64Codec(Option.FILENAME);
+
+        byte[] src = new byte[] { (byte)0xEF, (byte)0xCF, (byte)0x7E, (byte)0xFC };
+
+        String str = codec.toString(src);
+        assertEquals("conversion to string", "789-_A", str);
+
+        byte[] dst = codec.toBytes(str);
+        ArrayAsserts.assertEquals("conversion to byte[]", src, dst);
+    }
+
+
+    public void testConversionToBytesIgnoresWhitespace() throws Exception
+    {
+        Base64Codec codec = new Base64Codec();
+
+        byte[] exp = new byte[] { 0x12, 0x34, 0x56, 0x78, (byte)0x9A, (byte)0xBC, (byte)0xDE, (byte)0xF0 };
+        String str = "Ej  RW\reJ\t q8\n3vA=";
+
+        byte[] dst = codec.toBytes(str);
+        ArrayAsserts.assertEquals("conversion to byte[]", exp, dst);
+    }
+
+
     public void testConversionToBytesThrowsOnInvalid() throws Exception
     {
         try
@@ -164,6 +205,20 @@ extends TestCase
         catch (InvalidSourceByteException ex)
         {
             assertEquals("exception identifies incorrect byte", '^', ex.getInvalidByte());
+        }
+    }
+
+
+    public void testConversionToBytesThrowsIfUnpaddedAndPaddingRequired() throws Exception
+    {
+        try
+        {
+            new HexCodec().toBytes("3vA");
+            fail("converted incorrectly-padded string");
+        }
+        catch (CodecException ex)
+        {
+            // success
         }
     }
 }
