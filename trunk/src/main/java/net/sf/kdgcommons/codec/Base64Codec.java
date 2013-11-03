@@ -46,19 +46,70 @@ extends Codec
     public enum Option
     {
         /** Produces an unbroken string of base-64 characters. */
-        UNBROKEN(Integer.MAX_VALUE, null),
+        UNBROKEN(Integer.MAX_VALUE, null, defaultCharLookup, defaultValueLookup, '='),
 
         /** RFC-1421: 64 characters, CR+LF separator */
-        RFC1421(64, new byte[] { 13, 10 });
+        RFC1421(64, new byte[] { 13, 10 }, defaultCharLookup, defaultValueLookup, '='),
+
+        /**
+         *  RFC4648 <a href="http://tools.ietf.org/html/rfc4648#section-5">filename</a> format:
+         *  an unbroken string using filename-safe symbolic encoding, without pad characters.
+         */
+        FILENAME(Integer.MAX_VALUE, null, filenameCharLookup, filenameValueLookup, '\0');
+
 
         private final int _lineLength;
         private final byte[] _separator;
+        private final char[] _charLookup;
+        private final HashMap<Character,Integer> _valueLookup;
+        private final char _padChar;
 
-        private Option(int lineLength, byte[] separator)
+        private Option(int lineLength, byte[] separator, char[] charLookup, HashMap<Character,Integer> valueLookup, char padChar)
         {
             _lineLength = lineLength;
             _separator = separator;
+            _charLookup = charLookup;
+            _valueLookup = valueLookup;
+            _padChar = padChar;
         }
+    }
+
+//----------------------------------------------------------------------------
+//  Encoding Tables
+//----------------------------------------------------------------------------
+
+    private static char[] defaultCharLookup =
+    {
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+        'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'
+    };
+
+    private static HashMap<Character,Integer> defaultValueLookup = new HashMap<Character,Integer>(64);
+    static
+    {
+        defaultValueLookup.put('=', -1);
+        for (int ii = 0 ; ii < defaultCharLookup.length ; ii++)
+            defaultValueLookup.put(Character.valueOf(defaultCharLookup[ii]), Integer.valueOf(ii));
+    }
+
+    private static char[] filenameCharLookup =
+    {
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+        'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'
+    };
+
+    private static HashMap<Character,Integer> filenameValueLookup = new HashMap<Character,Integer>(64);
+    static
+    {
+        filenameValueLookup.put('=', -1);
+        for (int ii = 0 ; ii < filenameCharLookup.length ; ii++)
+            filenameValueLookup.put(Character.valueOf(filenameCharLookup[ii]), Integer.valueOf(ii));
     }
 
 //----------------------------------------------------------------------------
@@ -67,6 +118,10 @@ extends Codec
 
     private int _lineLength;
     private byte[] _separator;
+    private char[] _charLookup;
+    private HashMap<Character,Integer> _valueLookup;
+    private char _padChar;
+    private boolean _paddingRequired;
 
 
     /**
@@ -83,7 +138,7 @@ extends Codec
      */
     public Base64Codec(Option option)
     {
-        this(option._lineLength, option._separator);
+        this(option._lineLength, option._separator, option._charLookup, option._valueLookup, option._padChar);
     }
 
 
@@ -98,12 +153,26 @@ extends Codec
 
 
     /**
-     *  Creates an instance with custom line length and separator.
+     *  Creates an instance that uses standard encoding, but custom line
+     *  length and separator.
      */
     public Base64Codec(int lineLength, byte[] separator)
     {
+        this(lineLength, separator, defaultCharLookup, defaultValueLookup, '=');
+    }
+
+
+    /**
+     *  Internal constructor that specifies all values, including lookup tables.
+     */
+    private Base64Codec(int lineLength, byte[] separator, char[] charLookup, HashMap<Character,Integer> valueLookup, char padChar)
+    {
         _lineLength = lineLength;
         _separator = separator;
+        _charLookup = charLookup;
+        _valueLookup = valueLookup;
+        _padChar = padChar;
+        _paddingRequired = (_padChar != '\0');
     }
 
 //----------------------------------------------------------------------------
@@ -154,23 +223,6 @@ extends Codec
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
-
-    private static char[] charLookup =
-    {
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-        'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'
-    };
-
-    private static HashMap<Character,Integer> valueLookup = new HashMap<Character,Integer>(64);
-    static
-    {
-        valueLookup.put('=', -1);
-        for (int ii = 0 ; ii < charLookup.length ; ii++)
-            valueLookup.put(Character.valueOf(charLookup[ii]), Integer.valueOf(ii));
-    }
 
     private class Encoder
     {
@@ -234,13 +286,23 @@ extends Codec
 
             int e4 = b3 & 0x3F;
 
-            _out.write(charLookup[e1]);
-            _out.write(charLookup[e2]);
-            _out.write(b2 < 0 ? '=' : charLookup[e3]);
-            _out.write(b3 < 0 ? '=' : charLookup[e4]);
+            _out.write(_charLookup[e1]);
+            _out.write(_charLookup[e2]);
+            writeOrPad(b2, e3);
+            writeOrPad(b3, e4);
 
             _breakCount += 4;
             return true;
+        }
+
+
+        private void writeOrPad(int byteVal, int encVal)
+        throws IOException
+        {
+            if (byteVal >= 0)
+                _out.write(_charLookup[encVal]);
+            else if (_padChar != '\0')
+                _out.write(_padChar);
         }
 
     }
@@ -277,16 +339,15 @@ extends Codec
             }
         }
 
-
         private boolean decodeGroup()
         throws IOException
         {
-            int e1 = next();
-            int e2 = next();
-            int e3 = next();
-            int e4 = next();
+            int e1 = next(true);
+            if (e1 < 0) return false;
 
-            if ((e1 < 0) || (e2 < 0)) return false;
+            int e2 = next(! _paddingRequired);
+            int e3 = next(! _paddingRequired);
+            int e4 = next(! _paddingRequired);
 
             _out.write((e1 << 2) | ((e2 & 0x30) >> 4));
             if (e3 < 0) return false;
@@ -298,15 +359,19 @@ extends Codec
             return true;
         }
 
-        private int next()
+        private int next(boolean eofAllowed)
         throws IOException
         {
             int b = nextNonWhitespace(_in);
-            if (b < 0) return b;
+            if (b < 0)
+            {
+                if (eofAllowed) return -1;
+                else throw new CodecException("unexpected EOF");
+            }
 
-            if (b == '=') return -1;
+            if (b == _padChar) return -1;
 
-            Integer val = valueLookup.get(Character.valueOf((char)b));
+            Integer val = _valueLookup.get(Character.valueOf((char)b));
             if (val == null) throw new InvalidSourceByteException(b);
 
             return val.intValue();
