@@ -349,6 +349,43 @@ public class CollectionUtil
 
 
     /**
+     *  Compares two collections of <code>Comparable</code> elements. The two collections are
+     *  iterated, and the first not-equal <code>compareTo()</code> result is returned. If the
+     *  collections are of equal length and contain the same elements in iteration order, they
+     *  are considered equal. If they are of unequal length but contain the same elements in
+     *  iteration order, the shorter is considered less than the longer.
+     *  <p>
+     *  Note that two collections that are equal based on their intrinsic <code>equals()</code>
+     *  method, but iterate in a different order (ie, hash-based collections) are not considered
+     *  equal by this method.
+     *
+     *   @since 1.0.14
+     */
+    public static <T extends Comparable<T>> int compare(Collection<T> c1, Collection<T> c2)
+    {
+        Iterator<T> itx1 = c1.iterator();
+        Iterator<T> itx2 = c2.iterator();
+
+        while (itx1.hasNext())
+        {
+            if (! itx2.hasNext())
+                return 1;
+
+            T v1 = itx1.next();
+            T v2 = itx2.next();
+            int cmp = v1.compareTo(v2);
+            if (cmp != 0)
+                return cmp;
+        }
+
+        if (itx2.hasNext())
+            return -1;
+        else
+            return 0;
+    }
+
+
+    /**
      *  Returns the second iterable if the first is null. This is used for a null-safe
      *  for loop.
      */

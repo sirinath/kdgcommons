@@ -20,6 +20,9 @@
                 are startsWith(), endsWith(), and containsAt()
             </action>
             <action dev='kdgregory' type='add'>
+                CollectionUtil.compare(): compares the elements of two collections in iterator order 
+            </action>
+            <action dev='kdgregory' type='add'>
                 StringUtil.valueOf(): a replacement for String.valueOf() that returns an empty string
                 when passed null
             </action>
