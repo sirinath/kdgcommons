@@ -141,6 +141,36 @@ public class TestCollectionUtil extends TestCase
     }
 
 
+    public void testCompareEqualCollections() throws Exception
+    {
+        List<String> l1 = Arrays.asList("foo", "bar", "baz");
+        List<String> l2 = Arrays.asList("foo", "bar", "baz");
+
+        assertTrue(CollectionUtil.compare(l1, l2) == 0);
+    }
+
+
+    public void testCompareUnequalCollections() throws Exception
+    {
+        List<String> l1 = Arrays.asList("foo", "bar", "baz");
+        List<String> l2 = Arrays.asList("foo", "baz", "bar");
+
+        assertTrue(CollectionUtil.compare(l1, l2) < 0);
+        assertTrue(CollectionUtil.compare(l2, l1) > 0);
+    }
+
+
+    public void testCompareCollectionsOfDifferentLength() throws Exception
+    {
+        List<String> l1 = Arrays.asList("foo", "bar");
+        List<String> l2 = Arrays.asList("foo", "bar", "baz");
+
+        assertTrue(CollectionUtil.compare(l1, l2) < 0);
+        assertTrue(CollectionUtil.compare(l2, l1) > 0);
+    }
+
+
+
     public void testDefaultIfNull() throws Exception
     {
         Iterable<String> it1 = CollectionUtil.defaultIfNull(Arrays.asList("foo"), Arrays.asList("bar"));
