@@ -361,18 +361,19 @@ public class CollectionUtil
      *
      *   @since 1.0.14
      */
-    public static <T extends Comparable<T>> int compare(Collection<T> c1, Collection<T> c2)
+    @SuppressWarnings("rawtypes")
+    public static int compare(Collection<? extends Comparable> c1, Collection<? extends Comparable> c2)
     {
-        Iterator<T> itx1 = c1.iterator();
-        Iterator<T> itx2 = c2.iterator();
+        Iterator<? extends Comparable> itx1 = c1.iterator();
+        Iterator<? extends Comparable> itx2 = c2.iterator();
 
         while (itx1.hasNext())
         {
             if (! itx2.hasNext())
                 return 1;
 
-            T v1 = itx1.next();
-            T v2 = itx2.next();
+            Comparable v1 = itx1.next();
+            Comparable v2 = itx2.next();
             int cmp = v1.compareTo(v2);
             if (cmp != 0)
                 return cmp;

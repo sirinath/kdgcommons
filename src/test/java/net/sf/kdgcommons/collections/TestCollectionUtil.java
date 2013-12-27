@@ -170,7 +170,6 @@ public class TestCollectionUtil extends TestCase
     }
 
 
-
     public void testDefaultIfNull() throws Exception
     {
         Iterable<String> it1 = CollectionUtil.defaultIfNull(Arrays.asList("foo"), Arrays.asList("bar"));
