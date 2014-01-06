@@ -17,6 +17,7 @@ package net.sf.kdgcommons.util;
 import junit.framework.TestCase;
 
 
+@SuppressWarnings("deprecation")
 public class TestBase64Converter extends TestCase
 {
     /**
@@ -122,8 +123,5 @@ public class TestBase64Converter extends TestCase
                                 "US-ASCII");
             assertEquals(TEST_STRINGS[ii][0], decoded);
         }
-
-        assertEquals("foobar",
-                     new String(Base64Converter.decode("Z m9v\nYm\n?Fy"), "US-ASCII"));
     }
 }
