@@ -14,7 +14,7 @@
 
 package net.sf.kdgcommons.util;
 
-import net.sf.kdgcommons.lang.UnreachableCodeException;
+import net.sf.kdgcommons.codec.Base64Codec;
 
 
 /**
@@ -23,7 +23,10 @@ import net.sf.kdgcommons.lang.UnreachableCodeException;
  *  The basic encode and decode methods read and write from arbitrary segments
  *  of existing <code>byte[]</code>s. These are meant to be used with buffers
  *  created and filled by the calling code.
+ *
+ *  @deprecated Replaced by {@link net.sf.kdgcommons.codec.Base64Codec}
  */
+@Deprecated
 public class Base64Converter
 {
     /**
@@ -58,12 +61,9 @@ public class Base64Converter
      */
     public static int encode(byte[] src, int off, int len, byte[] dst, int doff)
     {
-        int dlen = 0;
-        for ( ; len > 0 ; len -= 3, off += 3, dlen += 4, doff += 4)
-        {
-            encodeGroup(src, off, len, dst, doff);
-        }
-        return dlen;
+        byte[] out = (new Base64Codec()).encode(src,doff, len);
+        System.arraycopy(out, 0, dst, doff, out.length);
+        return out.length;
     }
 
 
@@ -73,10 +73,7 @@ public class Base64Converter
      */
     public static byte[] encode(byte[] src)
     {
-        int dsize = (src.length + 2) / 3 * 4;
-        byte[] dst = new byte[dsize];
-        encode(src, 0, src.length, dst, 0);
-        return dst;
+        return (new Base64Codec()).encode(src);
     }
 
 
@@ -102,19 +99,9 @@ public class Base64Converter
      */
     public static int decode(byte[] src, int off, int len, byte[] dst, int doff)
     {
-        if (len % 4 != 0)
-        {
-            throw new IllegalArgumentException(
-                    "source segment size is " + len + "; must be multiple of 4");
-        }
-
-        int dlen = 0;
-        for ( ; len > 0 ; len -= 4, off += 4)
-        {
-            dlen += decodeGroup(src, off, dst, doff + dlen);
-        }
-
-        return dlen;
+        byte[] out = (new Base64Codec()).decode(src, off, len);
+        System.arraycopy(out, 0, dst, doff, out.length);
+        return out.length;
     }
 
 
@@ -124,19 +111,7 @@ public class Base64Converter
      */
     public static byte[] decode(byte[] src)
     {
-        int dsize = src.length * 3 / 4;
-        if (dsize == 0)
-            return new byte[0];
-
-        if (src[src.length - 1] == '=')
-            dsize--;
-
-        if (src[src.length - 2] == '=')
-            dsize--;
-
-        byte[] dst = new byte[dsize];
-        decode(src, 0, src.length, dst, 0);
-        return dst;
+        return (new Base64Codec()).decode(src);
     }
 
 
@@ -146,33 +121,8 @@ public class Base64Converter
      */
     public static byte[] decode(String src)
     {
-        ByteArray out = new ByteArray(src.length(), 25);
-
-        int inCnt = 0;
-        byte[] inbuf = new byte[4];
-        byte[] outbuf = new byte[3];
-
-        for (int ii = 0 ; ii < src.length() ; ii++)
-        {
-            char c = src.charAt(ii);
-            if (isBase64Char(c))
-                inbuf[inCnt++] = (byte)c;
-            if (inCnt == 4)
-            {
-                int len = decodeGroup(inbuf, 0, outbuf, 0);
-                out.add(outbuf, 0, len);
-                inCnt = 0;
-            }
-        }
-
-        if (inCnt != 0)
-            throw new IllegalArgumentException(
-                    "invalid encoded string: " + inCnt + " bytes left over");
-
-        return out.getBytes();
+        return (new Base64Codec()).toBytes(src);
     }
-
-
 
 
 //----------------------------------------------------------------------------
@@ -228,75 +178,4 @@ public class Base64Converter
         -1, -1, -1, -1, -1, -1, -1, -1,             // 0xF0 .. 0xF7
         -1, -1, -1, -1, -1, -1, -1, -1              // 0xF8 .. 0xFF
     };
-
-
-    /**
-     *  Encodes a group of 0..3 bytes from a potentially larger buffer.
-     */
-    @SuppressWarnings("fallthrough")
-    private static void encodeGroup(byte[] src, int off, int len, byte[] dst, int doff)
-    {
-        for (int ii = 0 ; ii < 4 ; ii++)
-            dst[doff + ii] = (byte)'=';
-
-        len = (len >= 3) ? 3 : len;
-
-        int current = 0;
-        int carry = 0;
-        switch (len)
-        {
-            case 3 :
-                current = src[off + 2] & 0x3F;
-                carry = (src[off + 2] & 0xC0) >> 6;
-                dst[doff + 3] = (byte)ENCODE_TABLE[current];
-            case 2 :
-                current = carry | (src[off + 1] & 0x0F) << 2;
-                carry = (src[off + 1] & 0xF0) >> 4;
-                dst[doff + 2] = (byte)ENCODE_TABLE[current];
-            case 1 :
-                current = carry | (src[off + 0] & 0x03) << 4;
-                dst[doff + 1] = (byte)ENCODE_TABLE[current];
-                current = (src[off + 0] & 0xFC) >> 2;
-                dst[doff + 0] = (byte)ENCODE_TABLE[current];
-            case 0 :
-                break;
-            default :
-                throw new UnreachableCodeException("invalid encode length");
-        }
-    }
-
-
-    /**
-     *  Decods a group of 4 characters from a potentially larger buffer.
-     */
-    @SuppressWarnings("fallthrough")
-    private static int decodeGroup(byte[] src, int off, byte[] dst, int doff)
-    {
-        for (int ii = 0 ; ii < 4 ; ii++)
-        {
-            int idx = off + ii;
-            char c = (char)src[idx];
-            if (!isBase64Char(c))
-            {
-                throw new IllegalArgumentException(
-                        "character at offset " + idx + " isn't Base64: " + c);
-            }
-        }
-
-        int d0 = DECODE_TABLE[src[off + 0]];
-        int d1 = DECODE_TABLE[src[off + 1]];
-        int d2 = DECODE_TABLE[src[off + 2]];
-        int d3 = DECODE_TABLE[src[off + 3]];
-
-        dst[doff + 0] = (byte)(d0 << 2 | (d1 & 0x30) >> 4);
-        if (d2 < 0)
-            return 1;
-
-        dst[doff + 1] = (byte)((d1 & 0x0F) << 4 | (d2 & 0x3C) >> 2);
-        if (d3 < 0)
-            return 2;
-
-        dst[doff + 2] = (byte)((d2 & 0x03) << 6 | d3);
-        return 3;
-    }
 }
