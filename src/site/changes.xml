@@ -30,6 +30,9 @@
                 StringUtil.valueOf(): a replacement for String.valueOf() that returns an empty string
                 when passed null
             </action>
+            <action dev='kdgregory' type='update'>
+                Base64Converter: deprecated in favor of Base64Codec
+            </action>
         </release>
 
         <release version="1.0.13" date="2013-08-29"
