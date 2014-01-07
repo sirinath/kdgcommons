@@ -23,6 +23,10 @@
                 CollectionUtil.compare(): compares the elements of two collections in iterator order 
             </action>
             <action dev='kdgregory' type='add'>
+                Object.compare(): null-safe comparison, where null is optionally low or high when
+                compared to not-null
+            </action>
+            <action dev='kdgregory' type='add'>
                 StringUtil.valueOf(): a replacement for String.valueOf() that returns an empty string
                 when passed null
             </action>
