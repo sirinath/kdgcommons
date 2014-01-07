@@ -159,6 +159,36 @@ public class ObjectUtil
 
 
     /**
+     *  Null-safe comparison of two arbitrary comparables. Null compares less
+     *  than not-null, two nulls are equal, else <code>v1.compareTo(v2)</code>.
+     *
+     *  @throws ClassCastException if objects are not directly comparable.
+     */
+    @SuppressWarnings("rawtypes")
+    public static int compare(Comparable v1, Comparable v2)
+    {
+        return compare(v1, v2, true);
+    }
+
+
+    /**
+     *  Null-safe comparison of two arbitrary comparables. Null will either compare
+     *  higher or lower than not null depending on <code>nullIsLow</code>, two nulls
+     *  are equal, else <code>v1.compareTo(v2)</code>.
+     *
+     *  @throws ClassCastException if objects are not directly comparable.
+     */
+    @SuppressWarnings("rawtypes")
+    public static int compare(Comparable v1, Comparable v2, boolean nullIsLow)
+    {
+        return ((v1 == null) && (v2 == null)) ? 0
+             : ((v1 == null) && (v2 != null)) ? (nullIsLow ? -1 : 1)
+             : ((v1 != null) && (v2 == null)) ? (nullIsLow ? 1  : -1)
+             : v1.compareTo(v2);
+    }
+
+
+    /**
      *  Returns a string value of an object similar to that returned by <code>
      *  Object.toString()</code>. The primary difference is that the numeric
      *  part of the string is its identity hashcode, and it's in decimal (so as

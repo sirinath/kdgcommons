@@ -111,4 +111,29 @@ public class TestObjectUtil extends TestCase
         assertEquals("default",     "bar", ObjectUtil.defaultValue(null, fact));
     }
 
+
+    public void testCompare() throws Exception
+    {
+        assertTrue("compare(foo, bar)", ObjectUtil.compare("foo", "bar") > 0);
+        assertTrue("compare(bar, foo)", ObjectUtil.compare("bar", "foo") < 0);
+        assertTrue("compare(bar, bar)", ObjectUtil.compare("bar", "bar") == 0);
+
+        assertTrue("compare(null, bar)",  ObjectUtil.compare(null, "bar") < 0);
+        assertTrue("compare(bar,  null)", ObjectUtil.compare("bar", null) > 0);
+        assertTrue("compare(null, null)", ObjectUtil.compare(null, null) == 0);
+    }
+
+
+    public void testCompareNullIsHigh() throws Exception
+    {
+        assertTrue("compare(foo, bar)", ObjectUtil.compare("foo", "bar", false) > 0);
+        assertTrue("compare(bar, foo)", ObjectUtil.compare("bar", "foo", false) < 0);
+        assertTrue("compare(bar, bar)", ObjectUtil.compare("bar", "bar", false) == 0);
+
+        assertTrue("compare(null, bar)",  ObjectUtil.compare(null, "bar", false) > 0);
+        assertTrue("compare(bar,  null)", ObjectUtil.compare("bar", null, false) < 0);
+        assertTrue("compare(null, null)", ObjectUtil.compare(null, null, false) == 0);
+    }
+
+
 }
