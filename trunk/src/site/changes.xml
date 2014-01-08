@@ -30,6 +30,9 @@
                 StringUtil.valueOf(): a replacement for String.valueOf() that returns an empty string
                 when passed null
             </action>
+            <action dev='kdgregory' type='add'>
+                Tuple2, ComparableTuple2: parameterized holder for a pair of values
+            </action>
             <action dev='kdgregory' type='update'>
                 Base64Converter: deprecated in favor of Base64Codec
             </action>
@@ -64,7 +67,7 @@
             </action>
             <action dev='kdgregory' type='update'>
                 Introspection and IntrospectionCache now allow an optional setAccessible(true)
-                on introspected methods.
+                on introspected methods
             </action>
         </release>
 
@@ -162,7 +165,7 @@
             </action>
             <action dev='kdgregory' type='update'>
                 This library no longer establishes a transitive dependency on JUnit 3.8.x. If you
-                use the assertion classes, you will need to provide your own JUnit dependency.
+                use the assertion classes, you will need to provide your own JUnit dependency
             </action>
         </release>
 
