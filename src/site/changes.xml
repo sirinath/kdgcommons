@@ -33,6 +33,10 @@
             <action dev='kdgregory' type='add'>
                 Tuple2, ComparableTuple2: parameterized holder for a pair of values
             </action>
+            <action dev='kdgregory' type='add'>
+                UnclosingInputStream, UnclosingOutputStream: stream decorators that silently ignore
+                close(); used to multiplex output onto a single stream
+            </action>
             <action dev='kdgregory' type='update'>
                 Base64Converter: deprecated in favor of Base64Codec
             </action>
