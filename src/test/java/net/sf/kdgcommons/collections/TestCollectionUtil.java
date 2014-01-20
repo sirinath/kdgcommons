@@ -109,6 +109,24 @@ public class TestCollectionUtil extends TestCase
     }
 
 
+    public void testPutAbsent() throws Exception
+    {
+        Map<String,String> base = new HashMap<String,String>();
+        base.put("foo", "bar");
+        base.put("baz", "bar");
+
+        Map<String,String> add = new HashMap<String,String>();
+        add.put("foo", "biff");
+        add.put("argle", "bargle");
+
+        CollectionUtil.putAbsent(base, add);
+        assertEquals("resulting map size", 3, base.size());
+        assertEquals("get(foo)",   "bar",    base.get("foo"));
+        assertEquals("get(baz)",   "bar",    base.get("baz"));
+        assertEquals("get(argle)", "bargle", base.get("argle"));
+    }
+
+
     public void testFirstAndLast() throws Exception
     {
         List<String> l1 = Arrays.asList("foo", "bar", "baz");

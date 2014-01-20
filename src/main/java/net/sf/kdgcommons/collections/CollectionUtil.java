@@ -134,6 +134,19 @@ public class CollectionUtil
 
 
     /**
+     *  Adds entries from <code>add</code> to <code>base</code> where there is not
+     *  already a mapping with the same key.
+     *
+     *  @since 1.0.14
+     */
+    public static <K,V> void putAbsent(Map<K,V> base, Map<K,V> add)
+    {
+        for (Map.Entry<K,V> entry : add.entrySet())
+            putIfAbsent(base, entry.getKey(), entry.getValue());
+    }
+
+
+    /**
      *  Returns the first element of the passed list, <code>null</code> if
      *  the list is empty or null.
      */
