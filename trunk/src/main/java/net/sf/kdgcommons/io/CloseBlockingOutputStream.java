@@ -25,12 +25,12 @@ import java.io.OutputStream;
  *
  *  @since 1.0.14
  */
-public class UnclosingOutputStream
+public class CloseBlockingOutputStream
 extends OutputStream
 {
     private OutputStream _delegate;
 
-    public UnclosingOutputStream(OutputStream delegate)
+    public CloseBlockingOutputStream(OutputStream delegate)
     {
         _delegate = delegate;
     }
