@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 
 import net.sf.kdgcommons.test.ArrayAsserts;
 
-public class TestUnclosingOutputStream extends TestCase
+public class TestCloseBlockingOutputStream extends TestCase
 {
 //----------------------------------------------------------------------------
 //  Support Code
@@ -63,7 +63,7 @@ public class TestUnclosingOutputStream extends TestCase
     public void testWriting() throws Exception
     {
         ByteArrayOutputStream base = new ByteArrayOutputStream();
-        UnclosingOutputStream test = new UnclosingOutputStream(base);
+        CloseBlockingOutputStream test = new CloseBlockingOutputStream(base);
 
         test.write(64);
         test.write(new byte[] { 65, 66, 67 });
@@ -78,7 +78,7 @@ public class TestUnclosingOutputStream extends TestCase
     public void testFlush() throws Exception
     {
         MyMockOutputStream base = new MyMockOutputStream();
-        UnclosingOutputStream test = new UnclosingOutputStream(base);
+        CloseBlockingOutputStream test = new CloseBlockingOutputStream(base);
 
         assertFalse("mock already flushed", base.wasFlushed);
         test.flush();
@@ -89,7 +89,7 @@ public class TestUnclosingOutputStream extends TestCase
     public void testClose() throws Exception
     {
         MyMockOutputStream base = new MyMockOutputStream();
-        UnclosingOutputStream test = new UnclosingOutputStream(base);
+        CloseBlockingOutputStream test = new CloseBlockingOutputStream(base);
 
         // mock will throw if this gets through
         test.close();

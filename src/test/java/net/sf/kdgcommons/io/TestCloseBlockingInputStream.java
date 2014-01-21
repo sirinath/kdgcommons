@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 import net.sf.kdgcommons.test.ArrayAsserts;
 
 
-public class TestUnclosingInputStream extends TestCase
+public class TestCloseBlockingInputStream extends TestCase
 {
 //----------------------------------------------------------------------------
 //  Support Code
@@ -58,7 +58,7 @@ public class TestUnclosingInputStream extends TestCase
     {
         byte[] data = new byte[] { 64, 65, 66, 67, 68, 69, 70 };
         ByteArrayInputStream base = new ByteArrayInputStream(data);
-        UnclosingInputStream test = new UnclosingInputStream(base);
+        CloseBlockingInputStream test = new CloseBlockingInputStream(base);
 
         byte[] r0 = new byte[4];
         assertEquals("read of full byte array, return", 4, test.read(r0));
@@ -81,7 +81,7 @@ public class TestUnclosingInputStream extends TestCase
     {
         byte[] data = new byte[] { 64, 65, 66, 67, 68, 69, 70 };
         ByteArrayInputStream base = new ByteArrayInputStream(data);
-        UnclosingInputStream test = new UnclosingInputStream(base);
+        CloseBlockingInputStream test = new CloseBlockingInputStream(base);
 
         assertTrue(test.markSupported());
 
@@ -100,7 +100,7 @@ public class TestUnclosingInputStream extends TestCase
     {
         byte[] data = new byte[] { 64, 65, 66, 67, 68, 69, 70 };
         ByteArrayInputStream base = new ByteArrayInputStream(data);
-        UnclosingInputStream test = new UnclosingInputStream(base);
+        CloseBlockingInputStream test = new CloseBlockingInputStream(base);
 
         // ByteArrayInputStream never skips less than the request amount (unless you're at EOF)
         assertEquals("bytes skipped", 3, test.skip(3));
@@ -113,7 +113,7 @@ public class TestUnclosingInputStream extends TestCase
     {
         byte[] data = new byte[] { 64, 65, 66, 67, 68, 69, 70 };
         ByteArrayInputStream base = new ByteArrayInputStream(data);
-        UnclosingInputStream test = new UnclosingInputStream(base);
+        CloseBlockingInputStream test = new CloseBlockingInputStream(base);
 
         // ByteArrayInputStream returns remaining bytes from available()
         assertEquals("byte available", base.available(), test.available());
@@ -123,7 +123,7 @@ public class TestUnclosingInputStream extends TestCase
     public void testClose() throws Exception
     {
         MyMockInputStream base = new MyMockInputStream();
-        UnclosingInputStream test = new UnclosingInputStream(base);
+        CloseBlockingInputStream test = new CloseBlockingInputStream(base);
 
         // mock will throw if this gets through
         test.close();

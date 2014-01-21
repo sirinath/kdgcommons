@@ -26,12 +26,12 @@ import java.io.InputStream;
  *
  *  @since 1.0.14
  */
-public class UnclosingInputStream
+public class CloseBlockingInputStream
 extends InputStream
 {
     private InputStream _delegate;
 
-    public UnclosingInputStream(InputStream delegate)
+    public CloseBlockingInputStream(InputStream delegate)
     {
         _delegate = delegate;
     }
