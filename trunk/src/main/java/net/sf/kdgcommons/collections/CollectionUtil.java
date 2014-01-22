@@ -139,7 +139,7 @@ public class CollectionUtil
      *
      *  @since 1.0.14
      */
-    public static <K,V> void putAbsent(Map<K,V> base, Map<K,V> add)
+    public static <K,V> void putIfAbsent(Map<K,V> base, Map<K,V> add)
     {
         for (Map.Entry<K,V> entry : add.entrySet())
             putIfAbsent(base, entry.getKey(), entry.getValue());

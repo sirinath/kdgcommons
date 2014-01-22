@@ -119,7 +119,7 @@ public class TestCollectionUtil extends TestCase
         add.put("foo", "biff");
         add.put("argle", "bargle");
 
-        CollectionUtil.putAbsent(base, add);
+        CollectionUtil.putIfAbsent(base, add);
         assertEquals("resulting map size", 3, base.size());
         assertEquals("get(foo)",   "bar",    base.get("foo"));
         assertEquals("get(baz)",   "bar",    base.get("baz"));
