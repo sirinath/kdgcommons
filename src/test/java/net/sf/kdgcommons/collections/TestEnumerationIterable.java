@@ -16,6 +16,7 @@ package net.sf.kdgcommons.collections;
 
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 import junit.framework.TestCase;
@@ -54,4 +55,25 @@ public class TestEnumerationIterable extends TestCase
         assertFalse(ei1.iterator().hasNext());
         assertFalse(ei2.iterator().hasNext());
     }
+
+
+    public void testRemoveNotSupported() throws Exception
+    {
+        Vector<String> src = new Vector<String>(Arrays.asList("foo", "bar", "baz"));
+        Enumeration<String> ee = src.elements();
+        EnumerationIterable<String> ei = new EnumerationIterable<String>(ee);
+        Iterator<String> itx = ei.iterator();
+
+        itx.next();
+        try
+        {
+            itx.remove();
+            fail("remove() didn't throw");
+        }
+        catch (UnsupportedOperationException ex)
+        {
+            // success
+        }
+    }
+
 }

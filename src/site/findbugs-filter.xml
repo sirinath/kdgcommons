@@ -41,4 +41,10 @@
         <!-- intentional: the version in util has been deprecated, has same functionality as version in collections -->
     </Match>
 
+    <Match>
+        <Class name='net.sf.kdgcommons.lang.ObjectUtil' />
+        <Bug pattern='NP_NULL_ON_SOME_PATH_MIGHT_BE_INFEASIBLE' />
+        <!-- all paths are covered; FindBugs is being paranoid -->
+    </Match>
+
 </FindBugsFilter>

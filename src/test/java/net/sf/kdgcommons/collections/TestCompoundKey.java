@@ -77,6 +77,7 @@ public class TestCompoundKey extends TestCase
     }
 
 
+
     public void testToString() throws Exception
     {
         assertEquals("[]", new CompoundKey().toString());
@@ -110,5 +111,26 @@ public class TestCompoundKey extends TestCase
 
         CompoundKey ret = (CompoundKey)ois.readObject();
         assertEquals(key, ret);
+    }
+
+
+    public void testToStringCache() throws Exception
+    {
+        // this test is to increase coverage; caching is not part of the contract
+        CompoundKey key = new CompoundKey();
+        String s1 = key.toString();
+        String s2 = key.toString();
+        assertSame(s1, s2);
+    }
+
+
+    public void testEqualsEdgeCases() throws Exception
+    {
+        // this test is to increase coverage
+        CompoundKey key = new CompoundKey("foo", "bar");
+
+        assertTrue("key.equals(key)",    key.equals(key));
+        assertFalse("key.equals(bogus)", key.equals("bogus"));
+        assertFalse("key.equals(null)",  key.equals(null));
     }
 }

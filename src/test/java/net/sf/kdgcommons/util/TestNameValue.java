@@ -101,6 +101,32 @@ public class TestNameValue extends TestCase
     }
 
 
+    public void testComparisonOfNonComparableValues() throws Exception
+    {
+        NameValue<Object> nv1 = new NameValue<Object>("foo", new Object()
+        {
+            @Override
+            public String toString()
+            {
+                return "zippy";
+            }
+        });
+
+        NameValue<Object> nv2 = new NameValue<Object>("foo", new Object()
+        {
+            @Override
+            public String toString()
+            {
+                return "griffy";
+            }
+        });
+
+        assertTrue("nv1 > nv2", nv1.compareTo(nv2) > 0);
+        assertTrue("nv2 < nv1", nv2.compareTo(nv1) < 0);
+    }
+
+
+
     public void testSerialization() throws Exception
     {
         NameValue<String> value = new NameValue<String>("foo", "bar");
