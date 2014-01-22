@@ -4,6 +4,10 @@
 	</properties>
 
     <body>
+        <release version="1.0.15" date="TBD"
+            description="">
+        </release>
+
         <release version="1.0.14" date="2014-01-21"
             description="">
             <action dev='kdgregory' type='add'>
