@@ -4,8 +4,21 @@
 	</properties>
 
     <body>
-        <release version="1.0.15" date="TBD"
-            description="">
+        <release version="1.1.0" date="TBD"
+            description="Add selected components from net.sf.swinglib">
+            <action dev='kdgregory' type='add'>
+                AsynchronousOperation: a replacement for SwingWorker that's intended for
+                use with a threadpool
+            </action>
+            <action dev='kdgregory' type='add'>
+                ClipManager: a simple mechanism for placing text on the system clipboard
+            </action>
+            <action dev='kdgregory' type='add'>
+                CompactGridLayout: a layout manager for building input forms
+            </action>
+            <action dev='kdgregory' type='add'>
+                SwingUtil: assorted utility functions
+            </action>
         </release>
 
         <release version="1.0.14" date="2014-01-21"
